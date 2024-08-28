@@ -1,0 +1,14 @@
+{
+  "name": "hyulian",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "node scripts/watch-all.js",
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

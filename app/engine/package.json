@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "migrate:reset": "npx sequelize-cli db:migrate:undo:all & npx sequelize-cli db:migrate",
     "prebuild": "rimraf dist",
     "test": "jest",
     "migrate": "npx sequelize-cli db:migrate"

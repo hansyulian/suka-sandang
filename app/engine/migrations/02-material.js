@@ -1,9 +1,19 @@
-const { baseProperties } = require("./__utils__");
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Materials", {
-      ...baseProperties,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.UUID,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
       name: {
         type: Sequelize.STRING,
       },

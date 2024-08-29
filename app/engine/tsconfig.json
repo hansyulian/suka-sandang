@@ -16,10 +16,5 @@
       "~/*": ["src/*"]
     }
   },
-  "include": [
-    "src",
-    "../api/src/@types",
-    "../api/src/utils/expressQueryOptions.ts",
-    "../api/src/utils/expressQueryOptions.test.ts"
-  ]
+  "include": ["src"]
 }

@@ -1,13 +1,9 @@
-import { Request, Response } from 'express';
-
-declare namespace Atlas {
-  export interface Locals {}
-}
+import { Request, Response } from "express";
 
 export type RequestContext<
   Params extends {},
   Query extends {} | undefined,
-  Body extends {} | undefined,
+  Body extends {} | undefined
 > = {
   params: Params;
   query: Query;
@@ -20,7 +16,7 @@ export type RequestContext<
 export function requestContextBuilder<
   Params extends {},
   Query extends {} | undefined,
-  Body extends {} | undefined,
+  Body extends {} | undefined
 >(request: Request, response: Response): RequestContext<Params, Query, Body> {
   const params = request.params as Params;
   const query = request.query as Query;

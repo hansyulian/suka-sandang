@@ -1,7 +1,6 @@
-import { Optional } from "sequelize";
 import { Column, Table } from "sequelize-typescript";
 
-import { BaseAttributes, BaseModel } from "./BaseModel";
+import { BaseAttributes, BaseModel, MutationOmit } from "./BaseModel";
 
 export type UserStatus = "pending" | "active" | "suspended";
 export type UserAttributes = BaseAttributes & {
@@ -10,9 +9,15 @@ export type UserAttributes = BaseAttributes & {
   password: string;
   status: UserStatus;
 };
-export type UserCreationAttributes = Optional<UserAttributes, "id">;
+export type UserCreationAttributes = MutationOmit<UserAttributes, "status">;
+export type UserUpdateAttributes = MutationOmit<
+  Partial<UserAttributes>,
+  "status" | "email"
+>;
 
-@Table
+@Table({
+  paranoid: true,
+})
 export class User extends BaseModel<UserAttributes, UserCreationAttributes> {
   @Column
   declare name: string;

@@ -1,20 +1,28 @@
 import { Optional } from "sequelize";
 import { Column, Table } from "sequelize-typescript";
 
-import { BaseAttributes, BaseModel } from "./BaseModel";
+import { BaseAttributes, BaseModel, MutationOmit } from "./BaseModel";
 
-export type MaterialStatus = "pending" | "active" | "inactive" | "deleted";
+export type MaterialStatus = "pending" | "active" | "inactive";
 export type MaterialAttributes = BaseAttributes & {
   name: string;
   code: string;
   status: MaterialStatus;
-  procurementPrice?: number;
-  salePrice?: number;
+  purchasePrice?: number;
+  retailPrice?: number;
   deletedAt?: Date;
 };
-export type MaterialCreationAttributes = Optional<MaterialAttributes, "id">;
-
-@Table
+export type MaterialCreationAttributes = MutationOmit<
+  MaterialAttributes,
+  "status"
+>;
+export type MaterialUpdateAttributes = MutationOmit<
+  Partial<MaterialAttributes>,
+  "status"
+>;
+@Table({
+  paranoid: true,
+})
 export class Material extends BaseModel<
   MaterialAttributes,
   MaterialCreationAttributes
@@ -26,10 +34,10 @@ export class Material extends BaseModel<
   declare code: string;
 
   @Column
-  declare procurementPrice?: number;
+  declare purchasePrice?: number;
 
   @Column
-  declare salePrice?: number;
+  declare retailPrice?: number;
 
   @Column({
     defaultValue: "active",

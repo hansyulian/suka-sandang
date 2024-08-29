@@ -3,7 +3,7 @@ import {
   InvalidCredentialException,
 } from "~/exceptions";
 import { SessionFacade } from "~/facades/SessionFacade";
-import { User } from "~/models";
+import { User, UserUpdateAttributes } from "~/models";
 import { JwtService } from "~/services";
 import { verifyPassword } from "~/utils";
 
@@ -77,7 +77,7 @@ describe("SessionFacade", () => {
     });
   });
 
-  describe("getUserProfile", () => {
+  describe("getUserInfo", () => {
     it("should return the user object if the user is found", async () => {
       // Arrange
       const mockUser = {
@@ -88,7 +88,7 @@ describe("SessionFacade", () => {
       (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
 
       // Act
-      const result = await SessionFacade.getUserProfile("1");
+      const result = await SessionFacade.getUserInfo("1");
 
       // Assert
       expect(result).toEqual(mockUser);
@@ -100,9 +100,53 @@ describe("SessionFacade", () => {
       (User.findByPk as jest.Mock).mockResolvedValue(null);
 
       // Act & Assert
-      await expect(SessionFacade.getUserProfile("1")).rejects.toThrow(
+      await expect(SessionFacade.getUserInfo("1")).rejects.toThrow(
         UserNotFoundException
       );
+      expect(User.findByPk).toHaveBeenCalledWith("1");
+    });
+  });
+
+  describe("updateUserInfo", () => {
+    it("should update user info and return the updated user", async () => {
+      // Arrange
+      const mockUser = {
+        id: "1",
+        email: "test@example.com",
+        password: "hashed_password",
+        update: jest.fn().mockResolvedValue({
+          id: "1",
+          email: "test@example.com",
+          password: "hashed_password",
+          name: "New Name",
+        }),
+      };
+      (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
+
+      const updateData: UserUpdateAttributes = { name: "New Name" };
+
+      // Act
+      const result = await SessionFacade.updateUserInfo("1", updateData);
+
+      // Assert
+      expect(result).toEqual({
+        id: "1",
+        email: "test@example.com",
+        password: "hashed_password",
+        name: "New Name",
+      });
+      expect(User.findByPk).toHaveBeenCalledWith("1");
+      expect(mockUser.update).toHaveBeenCalledWith({ name: "New Name" });
+    });
+
+    it("should throw UserNotFoundException if the user is not found", async () => {
+      // Arrange
+      (User.findByPk as jest.Mock).mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(
+        SessionFacade.updateUserInfo("1", { name: "New Name" })
+      ).rejects.toThrow(UserNotFoundException);
       expect(User.findByPk).toHaveBeenCalledWith("1");
     });
   });

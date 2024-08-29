@@ -1,7 +1,11 @@
-import { WhereOptions } from "sequelize";
+import { Op, WhereOptions } from "sequelize";
 import { FindAndCountAllResult, QueryOptions } from "~/@types/data";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
-import { Material } from "~/models/Material";
+import {
+  Material,
+  MaterialCreationAttributes,
+  MaterialUpdateAttributes,
+} from "~/models/Material";
 import { processQueryOptions } from "~/utils";
 
 export const MaterialFacade = {
@@ -9,7 +13,7 @@ export const MaterialFacade = {
   findById,
   create,
   update,
-  remove,
+  delete: remove,
 };
 
 export type MaterialQuery = {};
@@ -19,7 +23,12 @@ async function list(
   options: QueryOptions
 ): Promise<FindAndCountAllResult<Material>> {
   const result = await Material.findAndCountAll({
-    where: query,
+    where: {
+      status: {
+        [Op.ne]: "deleted",
+      },
+      ...query,
+    },
     ...processQueryOptions(options),
   });
   return {
@@ -36,8 +45,30 @@ async function findById(id: string) {
   return result;
 }
 
-async function create() {}
+async function create(data: MaterialCreationAttributes) {
+  const { code, name, purchasePrice, retailPrice } = data;
+  const result = await Material.create({
+    code,
+    name,
+    purchasePrice,
+    retailPrice,
+  });
+  return result;
+}
 
-async function update() {}
+async function update(id: string, data: MaterialUpdateAttributes) {
+  const record = await findById(id);
+  const { code, name, purchasePrice, retailPrice } = data;
+  const result = await record.update({
+    code,
+    name,
+    retailPrice,
+    purchasePrice,
+  });
+  return result;
+}
 
-async function remove() {}
+async function remove(id: string) {
+  const record = await findById(id);
+  await record.destroy();
+}

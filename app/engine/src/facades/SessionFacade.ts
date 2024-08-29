@@ -2,13 +2,14 @@ import {
   InvalidCredentialException,
   UserNotFoundException,
 } from "~/exceptions";
-import { User } from "~/models";
+import { User, UserUpdateAttributes } from "~/models";
 import { JwtService } from "~/services";
 import { verifyPassword } from "~/utils";
 
 export const SessionFacade = {
   emailLogin,
-  getUserProfile,
+  getUserInfo: getUserInfo,
+  updateUserInfo,
 };
 
 export type EmailLoginResult = {
@@ -36,10 +37,20 @@ async function emailLogin(
   };
 }
 
-async function getUserProfile(id: string) {
+async function getUserInfo(id: string) {
   const user = await User.findByPk(id);
   if (!user) {
     throw new UserNotFoundException({ id });
   }
   return user;
+}
+
+async function updateUserInfo(id: string, data: UserUpdateAttributes) {
+  const { name } = data;
+  const user = await getUserInfo(id);
+  const updatePayload = {
+    name,
+  };
+  const result = await user.update(updatePayload);
+  return result;
 }

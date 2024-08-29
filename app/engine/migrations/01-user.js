@@ -14,6 +14,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+
       name: {
         type: Sequelize.STRING,
       },

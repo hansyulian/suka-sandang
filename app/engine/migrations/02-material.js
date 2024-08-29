@@ -14,6 +14,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+
       name: {
         type: Sequelize.STRING,
       },
@@ -26,16 +31,16 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      procurementPrice: {
+      purchasePrice: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
-      salePrice: {
+      retailPrice: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
       status: {
-        type: Sequelize.ENUM("pending", "active", "inactive", "deleted"),
+        type: Sequelize.ENUM("pending", "active", "inactive"),
         allowNull: false,
         defaultValue: "active",
       },

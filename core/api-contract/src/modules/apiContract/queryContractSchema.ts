@@ -3,16 +3,16 @@ import {
   ApiContractPathFn,
   ApiContractQuerySchema,
   ApiContractResponseType,
-} from './types';
-import { ApiContractModelSchema } from './types/Model';
-import { QueryContractSchema } from './types/QueryContract';
+} from "./types";
+import { ApiContractModelSchema } from "./types/Model";
+import { QueryContractSchema } from "./types/QueryContract";
 
 export function queryContractSchema<
   TPath extends string,
   TModel extends ApiContractModelSchema,
   TQuery extends ApiContractQuerySchema,
   TParams extends ApiContractParamsSchema,
-  TResponseType extends ApiContractResponseType,
+  TResponseType extends ApiContractResponseType
 >(
   contractSchema: QueryContractSchema<
     TPath,
@@ -20,7 +20,7 @@ export function queryContractSchema<
     TParams,
     TQuery,
     TResponseType
-  >,
+  >
 ) {
   return contractSchema;
 }

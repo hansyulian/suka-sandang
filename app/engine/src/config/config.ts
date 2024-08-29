@@ -12,6 +12,7 @@ export const appConfig = {
     salt: pe.HASH_SALT ? parseInt(pe.HASH_SALT) : 10,
     jwtSecret: pe.JWT_SECRET ?? "supersecretjwtkey",
     jwtExpiry: pe.JWT_EXPIRES_IN ?? "30d",
+    maximumRetrieval: parseInt(pe.MAXIMUM_RETRIEVAL || "100"),
   },
   database: {
     username: process.env.DB_USERNAME || "root",

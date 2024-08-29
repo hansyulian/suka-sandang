@@ -1,11 +1,9 @@
+const { baseProperties } = require("./__utils__");
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: Sequelize.UUID,
-      },
+    await queryInterface.createTable("Users", {
+      ...baseProperties,
       name: {
         type: Sequelize.STRING,
       },
@@ -19,24 +17,16 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('pending', 'active', 'suspended'),
+        type: Sequelize.ENUM("pending", "active", "suspended"),
         allowNull: false,
-        defaultValue: 'active',
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+        defaultValue: "active",
       },
     });
-    const id = '00000000-0000-4000-8000-000000000001';
-    const name = 'Admin';
-    const email = 'admin@admin.com';
-    const password = 'hashedPasswordHere'; 
-    const status = 'active';
+    const id = "00000000-0000-4000-8000-000000000001";
+    const name = "Admin";
+    const email = "admin@admin.com";
+    const password = "hashedPasswordHere";
+    const status = "active";
     const now = new Date();
     const createdAt = now;
     const updatedAt = now;
@@ -55,10 +45,10 @@ module.exports = {
           updatedAt,
         },
         type: Sequelize.QueryTypes.INSERT,
-      },
+      }
     );
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable("Users");
   },
 };

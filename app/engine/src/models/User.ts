@@ -1,27 +1,19 @@
-import { Optional } from 'sequelize';
-import {
-  Column,
-  Table,
-} from 'sequelize-typescript';
+import { Optional } from "sequelize";
+import { Column, Table } from "sequelize-typescript";
 
-import {
-  BaseAttributes,
-  BaseModel,
-} from '~/base/BaseModel';
+import { BaseAttributes, BaseModel } from "./BaseModel";
 
-export type UserStatus = 'pending' | 'active' | 'suspended';
+export type UserStatus = "pending" | "active" | "suspended";
 export type UserAttributes = BaseAttributes & {
   name: string;
   email: string;
   password: string;
   status: UserStatus;
 };
-export type UserCreationAttributes = Optional<UserAttributes, 'id'>
-
+export type UserCreationAttributes = Optional<UserAttributes, "id">;
 
 @Table
 export class User extends BaseModel<UserAttributes, UserCreationAttributes> {
-
   @Column
   declare name: string;
 
@@ -33,5 +25,4 @@ export class User extends BaseModel<UserAttributes, UserCreationAttributes> {
 
   @Column
   declare status: UserStatus;
-
-};
+}

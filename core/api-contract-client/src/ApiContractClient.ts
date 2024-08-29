@@ -27,7 +27,7 @@ export class ApiContractClient {
     const { path, params, method, body, query, ...rest } = options;
     const url = stringRender(path, params);
 
-    const result = await axios<Response>({
+    const result = await axios.request<Response>({
       baseURL: baseUrl,
       url,
       method,

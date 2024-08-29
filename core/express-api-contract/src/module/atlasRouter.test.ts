@@ -1,5 +1,4 @@
-import { apiContractSchema } from "@hyulian/common";
-
+import { apiContractSchema } from "@hyulian/api-contract";
 import { atlasRouter } from "./atlasRouter";
 import { contractController } from "./contractController";
 import { createAtlasInstanceContext } from "./createAtlasInstanceContext";

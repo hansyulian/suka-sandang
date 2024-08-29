@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import commonjs from "vite-plugin-commonjs";
 
 import react from "@vitejs/plugin-react";
 
@@ -9,7 +10,7 @@ const apiPort = process.env.API_PORT;
 console.log(`forwarding /api to localhost:${apiPort}`);
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [commonjs(), react()],
   css: {
     preprocessorOptions: {
       scss: {
@@ -20,23 +21,12 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: "@app/common",
-        replacement: resolve(__dirname, "../common/dist"),
+        find: "@app/(.*)$",
+        replacement: resolve(__dirname, "../$1/dist"),
       },
       {
-        find: "@hyulian/common",
-        replacement: resolve(__dirname, "../../core/common/dist"),
-      },
-      {
-        find: "@hyulian/api-contract-client",
-        replacement: resolve(__dirname, "../../core/api-contract-client/dist"),
-      },
-      {
-        find: "@hyulian/react-api-contract-client",
-        replacement: resolve(
-          __dirname,
-          "../../core/react-api-contract-client/dist"
-        ),
+        find: "@hyulian/(.*)$",
+        replacement: resolve(__dirname, "../../core/$1/dist"),
       },
       { find: "~", replacement: resolve(__dirname, "src") },
     ],

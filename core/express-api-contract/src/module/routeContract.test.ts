@@ -1,6 +1,6 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 
-import { generateMockExpressRequest } from "../testUtil.test";
+import { generateMockExpressRequest } from "../utils/test/util";
 import { routeContract } from "./routeContract";
 
 describe("@base/atlas.routeContract", () => {

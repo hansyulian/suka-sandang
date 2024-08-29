@@ -11,9 +11,13 @@
     "watch": "node scripts/watch-all.js",
     "build": "pnpm --recursive run build",
     "test": "pnpm --recursive test",
-    "integrity-test": "pnpm build && pnpm test"
+    "integrity-test": "pnpm build && pnpm test",
+    "clean": "node scripts/clean.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  }
 }

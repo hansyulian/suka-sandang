@@ -1,0 +1,27 @@
+{
+  "name": "@hyulian/api-contract-client",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "prebuild": "rimraf dist",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hyulian/api-contract": "workspace:*",
+    "@hyulian/common": "workspace:*",
+    "axios": "^1.7.5"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.2.5",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.5.4"
+  }
+}

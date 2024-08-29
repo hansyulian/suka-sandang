@@ -1,6 +1,14 @@
-import { subtractor } from "~/utils/subtractor";
+import morgan from "morgan";
 
-import { adder } from "@core/common";
+import { atlas } from "@hyulian/express-api-contract";
 
-console.log(adder(10, 20));
-console.log(subtractor(20, 10));
+import { appConfig } from "./config";
+import { controllers } from "./controllers";
+
+const port = appConfig.app.port;
+
+const app = atlas((atlas) => {
+  atlas.use(morgan("combined"));
+  atlas.router("/", controllers);
+});
+app.start(port);

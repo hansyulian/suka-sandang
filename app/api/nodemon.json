@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "ignore": ["src/public", "tests/sample"],
-  "exec": "ts-node -r tsconfig-paths/register  --files src/app.ts"
+  "ignore": ["src/public"],
+  "exec": "tsx -r tsconfig-paths/register src/app.ts"
 }

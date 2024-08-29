@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "api": "pnpm --filter ./app/api dev",
+    "web": "pnpm --filter ./app/web dev",
+    "migrate": "pnpm --filter ./app/engine migrate",
+    "migrate:reset": "pnpm --filter ./app/engine migrate:reset",
     "watch": "node scripts/watch-all.js",
     "build": "pnpm --recursive run build",
     "test": "pnpm --recursive test"

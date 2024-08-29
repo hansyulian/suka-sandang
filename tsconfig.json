@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
-    "declaration": true,
+    "module": "ESNext", // Use ES modules
+    "target": "ESNext", // Use the latest ECMAScript features
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "@core/common/*": ["core/common/src/*"],
-      "@app/api/*": ["app/api/src/*"],
-      "@app/web/*": ["app/web/src/*"]
-    }
-  },
-  "include": ["core/common/src", "app/api/src", "app/web/src"]
+    "declaration": true,
+    "rootDir": "src",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
 }

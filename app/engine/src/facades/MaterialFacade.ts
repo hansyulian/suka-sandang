@@ -1,5 +1,5 @@
 import { Op, WhereOptions } from "sequelize";
-import { FindAndCountAllResult, QueryOptions } from "~/@types/data";
+import { FindAndCountAllResult, QueryOptions } from "~/types";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import {
   Material,

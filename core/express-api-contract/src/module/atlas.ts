@@ -11,6 +11,7 @@ import {
   AtlasRouterInitFn,
   AtlasRouterInitOptions,
 } from "./types";
+import { NextFunction, Request, Response } from "express";
 
 export function atlas(
   initFn: AtlasRouterInitFn,
@@ -25,6 +26,13 @@ export function atlas(
   applyValidators(context);
   applyMiddlewares(context);
   applyContracts(context);
+  if (options.onError) {
+    context.express.use(
+      (err: any, req: Request, res: Response, next: NextFunction) => {
+        options.onError!(err, req, res, next);
+      }
+    );
+  }
 
   return {
     express: context.express,

@@ -7,6 +7,7 @@ import { theme } from "~/config/theme";
 import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
+import "~/config/api";
 
 const queryClient = new QueryClient();
 

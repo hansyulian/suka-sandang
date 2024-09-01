@@ -7,11 +7,14 @@ import {
   ApiContractQuery,
   ApiContractResponse,
   ApiContractSchema,
+  InferApiContract,
+  InferResponseType,
   StrictSchemaType,
 } from "@hyulian/api-contract";
 import { HttpRequestMethods } from "@hyulian/common";
 
 import { RequestContext } from "./requestContextBuilder";
+import { CustomErrorType } from "~/module/expressErrorHandler";
 
 export type ExpressFn = (
   req: Request,
@@ -36,6 +39,12 @@ export type AtlasRouter<TSchema extends AtlasContractSchema> = {
 };
 export type AtlasRouterInitOptions = {
   disableRouterAndContractPathValidation?: true;
+  onError?: (
+    error: CustomErrorType,
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => void;
 };
 export type AtlasRouterInitFn<TSchema extends AtlasContractSchema = any> = (
   router: AtlasRouter<TSchema>
@@ -65,15 +74,9 @@ export type AtlasMiddlewareDetail = {
   middleware: AtlasMiddlewareWrapperFn;
 };
 
-// export type AtlasRouteContractController<
-//   TApiContract extends ApiContract<TResponse, TBody, TParams, TQuery>,
-//   TResponse extends ResponseBase<any> = any,
-//   TBody extends BodyBase<{}> = any,
-//   TParams extends {} = any,
-//   TQuery extends {} = any,
-// > = (
-//   request: RequestContext<TApiContract['params'], ApiContractQuery<TApiContract>, TBody>,
-// ) => PromiseLike<TApiContract['response']>;
+export type ApiContractResponseLite<
+  TApiContractSchema extends ApiContractSchema
+> = InferResponseType<TApiContractSchema["responseType"], any>;
 
 export type AtlasRouteContractController<
   TApiContractSchema extends ApiContractSchema
@@ -83,7 +86,9 @@ export type AtlasRouteContractController<
     ApiContractQuery<TApiContractSchema>,
     ApiContractBody<TApiContractSchema>
   >
-) => PromiseLike<ApiContractResponse<TApiContractSchema>>;
+  // some issue for this is the optional will cause it to be a: string | undefiend instead of a?: string
+  // ) => PromiseLike<ApiContractResponse<TApiContractSchema>>;
+) => PromiseLike<ApiContractResponseLite<TApiContractSchema>>;
 
 export type AtlasRouteContractMiddleware<
   TApiContractSchema extends ApiContractSchema

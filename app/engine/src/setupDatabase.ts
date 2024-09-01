@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import { appConfig } from "~/config";
 
 import { User } from "./models";
+import { Material } from "~/models/Material";
 
 type DBConfig = {
   username: string;
@@ -24,7 +25,7 @@ export async function setupDatabase(dbConfig: DBConfig = appConfig.database) {
     port: dbConfig.port,
     dialect: dbConfig.dialect,
     logging,
-    models: [User],
+    models: [User, Material],
   });
   return sequelize;
 }

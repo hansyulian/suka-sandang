@@ -1,14 +1,28 @@
 import morgan from "morgan";
 
-import { atlas } from "@hyulian/express-api-contract";
+import { atlas, expressErrorHandler } from "@hyulian/express-api-contract";
+import Express from "express";
 
 import { appConfig } from "./config";
 import { controllers } from "./controllers";
+import { setupDatabase } from "@app/engine";
 
-const port = appConfig.app.port;
+const port = appConfig.port;
 
-const app = atlas((atlas) => {
-  atlas.use(morgan("combined"));
-  atlas.router("/", controllers);
-});
-app.start(port);
+async function init() {
+  await setupDatabase();
+  const app = atlas(
+    (atlas) => {
+      atlas.use(morgan("combined"));
+      atlas.use(Express.json());
+      atlas.router("/", controllers);
+    },
+    {
+      onError: expressErrorHandler({
+        debug: appConfig.debug,
+      }),
+    }
+  );
+  app.start(port);
+}
+init();

@@ -27,7 +27,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
       );
       errors.push(...queryValidation.errors);
     }
-    if (method !== "get") {
+    if (!["get", "delete"].includes(method)) {
       const mutationContract = apiContract as MutationContractSchema;
       if (mutationContract.bodyType === "array") {
         for (const index in request.body) {

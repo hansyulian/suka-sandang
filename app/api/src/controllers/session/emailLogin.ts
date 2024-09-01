@@ -4,7 +4,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const emailLoginController = contractController(
   emailLoginContract,
-  async function emailLogin({ body }) {
+  async ({ body }) => {
     const { email, password } = body;
     const loginResult = await SessionFacade.emailLogin(email, password);
     return {

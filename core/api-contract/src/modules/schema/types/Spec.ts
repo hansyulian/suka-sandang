@@ -1,40 +1,46 @@
-import { DateString } from '../../custom';
-import { BaseSpec, OptionalSpec } from './Base';
+import {
+  AnySpec,
+  AnysSpec,
+  OptionalAnySpec,
+  OptionalAnysSpec,
+} from "~/modules/schema/types/Any";
+import { DateString } from "../../custom";
+import { BaseSpec, OptionalSpec } from "./Base";
 import {
   BooleanSpec,
   BooleansSpec,
   OptionalBooleanSpec,
   OptionalBooleansSpec,
-} from './Boolean';
+} from "./Boolean";
 import {
   DateStringSpec,
   DateStringsSpec,
   OptionalDateStringSpec,
   OptionalDateStringsSpec,
-} from './DateString';
+} from "./DateString";
 import {
   EnumSpec,
   EnumsSpec,
   OptionalEnumSpec,
   OptionalEnumsSpec,
-} from './Enum';
+} from "./Enum";
 import {
   NumberSpec,
   NumbersSpec,
   OptionalNumberSpec,
   OptionalNumbersSpec,
-} from './Number';
+} from "./Number";
 import {
   OptionalStringSpec,
   OptionalStringsSpec,
   StringSpec,
   StringsSpec,
-} from './String';
+} from "./String";
 
 export type OptionalValueCheck<
   TSpecification extends OptionalSpec,
-  TReturnType,
-> = TSpecification['optional'] extends true
+  TReturnType
+> = TSpecification["optional"] extends true
   ? TReturnType | undefined
   : TReturnType;
 
@@ -49,9 +55,9 @@ export type Schema = Record<string, Specs>;
 export type ObjectSpecOptions = {
   spec: Schema;
 };
-export type ObjectSpec = BaseSpec<'object', ObjectSpecOptions>;
+export type ObjectSpec = BaseSpec<"object", ObjectSpecOptions>;
 export type OptionalObjectSpec = ObjectSpec & OptionalSpec<{}>;
-export type ObjectsSpec = BaseSpec<'objects', ObjectSpecOptions> &
+export type ObjectsSpec = BaseSpec<"objects", ObjectSpecOptions> &
   OptionalSpec<Array<Schema>>;
 export type OptionalObjectsSpec = ObjectsSpec & OptionalSpec<[]>;
 
@@ -73,13 +79,15 @@ export type Specs =
   | OptionalDateStringSpec
   | OptionalEnumSpec
   | OptionalObjectSpec
+  | OptionalAnySpec
   // array values
   | OptionalNumbersSpec
   | OptionalStringsSpec
   | OptionalBooleansSpec
   | OptionalDateStringsSpec
   | OptionalEnumsSpec
-  | OptionalObjectsSpec; // array of object
+  | OptionalObjectsSpec
+  | OptionalAnysSpec; // array of object
 
 /**
  * Utility type to infer the type from the specification value.
@@ -89,38 +97,44 @@ export type InferSpecType<TSpecs extends Specs> =
   TSpecs extends StringSpec
     ? string
     : // number type checking
-      TSpecs extends NumberSpec
-      ? number
-      : // boolean type checking
-        TSpecs extends BooleanSpec
-        ? boolean
-        : // dateString type checking
-          TSpecs extends DateStringSpec
-          ? DateString
-          : // object type checking
-            TSpecs extends ObjectSpec
-            ? SchemaType<TSpecs['spec']>
-            : // enum type checking
-              TSpecs extends EnumSpec
-              ? TSpecs['values'][number]
-              : // Array checkings
-                TSpecs extends StringsSpec
-                ? string[]
-                : // number type checking
-                  TSpecs extends NumbersSpec
-                  ? number[]
-                  : // boolean type checking
-                    TSpecs extends BooleansSpec
-                    ? boolean[]
-                    : // dateString type checking
-                      TSpecs extends DateStringsSpec
-                      ? DateString[]
-                      : // object type checking
-                        TSpecs extends ObjectsSpec
-                        ? Array<SchemaType<TSpecs['spec']>>
-                        : // enum type checking
-                          TSpecs extends EnumsSpec
-                          ? Array<TSpecs['values'][number]>
-                          : // default says 'unableToInferTypingDebug' to make it easier to debug
-                            // by right, this one should never occur unless it's a bug
-                            TSpecs & 'unableToInferTypingDebug';
+    TSpecs extends NumberSpec
+    ? number
+    : // boolean type checking
+    TSpecs extends BooleanSpec
+    ? boolean
+    : // dateString type checking
+    TSpecs extends DateStringSpec
+    ? DateString
+    : // object type checking
+    TSpecs extends ObjectSpec
+    ? SchemaType<TSpecs["spec"]>
+    : // enum type checking
+    TSpecs extends EnumSpec
+    ? TSpecs["values"][number]
+    : // any type checking
+    TSpecs extends AnySpec
+    ? any
+    : // Array checkings
+    TSpecs extends StringsSpec
+    ? string[]
+    : // number type checking
+    TSpecs extends NumbersSpec
+    ? number[]
+    : // boolean type checking
+    TSpecs extends BooleansSpec
+    ? boolean[]
+    : // dateString type checking
+    TSpecs extends DateStringsSpec
+    ? DateString[]
+    : // object type checking
+    TSpecs extends ObjectsSpec
+    ? Array<SchemaType<TSpecs["spec"]>>
+    : // enum type checking
+    TSpecs extends EnumsSpec
+    ? Array<TSpecs["values"][number]>
+    : // array of any checking
+    TSpecs extends AnysSpec
+    ? Array<any>
+    : // default says 'unableToInferTypingDebug' to make it easier to debug
+      // by right, this one should never occur unless it's a bug
+      TSpecs & "unableToInferTypingDebug";

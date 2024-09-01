@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "CommonJS", // Use ES modules
+    "module": "ESNext", // Use ES modules
     "target": "ESNext", // Use the latest ECMAScript features
     "outDir": "dist",
     "declaration": true,

@@ -4,7 +4,7 @@ export type ResponseBase<Model extends {}> =
   | ArrayResponse<Model>
   | PaginatedArrayResponse<Model>;
 
-export type PaginationInfo = {
+export type ListInfo = {
   count: number;
 };
 
@@ -14,18 +14,18 @@ export type ArrayResponse<Model extends {}> = {
   records: Model[];
 };
 export type PaginatedArrayResponse<Model extends {}> = {
-  pagination: PaginationInfo;
+  info: ListInfo;
 } & ArrayResponse<Model>;
 
-export type ApiContractResponseType = 'object' | 'array' | 'paginatedArray';
+export type ApiContractResponseType = "object" | "array" | "paginatedArray";
 
 export type InferResponseType<
   RT extends ApiContractResponseType,
-  Model extends {},
-> = RT extends 'object'
+  Model extends {}
+> = RT extends "object"
   ? ObjectResponse<Model>
-  : RT extends 'array'
-    ? ArrayResponse<Model>
-    : RT extends 'paginatedArray'
-      ? PaginatedArrayResponse<Model>
-      : 'failToInferContractResponse';
+  : RT extends "array"
+  ? ArrayResponse<Model>
+  : RT extends "paginatedArray"
+  ? PaginatedArrayResponse<Model>
+  : "failToInferContractResponse";

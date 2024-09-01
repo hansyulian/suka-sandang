@@ -8,7 +8,9 @@
     "migrate:reset": "npx sequelize-cli db:migrate:undo:all & npx sequelize-cli db:migrate",
     "prebuild": "rimraf dist",
     "test": "jest",
-    "migrate": "npx sequelize-cli db:migrate"
+    "migrate": "npx sequelize-cli db:migrate",
+    "prewatch": "pnpm build",
+    "watch": "npx nodemon"
   },
   "dependencies": {
     "@hyulian/api-contract": "workspace:*",

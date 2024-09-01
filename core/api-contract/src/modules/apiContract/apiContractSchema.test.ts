@@ -42,6 +42,9 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
       responseType: "array",
       model: {
         a: { type: "string" },
+        anyValue: {
+          type: "any",
+        },
       },
       params: {
         b: { type: "string" },
@@ -55,9 +58,18 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
     const result: InferApiContract<typeof sampleApiContract> = {
       params: { b: "123" },
       response: {
-        records: [{ a: "123" }],
+        records: [
+          { a: "123", anyValue: "123" },
+          {
+            a: "2222",
+            anyValue: {},
+          },
+        ],
       },
-      model: { a: "123" },
+      model: {
+        a: "123",
+        anyValue: { value: "even object also acceptable for any" },
+      },
       query: { d: "123" },
     };
     expect(true);
@@ -105,7 +117,7 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
       query: { d: "123" },
       response: {
         records: [{ a: "123" }],
-        pagination: {
+        info: {
           count: 1,
         },
       },
@@ -203,7 +215,7 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
     });
     const result: ApiContractResponse<typeof sampleApiContract> = {
       records: [{ a: "123" }],
-      pagination: {
+      info: {
         count: 1,
       },
     };
@@ -237,6 +249,38 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
       body: [{ c: "123" }],
       response: { a: "123" },
       model: { a: "123" },
+    };
+    // const fail: ContractType = {
+    //   params: { b: '123' },
+    //   body: { c: '123' },
+    //   query: { d: '123' },
+    //   response: { a: '123' },
+    //   model: { a: '123' },
+    // };
+    expect(true);
+  });
+  it("InferApiContract should be able to handle optional typing correctly for model", () => {
+    const sampleApiContract = apiContractSchema({
+      bodyType: "array",
+      body: { c: { type: "string" } },
+      responseType: "object",
+      model: {
+        a: { type: "string" },
+        b: { type: "number", optional: true },
+      },
+      params: {
+        b: { type: "string" },
+      },
+      method: "post",
+      path: "/",
+    });
+    type SchemaType = typeof sampleApiContract;
+    type ContractType = InferApiContract<SchemaType>;
+    const result: ContractType = {
+      params: { b: "123" },
+      body: [{ c: "123" }],
+      response: { a: "123", b: undefined },
+      model: { a: "123", b: undefined },
     };
     // const fail: ContractType = {
     //   params: { b: '123' },

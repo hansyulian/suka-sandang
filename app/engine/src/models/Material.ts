@@ -1,9 +1,9 @@
-import { Optional } from "sequelize";
 import { Column, Table } from "sequelize-typescript";
 
 import { BaseAttributes, BaseModel, MutationOmit } from "./BaseModel";
 
-export type MaterialStatus = "pending" | "active" | "inactive";
+export const materialStatuses = ["pending", "active", "inactive"] as const;
+export type MaterialStatus = (typeof materialStatuses)[number];
 export type MaterialAttributes = BaseAttributes & {
   name: string;
   code: string;

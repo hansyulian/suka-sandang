@@ -1,4 +1,4 @@
-import { QueryOptions } from "~/@types/data";
+import { QueryOptions } from "~/types";
 import { appConfig } from "~/config";
 
 export function processQueryOptions(query: QueryOptions) {

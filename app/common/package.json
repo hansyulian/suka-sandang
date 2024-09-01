@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias",
     "prebuild": "rimraf dist",
-    "test": "jest"
+    "test": "jest",
+    "prewatch": "pnpm build",
+    "watch": "npx nodemon"
   },
   "dependencies": {
     "@hyulian/api-contract": "workspace:*",

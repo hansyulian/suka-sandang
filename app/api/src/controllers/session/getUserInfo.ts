@@ -4,8 +4,8 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const getUserInfoController = contractController(
   getUserInfoContract,
-  async function getUserProfile({ locals }) {
-    const result = await SessionFacade.getUserProfile(locals.userId);
+  async ({ locals }) => {
+    const result = await SessionFacade.getUserInfo(locals.userId);
     return result;
   }
 );

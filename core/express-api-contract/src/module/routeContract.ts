@@ -75,7 +75,7 @@ export function routeContract<TApiContractSchema extends ApiContractSchema>(
             SchemaType<TApiContractSchema["model"]>
           > = {
             records: [],
-            pagination: par.pagination,
+            info: par.info,
           };
           for (const record of par.records) {
             paginatedArrayResponse.records.push(

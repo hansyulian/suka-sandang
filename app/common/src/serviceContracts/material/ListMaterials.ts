@@ -6,6 +6,14 @@ export const listMaterialsContract = apiContractSchema({
   path: "/material",
   params: {},
   query: {
+    name: {
+      type: "string",
+      optional: true,
+    },
+    code: {
+      type: "string",
+      optional: true,
+    },
     ...paginationQuery,
   },
   responseType: "paginatedArray",
@@ -15,6 +23,7 @@ export const listMaterialsContract = apiContractSchema({
     code: { type: "string" },
     purchasePrice: { type: "number", optional: true },
     retailPrice: { type: "number", optional: true },
+    status: { type: "enum", values: ["pending", "active", "inactive"] },
     createdAt: { type: "dateString" },
     updatedAt: { type: "dateString" },
     deletedAt: { type: "dateString" },

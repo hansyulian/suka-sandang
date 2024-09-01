@@ -2,25 +2,25 @@
   "name": "@app/web",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "watch": "echo 'not a library'"
   },
   "dependencies": {
     "@app/common": "workspace:*",
     "@hyulian/api-contract-client": "workspace:*",
     "@hyulian/common": "workspace:*",
-    "@hyulian/react-api-contract-client": "workspace:*",
     "@mantine/core": "^7.12.1",
     "@mantine/hooks": "^7.12.1",
     "@tanstack/react-query": "^5.52.2",
     "@tanstack/react-router": "^1.51.2",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vite-plugin-commonjs": "^0.10.1"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

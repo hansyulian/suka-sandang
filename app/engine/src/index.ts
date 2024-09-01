@@ -4,3 +4,4 @@ export * from "./services";
 export * from "./utils";
 export * from "./facades";
 export * from "./exceptions";
+export * from "./types";

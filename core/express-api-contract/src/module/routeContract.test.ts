@@ -30,7 +30,7 @@ describe("@base/atlas.routeContract", () => {
             status: "status",
           },
         ],
-        pagination: {
+        info: {
           count: 1,
         },
       },
@@ -58,7 +58,7 @@ describe("@base/atlas.routeContract", () => {
               status: "status",
             },
           ],
-          pagination: {
+          info: {
             count: 10,
           },
         };
@@ -89,7 +89,7 @@ describe("@base/atlas.routeContract", () => {
           status: "status",
         },
       ],
-      pagination: {
+      info: {
         count: 10,
       },
     });

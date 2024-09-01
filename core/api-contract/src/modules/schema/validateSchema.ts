@@ -1,20 +1,21 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
-import { SchemaValidationExceptionDetail } from '../../exceptions';
-import { DateString, dateStringUtil } from '../custom';
-import { OptionalSpec } from './types/Base';
-import { BooleanSpecOptions } from './types/Boolean';
-import { DateStringSpecOptions } from './types/DateString';
-import { EnumSpecOptions } from './types/Enum';
-import { NumberSpecOptions } from './types/Number';
+import { SchemaValidationExceptionDetail } from "../../exceptions";
+import { DateString, dateStringUtil } from "../custom";
+import { OptionalSpec } from "./types/Base";
+import { BooleanSpecOptions } from "./types/Boolean";
+import { DateStringSpecOptions } from "./types/DateString";
+import { EnumSpecOptions } from "./types/Enum";
+import { NumberSpecOptions } from "./types/Number";
 import {
   InferSpecType,
   ObjectSpecOptions,
   Schema,
   SchemaType,
   Specs,
-} from './types/Spec';
-import { StringSpecOptions } from './types/String';
+} from "./types/Spec";
+import { StringSpecOptions } from "./types/String";
+import { AnySpecOptions } from "~/modules/schema/types/Any";
 
 type ValidationReturn<T = any> = {
   errors: SchemaValidationExceptionDetail[];
@@ -24,16 +25,16 @@ type ValidationReturn<T = any> = {
 type ValidatorFunction<TSpecs extends Specs, TReturnType> = (
   value: any,
   key: string,
-  spec: TSpecs,
+  spec: TSpecs
 ) => ValidationReturn<TReturnType>;
 
 function joinKey(...args: (string | number)[]) {
-  return args.filter((args) => !!args).join('.');
+  return args.filter((args) => !!args).join(".");
 }
 export function validateSchema<
   UTSchemaType extends SchemaType<TSchema>,
-  TSchema extends Schema,
->(values: UTSchemaType, schema: TSchema, keyPrefix: string = '') {
+  TSchema extends Schema
+>(values: UTSchemaType, schema: TSchema, keyPrefix: string = "") {
   type ReturnType = SchemaType<typeof schema>;
   const result: any = {};
   const keys = Object.keys(schema);
@@ -50,7 +51,7 @@ export function validateSchema<
         const { errors: valueErrors, value: finalValue } = validateValue(
           preprocessedValue,
           joinKey(keyPrefix, key),
-          spec,
+          spec
         );
         result[key] = finalValue;
         errors.push(...valueErrors);
@@ -66,20 +67,20 @@ function validateOptionalSpec(
   value: any,
   key: string,
   values: any,
-  spec: OptionalSpec,
+  spec: OptionalSpec
 ): ValidationReturn {
   let processedValue = value;
   const errors: SchemaValidationExceptionDetail[] = [];
   if ((value === undefined || value === null) && !spec.optional) {
     if (spec.defaultValue) {
-      if (typeof spec.defaultValue === 'function') {
+      if (typeof spec.defaultValue === "function") {
         processedValue = spec.defaultValue(value, values);
       } else {
         processedValue = spec.defaultValue;
       }
     } else {
       errors.push({
-        type: 'required',
+        type: "required",
         key,
         value,
       });
@@ -93,32 +94,35 @@ function validateOptionalSpec(
 
 function validateValue(value: any, key: string, spec: Specs) {
   switch (spec.type) {
-    case 'boolean':
+    case "boolean":
       return validateBoolean(value, key, spec);
-    case 'number':
+    case "number":
       return validateNumber(value, key, spec);
-    case 'string':
+    case "string":
       return validateString(value, key, spec);
-    case 'dateString':
+    case "dateString":
       return validateDateString(value, key, spec);
-    case 'object':
+    case "object":
       return validateObject(value, key, spec);
-    case 'enum':
+    case "enum":
       return validateEnum(value, key, spec);
-
+    case "any":
+      return validateAny(value, key, spec);
     // array
-    case 'booleans':
+    case "booleans":
       return genericValidateArray(validateBoolean, value, key, spec);
-    case 'numbers':
+    case "numbers":
       return genericValidateArray(validateNumber, value, key, spec);
-    case 'strings':
+    case "strings":
       return genericValidateArray(validateString, value, key, spec);
-    case 'dateStrings':
+    case "dateStrings":
       return genericValidateArray(validateDateString, value, key, spec);
-    case 'objects':
+    case "objects":
       return genericValidateArray(validateObject, value, key, spec);
-    case 'enums':
+    case "enums":
       return genericValidateArray(validateEnum, value, key, spec);
+    case "anys":
+      return genericValidateArray(validateAny, value, key, spec);
   }
 }
 
@@ -126,7 +130,7 @@ function genericValidateArray<TSpecs extends Specs, TReturnType>(
   validator: ValidatorFunction<TSpecs, TReturnType>,
   value: any[],
   key: string,
-  spec: TSpecs,
+  spec: TSpecs
 ): ValidationReturn<TReturnType[]> {
   const errors: SchemaValidationExceptionDetail[] = [];
   const values: TReturnType[] = [];
@@ -145,16 +149,16 @@ function genericValidateArray<TSpecs extends Specs, TReturnType>(
 function validateBoolean(
   value: any,
   key: string,
-  spec: BooleanSpecOptions,
+  spec: BooleanSpecOptions
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'boolean') {
+  if (typeof value !== "boolean") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'boolean',
+      expected: "boolean",
     });
   }
   return {
@@ -166,28 +170,28 @@ function validateBoolean(
 function validateNumber(
   value: any,
   key: string,
-  spec: NumberSpecOptions,
+  spec: NumberSpecOptions
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'number') {
+  if (typeof value !== "number") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'number',
+      expected: "number",
     });
   }
   if (spec.min !== undefined && value < spec.min) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
   }
   if (spec.max !== undefined && value > spec.max) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
@@ -201,28 +205,28 @@ function validateNumber(
 function validateString(
   value: any,
   key: string,
-  spec: StringSpecOptions,
+  spec: StringSpecOptions
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'string',
+      expected: "string",
     });
   }
   if (spec.minLength !== undefined && value.length < spec.minLength) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
   }
   if (spec.maxLength !== undefined && value.length > spec.maxLength) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
@@ -236,36 +240,36 @@ function validateString(
 function validateDateString(
   value: any,
   key: string,
-  spec: DateStringSpecOptions,
+  spec: DateStringSpecOptions
 ) {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'dateString',
+      expected: "dateString",
     });
   } else if (!dateStringUtil.isValid(value)) {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
-      actual: 'string',
-      expected: 'dateString',
+      actual: "string",
+      expected: "dateString",
     });
   }
   if (spec.min && dayjs(value).isBefore(spec.min)) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
   }
   if (spec.max && dayjs(value).isAfter(spec.max)) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
     });
@@ -279,22 +283,22 @@ function validateDateString(
 function validateObject(
   value: any,
   key: string,
-  spec: ObjectSpecOptions,
+  spec: ObjectSpecOptions
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'object') {
+  if (typeof value !== "object") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'object',
+      expected: "object",
     });
   }
   const { errors: validationErrors, value: projectedValue } = validateSchema(
     value,
     spec.spec,
-    key,
+    key
   );
   errors.push(...validationErrors);
   return {
@@ -306,21 +310,21 @@ function validateObject(
 function validateEnum<TEnum extends string>(
   value: any,
   key: string,
-  spec: EnumSpecOptions<TEnum>,
+  spec: EnumSpecOptions<TEnum>
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     errors.push({
-      type: 'invalidType',
+      type: "invalidType",
       key,
       value,
       actual: typeof value,
-      expected: 'string',
+      expected: "string",
     });
   }
   if (!spec.values.includes(value)) {
     errors.push({
-      type: 'invalidValue',
+      type: "invalidValue",
       key,
       value,
       expected: spec.values,
@@ -329,5 +333,12 @@ function validateEnum<TEnum extends string>(
   return {
     errors,
     value: value as string,
+  };
+}
+
+function validateAny(value: any, key: string, spec: AnySpecOptions) {
+  return {
+    errors: [],
+    value,
   };
 }

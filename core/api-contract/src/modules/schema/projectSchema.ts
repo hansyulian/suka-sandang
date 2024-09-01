@@ -1,3 +1,4 @@
+import { AnySpecOptions } from "~/modules/schema/types/Any";
 import { dateStringUtil } from "../custom/DateString";
 import { OptionalSpec } from "./types/Base";
 import { BooleanSpecOptions } from "./types/Boolean";
@@ -45,6 +46,8 @@ function projectValue(value: any, spec: Specs) {
       return projectObject(value, spec);
     case "enum":
       return projectEnum(value, spec);
+    case "any":
+      return projectAny(value, spec);
     // array
     case "booleans":
       return genericProjectArray(projectBoolean, value, spec);
@@ -58,6 +61,8 @@ function projectValue(value: any, spec: Specs) {
       return genericProjectArray(projectObject, value, spec);
     case "enums":
       return genericProjectArray(projectEnum, value, spec);
+    case "anys":
+      return genericProjectArray(projectAny, value, spec);
   }
 }
 
@@ -102,6 +107,9 @@ function projectString(value: any, spec: StringSpecOptions) {
   return String(value);
 }
 
+function projectAny(value: any, spec: AnySpecOptions) {
+  return value;
+}
 function projectDateString(value: any, spec: DateStringSpecOptions) {
   return dateStringUtil.toDateString(value);
 }

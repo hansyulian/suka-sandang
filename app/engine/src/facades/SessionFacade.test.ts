@@ -138,6 +138,42 @@ describe("SessionFacade", () => {
       expect(User.findByPk).toHaveBeenCalledWith("1");
       expect(mockUser.update).toHaveBeenCalledWith({ name: "New Name" });
     });
+    it("should update user info and return the updated user and ignore stray values", async () => {
+      // Arrange
+      const mockUser = {
+        id: "1",
+        email: "test@example.com",
+        password: "hashed_password",
+        update: jest.fn().mockResolvedValue({
+          id: "1",
+          email: "test@example.com",
+          password: "hashed_password",
+          name: "New Name",
+        }),
+      };
+      (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
+
+      const updateData: UserUpdateAttributes = {
+        name: "New Name",
+      };
+
+      // Act
+      const result = await SessionFacade.updateUserInfo("1", {
+        ...updateData,
+        a: "stray value",
+        b: "stray value",
+      } as any);
+
+      // Assert
+      expect(result).toEqual({
+        id: "1",
+        email: "test@example.com",
+        password: "hashed_password",
+        name: "New Name",
+      });
+      expect(User.findByPk).toHaveBeenCalledWith("1");
+      expect(mockUser.update).toHaveBeenCalledWith({ name: "New Name" });
+    });
 
     it("should throw UserNotFoundException if the user is not found", async () => {
       // Arrange

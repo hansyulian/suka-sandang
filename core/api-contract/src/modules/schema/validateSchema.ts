@@ -7,13 +7,7 @@ import { BooleanSpecOptions } from "./types/Boolean";
 import { DateStringSpecOptions } from "./types/DateString";
 import { EnumSpecOptions } from "./types/Enum";
 import { NumberSpecOptions } from "./types/Number";
-import {
-  InferSpecType,
-  ObjectSpecOptions,
-  Schema,
-  SchemaType,
-  Specs,
-} from "./types/Spec";
+import { ObjectSpecOptions, Schema, SchemaType, Specs } from "./types/Spec";
 import { StringSpecOptions } from "./types/String";
 import { AnySpecOptions } from "~/modules/schema/types/Any";
 
@@ -82,7 +76,6 @@ function validateOptionalSpec(
       errors.push({
         type: "required",
         key,
-        value,
       });
     }
   }

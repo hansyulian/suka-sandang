@@ -17,6 +17,7 @@ export const getMaterialContract = apiContractSchema({
     createdAt: { type: "dateString" },
     updatedAt: { type: "dateString" },
     deletedAt: { type: "dateString" },
+    status: { type: "enum", values: ["pending", "active", "inactive"] },
   },
 });
 

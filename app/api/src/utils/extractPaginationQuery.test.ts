@@ -70,4 +70,20 @@ describe("extractPaginationQuery", () => {
       orderDirection: "asc",
     });
   });
+  it("should handle empty", () => {
+    const query: Partial<PaginationQuery> = {};
+
+    const result = extractPaginationQuery({
+      ...query,
+      a: "stray value",
+      b: "stray value",
+    } as any);
+
+    expect(result).toEqual({
+      limit: undefined,
+      offset: undefined,
+      orderBy: undefined,
+      orderDirection: undefined,
+    });
+  });
 });

@@ -1,13 +1,8 @@
 import { Exception } from "@hyulian/common";
 
-export type SchemaValidationExceptionDetails = {
-  details: SchemaValidationExceptionDetail[];
-};
-
 export type RequiredSchemaValidationExceptionDetail = {
   type: "required";
   key: string;
-  value: string;
 };
 export type InvalidValueSchemaValidationExceptionDetail = {
   type: "invalidValue";
@@ -18,7 +13,7 @@ export type InvalidValueSchemaValidationExceptionDetail = {
 export type InvalidTypeSchemaValidationExceptionDetail = {
   type: "invalidType";
   key: string;
-  value: string;
+  value: unknown;
   expected: string;
   actual: string;
 };
@@ -31,9 +26,11 @@ export type SchemaValidationExceptionDetail =
 export type SchemaValidationExceptionDetailTypes =
   SchemaValidationExceptionDetail["type"];
 
-export class SchemaValidationException extends Exception<SchemaValidationExceptionDetails> {
+export class SchemaValidationException extends Exception<
+  SchemaValidationExceptionDetail[]
+> {
   public constructor(
-    details: SchemaValidationExceptionDetails,
+    details: SchemaValidationExceptionDetail[],
     reference?: string
   ) {
     super("specValidation", details, reference);

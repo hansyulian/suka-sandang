@@ -16,6 +16,7 @@ export const createMaterialContract = apiContractSchema({
     id: { type: "string" },
     name: { type: "string" },
     code: { type: "string" },
+    status: { type: "enum", values: ["pending", "active", "inactive"] },
     purchasePrice: { type: "number", optional: true },
     retailPrice: { type: "number", optional: true },
     createdAt: { type: "dateString" },

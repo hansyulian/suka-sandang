@@ -1,1 +1,3 @@
-export * from './User';
+export * from "./User";
+export * from "./BaseModel";
+export * from "./Material";

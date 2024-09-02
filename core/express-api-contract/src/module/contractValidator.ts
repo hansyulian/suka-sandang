@@ -49,11 +49,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
     }
 
     if (errors.length > 0) {
-      return next(
-        new SchemaValidationException({
-          details: errors,
-        })
-      );
+      return next(new SchemaValidationException(errors));
     }
     return next();
   };

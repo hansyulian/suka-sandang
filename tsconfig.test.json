@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.base.json",
+  "module": "CommonJS", // Jest requires CommonJS for test files
+  "include": ["src", "@types"],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

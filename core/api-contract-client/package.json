@@ -1,14 +1,30 @@
 {
   "name": "@hyulian/api-contract-client",
   "version": "0.0.0",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias",
-    "prebuild": "rimraf dist",
-    "test": "jest",
-    "prewatch": "pnpm build",
-    "watch": "npx nodemon"
+    "dev": "tsc --build --watch",
+    "build": "tsc --build tsconfig.build.json",
+    "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
+    "clean": "shx mkdir -p dist && shx rm -rf dist",
+    "prebuild": "pnpm run clean",
+    "watch": "npx tsc --build tsconfig.build.json --watch",
+    "test": "npx jest"
   },
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/src/index.js",
+    "require": "./dist/cjs/src/index.js",
+    "types": "./dist/types/src/index.d.ts"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE"
+  ],
   "author": "",
   "license": "ISC",
   "description": "",
@@ -21,8 +37,9 @@
     "@types/axios": "^0.14.0",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
-    "rimraf": "^6.0.1",
     "nodemon": "^3.1.4",
+    "rimraf": "^6.0.1",
+    "shx": "^0.3.4",
     "ts-jest": "^29.2.5",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.5.4"

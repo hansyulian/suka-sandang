@@ -1,5 +1,12 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", "@types"],
-  "exclude": ["**/*.test.ts"]
+  "exclude": ["**/*.test.ts"],
+  "references": [
+    {
+      "path": "./tsconfig.cjs.json"
+    },
+    {
+      "path": "./tsconfig.esm.json"
+    }
+  ]
 }

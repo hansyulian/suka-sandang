@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.esm.json",
+  "include": ["src", "config/config.js", "@types"],
+  "compilerOptions": {
+    "outDir": "dist/esm",
+    "declarationDir": "dist/types",
+    "strict": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "isolatedModules": false,
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["node_modules/@types", "@types"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "~test/*": ["test/*"]
+    },
+    "composite": true
+  }
+}

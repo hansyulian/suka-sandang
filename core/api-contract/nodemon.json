@@ -1,7 +1,7 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "tsc -p tsconfig.build.json && tsc-alias",
+  "exec": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
   "ignore": ["dist", "node_modules"],
   "restartable": "rs"
 }

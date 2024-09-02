@@ -1,17 +1,31 @@
 {
   "name": "@app/engine",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias",
-    "migrate:reset": "npx sequelize-cli db:migrate:undo:all & npx sequelize-cli db:migrate",
-    "prebuild": "rimraf dist",
-    "test": "jest",
-    "migrate": "npx sequelize-cli db:migrate",
-    "prewatch": "pnpm build",
-    "watch": "npx nodemon"
+    "dev": "tsc --build --watch",
+    "build": "tsc --build tsconfig.build.json",
+    "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
+    "clean": "shx mkdir -p dist && shx rm -rf dist",
+    "prebuild": "pnpm run clean",
+    "watch": "npx tsc --build tsconfig.build.json --watch",
+    "test": "npx jest"
   },
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/src/index.js",
+    "require": "./dist/cjs/src/index.js",
+    "types": "./dist/types/src/index.d.ts"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE"
+  ],
   "dependencies": {
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/common": "workspace:*",
@@ -33,6 +47,7 @@
     "nodemon": "^3.1.4",
     "rimraf": "^6.0.1",
     "sequelize-cli": "^6.6.2",
+    "shx": "^0.3.4",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",

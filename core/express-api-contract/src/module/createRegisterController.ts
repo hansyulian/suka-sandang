@@ -1,7 +1,7 @@
 import { ApiContractSchema } from "@hyulian/api-contract";
 import { stringRender, unslash } from "@hyulian/common";
 
-import { createExpressParamsMap } from "../utils/createExpressParamsMap";
+import { createExpressParamsMap } from "./createExpressParamsMap";
 import { createRegisterContractMiddleware } from "./createRegisterContractMiddleware";
 import {
   AtlasContractController,

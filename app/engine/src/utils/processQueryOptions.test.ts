@@ -1,5 +1,5 @@
 import { appConfig } from "~/config";
-import { QueryOptions } from "~/@types/data";
+import { QueryOptions } from "~/types";
 import { processQueryOptions } from "~/utils/processQueryOptions";
 
 // Mock appConfig

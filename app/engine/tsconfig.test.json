@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.test.json",
+  "include": ["src", "config/config.js", "tests", "@types"],
+  "exclude": [],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "@types"],
+    "paths": {
+      "~/*": ["src/*"],
+      "~tests/*": ["tests/*"]
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true
+  }
+}

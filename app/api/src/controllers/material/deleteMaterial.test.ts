@@ -1,22 +1,18 @@
-import {
-  MaterialCreationAttributes,
-  MaterialFacade,
-  MaterialNotFoundException,
-} from "@app/engine";
+import { MaterialFacade, MaterialNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
-jest.mock("@app/engine", () => ({
-  ...jest.requireActual("@app/engine"),
-  MaterialFacade: {
-    delete: jest.fn(),
-  },
-}));
 describe("Controller: deleteMaterialController", () => {
+  it("should require authentication", async () => {
+    await apiTest.testRequireAuthentication().delete("/material/mock-id");
+  });
   it("should call material facade delete function", async () => {
     (MaterialFacade.delete as jest.Mock).mockResolvedValueOnce(undefined);
     const id = "mock-id";
-    const response = await apiTest.instance.delete(`/material/${id}`).send();
+    const response = await apiTest
+      .withAuthentication()
+      .delete(`/material/${id}`)
+      .send();
 
     expect(MaterialFacade.delete).toHaveBeenCalledWith(id);
     const { body } = response;
@@ -29,7 +25,10 @@ describe("Controller: deleteMaterialController", () => {
         id,
       })
     );
-    const response = await apiTest.instance.delete(`/material/${id}`).send();
+    const response = await apiTest
+      .withAuthentication()
+      .delete(`/material/${id}`)
+      .send();
 
     expect(MaterialFacade.delete).toHaveBeenCalledWith(id);
     expectRejection(response, new MaterialNotFoundException({ id }));

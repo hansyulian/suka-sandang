@@ -5,9 +5,9 @@ import { contractController } from "@hyulian/express-api-contract";
 export const updateUserInfoController = contractController(
   updateUserInfoContract,
   async ({ body, locals }) => {
-    const { userId } = locals;
+    const { user } = locals;
     const { name } = body;
-    const result = await SessionFacade.updateUserInfo(userId, { name });
+    const result = await SessionFacade.updateUserInfo(user.id, { name });
     return result;
   }
 );

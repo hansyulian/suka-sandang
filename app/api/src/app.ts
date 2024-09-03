@@ -18,6 +18,7 @@ async function init() {
       atlas.router("/", controllers);
     },
     {
+      debug: appConfig.debug,
       onError: expressErrorHandler({
         debug: appConfig.debug,
       }),

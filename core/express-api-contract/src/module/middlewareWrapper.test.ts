@@ -44,7 +44,7 @@ describe("@hyulian/common.middlewareWrapper", () => {
     // Assert the result
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith(sampleError);
-    expect(mockResponse.locals).toEqual(undefined);
+    expect(mockResponse.locals).toEqual({});
   });
 
   // Add more test cases as needed for other scenarios

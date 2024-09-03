@@ -2,13 +2,10 @@ import { MaterialFacade, MaterialNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
-jest.mock("@app/engine", () => ({
-  ...jest.requireActual("@app/engine"),
-  MaterialFacade: {
-    findById: jest.fn(),
-  },
-}));
 describe("Controller: getMaterialController", () => {
+  it("should require authentication", async () => {
+    await apiTest.testRequireAuthentication().get("/material/mock-id");
+  });
   it("should call material facade get function", async () => {
     const id = "mock-id";
     (MaterialFacade.findById as jest.Mock).mockResolvedValueOnce({
@@ -21,7 +18,10 @@ describe("Controller: getMaterialController", () => {
       status: "active",
       updatedAt: new Date(),
     });
-    const response = await apiTest.instance.get(`/material/${id}`).send();
+    const response = await apiTest
+      .withAuthentication()
+      .get(`/material/${id}`)
+      .send();
 
     expect(MaterialFacade.findById).toHaveBeenCalledWith(id);
     const { body } = response;
@@ -42,7 +42,10 @@ describe("Controller: getMaterialController", () => {
         id,
       })
     );
-    const response = await apiTest.instance.get(`/material/${id}`).send();
+    const response = await apiTest
+      .withAuthentication()
+      .get(`/material/${id}`)
+      .send();
 
     expect(MaterialFacade.findById).toHaveBeenCalledWith(id);
     expectRejection(response, new MaterialNotFoundException({ id }));

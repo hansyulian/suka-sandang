@@ -26,7 +26,7 @@ export function atlasRouter<
   return {
     express: context.express,
     use: (fn: ExpressFn) => {
-      context.express.use(path, fn);
+      context.express.use(normalizedPath, fn);
     },
     controller: createRegisterController(normalizedPath, context),
     router: <

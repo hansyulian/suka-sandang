@@ -1,15 +1,11 @@
-import { MaterialFacade, MaterialNotFoundException } from "@app/engine";
+import { MaterialFacade } from "@app/engine";
 import { extractPaginationQuery, generateStringLikeQuery } from "~/utils";
 import { apiTest, injectStrayValues } from "~test/utils";
-import { expectRejection } from "~test/utils/expectRejection";
 
-jest.mock("@app/engine", () => ({
-  ...jest.requireActual("@app/engine"),
-  MaterialFacade: {
-    list: jest.fn(),
-  },
-}));
 describe("Controller: listMaterialsController", () => {
+  it("should require authentication", async () => {
+    await apiTest.testRequireAuthentication().get("/material");
+  });
   it("should call material facade list function", async () => {
     const id = "mock-id";
     (MaterialFacade.list as jest.Mock).mockResolvedValueOnce({
@@ -27,7 +23,7 @@ describe("Controller: listMaterialsController", () => {
       ],
       count: 1,
     });
-    const response = await apiTest.instance.get(`/material`).send();
+    const response = await apiTest.withAuthentication().get(`/material`).send();
 
     expect(MaterialFacade.list).toHaveBeenCalledWith(
       {},
@@ -68,7 +64,8 @@ describe("Controller: listMaterialsController", () => {
       code: "code-test",
       name: "name-test",
     };
-    const response = await apiTest.instance
+    const response = await apiTest
+      .withAuthentication()
       .get(`/material`)
       .query(injectStrayValues(query))
       .send();

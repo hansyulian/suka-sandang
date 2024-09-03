@@ -38,7 +38,8 @@ export type AtlasRouter<TSchema extends AtlasContractSchema> = {
   };
 };
 export type AtlasRouterInitOptions = {
-  disableRouterAndContractPathValidation?: true;
+  disableRouterAndContractPathValidation?: boolean;
+  debug?: boolean;
   onError?: (
     error: CustomErrorType,
     req: Request,

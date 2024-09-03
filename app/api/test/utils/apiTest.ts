@@ -1,8 +1,8 @@
 import { atlas, expressErrorHandler } from "@hyulian/express-api-contract";
 import Express from "express";
 import { controllers } from "~/controllers";
-import supertest from "supertest";
-import { setupDatabase } from "@app/engine";
+import supertest, { Response } from "supertest";
+import { mockAuthenticated } from "~test/utils/mockAuthenticated";
 
 const app = atlas(
   (atlas) => {
@@ -18,6 +18,40 @@ const app = atlas(
 );
 const instance = supertest(app.express);
 
+function withAuthentication() {
+  mockAuthenticated();
+  return {
+    get: (path: string) =>
+      instance.get(path).set("Authorization", "mock-token"),
+    post: (path: string) =>
+      instance.post(path).set("Authorization", "mock-token"),
+    put: (path: string) =>
+      instance.put(path).set("Authorization", "mock-token"),
+    delete: (path: string) =>
+      instance.delete(path).set("Authorization", "mock-token"),
+  };
+}
+
+function checkRequireAuthentication(response: Response) {
+  expect(response.status).toStrictEqual(401);
+  expect(response.body).toEqual({ name: "Unauthorized", details: {} });
+}
+
+function testRequireAuthentication() {
+  return {
+    get: async (path: string) =>
+      checkRequireAuthentication(await instance.get(path).send()),
+    post: async (path: string) =>
+      checkRequireAuthentication(await instance.post(path).send()),
+    put: async (path: string) =>
+      checkRequireAuthentication(await instance.put(path).send()),
+    delete: async (path: string) =>
+      checkRequireAuthentication(await instance.delete(path).send()),
+  };
+}
+
 export const apiTest = {
   instance,
+  withAuthentication,
+  testRequireAuthentication,
 };

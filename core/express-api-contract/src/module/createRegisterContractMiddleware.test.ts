@@ -7,7 +7,7 @@ describe("@base/atlas.createRegisterContractMiddleware", () => {
   it("Should be able to strict typing based on the api contract", () => {
     const sampleApiContract = apiContractSchema({
       method: "get",
-      path: "some/{stringParam}/sample/{numberParam}",
+      path: "some/:stringParam/sample/:numberParam",
       params: {
         numberParam: { type: "number" },
         stringParam: { type: "string" },
@@ -38,7 +38,7 @@ describe("@base/atlas.createRegisterContractMiddleware", () => {
     expect(context.middlewares.length).toStrictEqual(1);
     expect(context.middlewares[0].method).toStrictEqual("get");
     expect(context.middlewares[0].path).toStrictEqual(
-      "some/{stringParam}/sample/{numberParam}"
+      "some/:stringParam/sample/:numberParam"
     );
   });
 });

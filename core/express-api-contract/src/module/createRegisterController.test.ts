@@ -53,7 +53,7 @@ describe("@base/atlas.createRegisterController", () => {
     expect(context.middlewares.length).toStrictEqual(1);
     expect(context.middlewares[0].method).toStrictEqual("get");
     expect(context.middlewares[0].path).toStrictEqual(
-      "some/{stringParam}/sample/{numberParam}"
+      "some/:stringParam/sample/:numberParam"
     );
   });
 });

@@ -11,7 +11,7 @@ export const appConfig = {
     port: pe.API_PORT ? parseInt(pe.API_PORT) : 3000,
     salt: pe.HASH_SALT ? parseInt(pe.HASH_SALT) : 10,
     jwtSecret: pe.JWT_SECRET ?? "supersecretjwtkey",
-    jwtExpiry: pe.JWT_EXPIRES_IN ?? "30d",
+    jwtExpiry: parseInt(pe.JWT_EXPIRES_IN || `${30 * 24 * 3600}`),
     maximumRetrieval: parseInt(pe.MAXIMUM_RETRIEVAL || "100"),
   },
   database: {

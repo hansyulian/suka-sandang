@@ -10,14 +10,11 @@ import {
   validationRejection,
 } from "~test/utils";
 
-jest.mock("@app/engine", () => ({
-  ...jest.requireActual("@app/engine"),
-  MaterialFacade: {
-    create: jest.fn(),
-  },
-}));
 describe("Controller: createMaterialController", () => {
-  it("should call material facade create function", async () => {
+  it("should require authentication", async () => {
+    await apiTest.testRequireAuthentication().post("/material");
+  });
+  it("should call material facade create function with required parameters", async () => {
     const id = "mock-id";
     const payload: MaterialCreationAttributes = {
       name: "Material 1",
@@ -34,10 +31,11 @@ describe("Controller: createMaterialController", () => {
     (MaterialFacade.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(material)
     );
-    const response = await apiTest.instance
+    const response = await apiTest
+      .withAuthentication()
       .post("/material")
       .send(injectStrayValues(payload));
-
+    expect(response.status).toStrictEqual(200);
     expect(MaterialFacade.create).toHaveBeenCalledWith({
       // ensure filtering of stray values
       ...payload,
@@ -52,6 +50,7 @@ describe("Controller: createMaterialController", () => {
     expect(body.updatedAt).toBeDefined();
     expect(body.status).toStrictEqual("active");
     expect(body.deletedAt).toBeUndefined();
+
     checkStrayValues(body);
   });
 
@@ -74,10 +73,12 @@ describe("Controller: createMaterialController", () => {
     (MaterialFacade.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(material)
     );
-    const response = await apiTest.instance
+    const response = await apiTest
+      .withAuthentication()
       .post("/material")
       .send(injectStrayValues(payload));
 
+    expect(response.status).toStrictEqual(200);
     expect(MaterialFacade.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
@@ -93,7 +94,7 @@ describe("Controller: createMaterialController", () => {
   });
 
   it("should require name and code", async () => {
-    const response = await apiTest.instance.post("/material").send({
+    const response = await apiTest.withAuthentication().post("/material").send({
       // ensure the filtering of stray values
       strayValue1: "stray value 1",
       handsomeValue: 123456,
@@ -111,7 +112,7 @@ describe("Controller: createMaterialController", () => {
   });
 
   it("should only accept correct data type", async () => {
-    const response = await apiTest.instance.post("/material").send({
+    const response = await apiTest.withAuthentication().post("/material").send({
       name: 125258284,
       code: true,
       purchasePrice: "21591295",

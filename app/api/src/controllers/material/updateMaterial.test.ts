@@ -10,13 +10,10 @@ import {
   validationRejection,
 } from "~test/utils";
 
-jest.mock("@app/engine", () => ({
-  ...jest.requireActual("@app/engine"),
-  MaterialFacade: {
-    update: jest.fn(),
-  },
-}));
 describe("Controller: updateMaterialController", () => {
+  it("should require authentication", async () => {
+    await apiTest.testRequireAuthentication().put("/material/mock-id");
+  });
   it("should call material facade update function", async () => {
     const id = "mock-id";
     const payload: MaterialUpdateAttributes = {
@@ -35,7 +32,8 @@ describe("Controller: updateMaterialController", () => {
     (MaterialFacade.update as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(material)
     );
-    const response = await apiTest.instance
+    const response = await apiTest
+      .withAuthentication()
       .put(`/material/${id}`)
       .send(injectStrayValues(payload));
 
@@ -70,7 +68,8 @@ describe("Controller: updateMaterialController", () => {
     (MaterialFacade.update as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(material)
     );
-    const response = await apiTest.instance
+    const response = await apiTest
+      .withAuthentication()
       .put(`/material/${id}`)
       .send(injectStrayValues(payload));
 
@@ -94,7 +93,7 @@ describe("Controller: updateMaterialController", () => {
   });
 
   it("should require name and code", async () => {
-    const response = await apiTest.instance.post("/material").send({
+    const response = await apiTest.withAuthentication().post("/material").send({
       // ensure the filtering of stray values
       strayValue1: "stray value 1",
       handsomeValue: 123456,
@@ -112,7 +111,7 @@ describe("Controller: updateMaterialController", () => {
   });
 
   it("should only accept correct data type", async () => {
-    const response = await apiTest.instance.post("/material").send({
+    const response = await apiTest.withAuthentication().post("/material").send({
       name: 125258284,
       code: true,
       purchasePrice: "21591295",

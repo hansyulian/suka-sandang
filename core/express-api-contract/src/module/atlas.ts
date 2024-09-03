@@ -23,9 +23,9 @@ export function atlas(
 
   validateInstance(context, options);
 
-  applyValidators(context);
   applyMiddlewares(context);
-  applyContracts(context);
+  applyValidators(context);
+  applyContracts(context, options);
   if (options.onError) {
     context.express.use(
       (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -92,7 +92,10 @@ function applyMiddlewares(context: AtlasInstanceContext) {
   }
 }
 
-function applyContracts(context: AtlasInstanceContext) {
+function applyContracts(
+  context: AtlasInstanceContext,
+  options: AtlasRouterInitOptions
+) {
   const longestPath = context.contracts.reduce(
     (prev, current) =>
       prev < current.contractPath.length ? current.contractPath.length : prev,
@@ -103,13 +106,15 @@ function applyContracts(context: AtlasInstanceContext) {
   });
   for (const record of contracts) {
     const { contract, controller, contractPath } = record;
-    console.log(
-      contract.method.toUpperCase(),
-      pad(contractPath, longestPath, {
-        align: "left",
-      }),
-      controller.name
-    );
+    if (options.debug) {
+      console.log(
+        contract.method.toUpperCase(),
+        pad(contractPath, longestPath, {
+          align: "left",
+        }),
+        controller.name
+      );
+    }
     switch (contract.method) {
       case "get":
         context.express.get(contractPath, routeContract(contract, controller));

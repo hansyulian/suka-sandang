@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { Exception, GenericException } from "@hyulian/common";
+import { UnauthorizedException } from "~/exceptions";
 
 export type CustomErrorType = Error | Exception;
 export type OnError = (error: Exception) => Promise<void> | void;
@@ -31,7 +32,11 @@ export function expressErrorHandler(config: ExpressErrorHandlerConfig) {
       details: exception.details,
       stack: config.debug ? exception.stack : undefined,
     };
-    response.status(500).json(exceptionJson);
+    if (err instanceof UnauthorizedException) {
+      response.status(401).json(exceptionJson);
+    } else {
+      response.status(500).json(exceptionJson);
+    }
     if (config.debug) {
       const processedStack = exception.stack?.split("\n") ?? [];
       console.error(

@@ -1,4 +1,4 @@
-import { JwtService, SessionFacade, UserAttributes } from "@app/engine";
+import { JwtService, UserAttributes, UserFacade } from "@app/engine";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { appConfig } from "~/config";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
@@ -26,7 +26,7 @@ describe("authenticationMidleware", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    (SessionFacade.getUserInfo as jest.Mock).mockResolvedValueOnce(user);
+    (UserFacade.findById as jest.Mock).mockResolvedValueOnce(user);
     const testData = generateMiddlewareTestData();
     testData.request.cookies[appConfig.jwtCookieKey] = "mock-jwt";
     await authenticationMiddleware(testData);
@@ -45,7 +45,7 @@ describe("authenticationMidleware", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    (SessionFacade.getUserInfo as jest.Mock).mockResolvedValueOnce(user);
+    (UserFacade.findById as jest.Mock).mockResolvedValueOnce(user);
 
     const testData = generateMiddlewareTestData();
 

@@ -1,4 +1,4 @@
-import { JwtService, SessionFacade } from "@app/engine";
+import { JwtService, SessionFacade, UserFacade } from "@app/engine";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { AtlasMiddlewareWrapperFn } from "@hyulian/express-api-contract/dist/types/src/module/types";
 import { appConfig } from "~/config";
@@ -12,6 +12,6 @@ export const authenticationMiddleware: AtlasMiddlewareWrapperFn =
       throw new UnauthorizedException();
     }
     const result = await JwtService.verifyToken(token);
-    const user = await SessionFacade.getUserInfo(result.id);
+    const user = await UserFacade.findById(result.id);
     locals.user = user;
   };

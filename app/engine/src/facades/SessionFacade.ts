@@ -8,12 +8,10 @@ import { verifyPassword } from "~/utils";
 
 export const SessionFacade = {
   emailLogin,
-  getUserInfo: getUserInfo,
-  updateUserInfo,
 };
 
 export type EmailLoginResult = {
-  token: string;
+  sessionToken: string;
 };
 
 async function emailLogin(
@@ -31,26 +29,8 @@ async function emailLogin(
   if (!(await verifyPassword(password, user.password))) {
     throw new InvalidCredentialException();
   }
-  const token = await JwtService.signToken(user);
+  const sessionToken = await JwtService.signToken(user);
   return {
-    token,
+    sessionToken,
   };
-}
-
-async function getUserInfo(id: string) {
-  const user = await User.findByPk(id);
-  if (!user) {
-    throw new UserNotFoundException({ id });
-  }
-  return user;
-}
-
-async function updateUserInfo(id: string, data: UserUpdateAttributes) {
-  const { name } = data;
-  const user = await getUserInfo(id);
-  const updatePayload = {
-    name,
-  };
-  const result = await user.update(updatePayload);
-  return result;
 }

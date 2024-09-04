@@ -1,7 +1,7 @@
-function deepMockFunctions(section) {
-  const result = {};
+export function deepMockFunctions(section: any) {
+  const result: any = {};
   for (const key in section) {
-    sectionType = typeof section[key];
+    const sectionType = typeof section[key];
     if (sectionType === "function") {
       result[key] = jest.fn();
     } else if (sectionType === "object") {
@@ -12,4 +12,3 @@ function deepMockFunctions(section) {
   }
   return result;
 }
-module.exports = deepMockFunctions;

@@ -9,7 +9,7 @@ export function validationRejection(
   validations: SchemaValidationExceptionDetail[]
 ) {
   const { name, details } = response.body as SchemaValidationException;
-  expect(name).toStrictEqual("specValidation");
+  expect(name).toStrictEqual("schemaValidation");
   expect(validations.length).toStrictEqual(details.length);
   for (let i = 0; i < validations.length; i += 1) {
     expect(details[i]).toEqual(validations[i]);

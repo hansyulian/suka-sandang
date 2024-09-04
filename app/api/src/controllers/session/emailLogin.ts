@@ -15,7 +15,7 @@ export const emailLoginController = contractController(
       sameSite: "strict",
     });
     return {
-      sessionToken: loginResult.token,
+      sessionToken: loginResult.sessionToken,
     };
   }
 );

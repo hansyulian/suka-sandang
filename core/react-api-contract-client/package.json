@@ -7,8 +7,8 @@
     "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
     "clean": "shx mkdir -p dist && shx rm -rf dist",
     "prebuild": "pnpm run clean",
-    "watch": "npx tsc --build tsconfig.build.json --watch",
-    "test": "npx jest"
+    "watch": "pnpm build",
+    "test": "echo 'unimplemented'"
   },
   "type": "commonjs",
   "sideEffects": false,

@@ -16,19 +16,19 @@ const app = atlas(
     }),
   }
 );
-const instance = supertest(app.express);
+const withoutAuthentication = () => supertest(app.express);
 
 function withAuthentication() {
   mockAuthenticated();
   return {
     get: (path: string) =>
-      instance.get(path).set("Authorization", "mock-token"),
+      withoutAuthentication().get(path).set("Authorization", "mock-token"),
     post: (path: string) =>
-      instance.post(path).set("Authorization", "mock-token"),
+      withoutAuthentication().post(path).set("Authorization", "mock-token"),
     put: (path: string) =>
-      instance.put(path).set("Authorization", "mock-token"),
+      withoutAuthentication().put(path).set("Authorization", "mock-token"),
     delete: (path: string) =>
-      instance.delete(path).set("Authorization", "mock-token"),
+      withoutAuthentication().delete(path).set("Authorization", "mock-token"),
   };
 }
 
@@ -40,18 +40,26 @@ function checkRequireAuthentication(response: Response) {
 function testRequireAuthentication() {
   return {
     get: async (path: string) =>
-      checkRequireAuthentication(await instance.get(path).send()),
+      checkRequireAuthentication(
+        await withoutAuthentication().get(path).send()
+      ),
     post: async (path: string) =>
-      checkRequireAuthentication(await instance.post(path).send()),
+      checkRequireAuthentication(
+        await withoutAuthentication().post(path).send()
+      ),
     put: async (path: string) =>
-      checkRequireAuthentication(await instance.put(path).send()),
+      checkRequireAuthentication(
+        await withoutAuthentication().put(path).send()
+      ),
     delete: async (path: string) =>
-      checkRequireAuthentication(await instance.delete(path).send()),
+      checkRequireAuthentication(
+        await withoutAuthentication().delete(path).send()
+      ),
   };
 }
 
 export const apiTest = {
-  instance,
+  withoutAuthentication,
   withAuthentication,
   testRequireAuthentication,
 };

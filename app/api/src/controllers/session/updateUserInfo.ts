@@ -1,5 +1,5 @@
 import { updateUserInfoContract } from "@app/common";
-import { SessionFacade } from "@app/engine";
+import { UserFacade } from "@app/engine";
 import { contractController } from "@hyulian/express-api-contract";
 
 export const updateUserInfoController = contractController(
@@ -7,7 +7,7 @@ export const updateUserInfoController = contractController(
   async ({ body, locals }) => {
     const { user } = locals;
     const { name } = body;
-    const result = await SessionFacade.updateUserInfo(user.id, { name });
+    const result = await UserFacade.update(user.id, { name });
     return result;
   }
 );

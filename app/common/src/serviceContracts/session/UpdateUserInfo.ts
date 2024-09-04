@@ -2,14 +2,25 @@ import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { simpleStatusResponse } from "~/common/simpleStatusResponse";
 
 export const updateUserInfoContract = apiContractSchema({
-  method: "post",
+  method: "put",
   path: "/session/me",
   params: {},
   body: {
     name: { type: "string" },
   },
   bodyType: "object",
-  ...simpleStatusResponse,
+  responseType: "object",
+  model: {
+    name: {
+      type: "string",
+    },
+    email: {
+      type: "string",
+    },
+    status: {
+      type: "string",
+    },
+  },
 });
 
 export type UpdateUserInfoContract = InferApiContract<

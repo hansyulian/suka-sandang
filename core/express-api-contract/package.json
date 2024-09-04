@@ -7,7 +7,7 @@
     "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
     "clean": "shx mkdir -p dist && shx rm -rf dist",
     "prebuild": "pnpm run clean",
-    "watch": "npx tsc --build tsconfig.build.json --watch",
+    "watch": "pnpm build",
     "test": "npx jest"
   },
   "type": "commonjs",
@@ -25,12 +25,11 @@
     "src",
     "LICENSE"
   ],
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
+    "express": "^4.19.2",
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/common": "workspace:*"
-  },
-  "peerDependencies": {
-    "express": "^4.19.2"
   },
   "author": "",
   "license": "ISC",

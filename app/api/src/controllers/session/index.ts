@@ -6,9 +6,9 @@ import { updateUserInfoController } from "~/controllers/session/updateUserInfo";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
 
 export const sessionController = createRouter((atlas) => {
-  atlas.middleware(authenticationMiddleware);
-
   atlas.controller(emailLoginController);
-  atlas.controller(getUserInfoController);
-  atlas.controller(updateUserInfoController);
+  atlas.controller(getUserInfoController).middleware(authenticationMiddleware);
+  atlas
+    .controller(updateUserInfoController)
+    .middleware(authenticationMiddleware);
 });

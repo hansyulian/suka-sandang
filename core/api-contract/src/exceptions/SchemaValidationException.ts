@@ -33,6 +33,6 @@ export class SchemaValidationException extends Exception<
     details: SchemaValidationExceptionDetail[],
     reference?: string
   ) {
-    super("specValidation", details, reference);
+    super("schemaValidation", details, reference);
   }
 }

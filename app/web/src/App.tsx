@@ -6,7 +6,7 @@ import { theme } from "~/config/theme";
 
 import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "@tanstack/react-router";
+import { RouterProvider } from "react-router-dom";
 import "~/config/api";
 import { AuthProvider } from "~/contexts";
 import { useAuth } from "~/hooks/useAuth";
@@ -26,15 +26,11 @@ function App() {
 }
 
 function InnerApp() {
-  const { state, authenticatedUser } = useAuth();
+  const { state } = useAuth();
   if (state === "pending" || state === "loading") {
     return null;
   }
-  return (
-    <RouterProvider router={router} context={{ authenticatedUser }}>
-      {/* more providers */}
-    </RouterProvider>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

@@ -21,7 +21,7 @@ const apiClient = new ReactApiContractClient({ baseUrl: appConfig.apiBaseUrl });
 type ConstQueryKeys<Keys extends string> = Record<Keys, QueryKeyFn>;
 function lockQueryKeys<
   TKeys extends string,
-  TConstQueryKeys extends ConstQueryKeys<TKeys>
+  TConstQueryKeys extends ConstQueryKeys<TKeys>,
 >(queryKeys: TConstQueryKeys): TConstQueryKeys {
   return queryKeys;
 }
@@ -41,7 +41,10 @@ export const Api = {
   session: {
     getUserInfo: apiClient.registerQueryContract(
       getUserInfoContract,
-      queryKeys.getUserInfo
+      queryKeys.getUserInfo,
+      {
+        retry: false,
+      }
     ),
     emailLogin: apiClient.registerMutationContract(emailLoginContract),
     updateUserInfo: apiClient.registerMutationContract(updateUserInfoContract),

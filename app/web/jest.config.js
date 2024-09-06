@@ -1,5 +1,5 @@
 const { pathsToModuleNameMapper } = require("ts-jest");
-const { compilerOptions } = require("./tsconfig");
+const { compilerOptions } = require("./tsconfig.node");
 
 module.exports = {
   preset: "ts-jest",
@@ -8,10 +8,9 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
-  moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json", "node"],
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   testPathIgnorePatterns: ["/node_modules/", "/build/"],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   }),
 };

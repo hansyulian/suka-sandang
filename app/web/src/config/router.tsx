@@ -1,23 +1,33 @@
-import {
-  createRootRouteWithContext,
-  createRouter,
-} from "@tanstack/react-router";
-import { indexRouter } from "~/routes/Index";
-import { sessionRouter } from "~/routes/Session";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
+import { RequireAuth } from "~/components/RequireAuth";
+import { CustomRoute, routes } from "~/config/routes";
+import { MasterLayout } from "~/layouts";
+import { SessionLayout } from "~/layouts/SessionLayout";
 
-export const rootRoute = createRootRouteWithContext<AppRouteContext>()({});
-
-export const getRootRoute = () => rootRoute;
-const routeTree = rootRoute.addChildren([indexRouter(), sessionRouter()]);
-
-export const router = createRouter({
-  routeTree,
-  context: {},
-  defaultNotFoundComponent: () => <p>404 Not Found</p>,
-});
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapRoutes(routes: CustomRoute[]): RouteObject[] {
+  return routes.map((route) => ({
+    path: route.path,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    element: <route.element />,
+  }));
 }
+
+export const router = createBrowserRouter([
+  // public
+  // require authentication
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <MasterLayout />,
+        children: mapRoutes([routes.landing]),
+      },
+    ],
+  },
+  // session
+  {
+    element: <SessionLayout />,
+    children: mapRoutes([routes.login]),
+  },
+]);

@@ -7,18 +7,19 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Api, queryKeys } from "~/config/api";
+import { useHandleRedirect } from "~/hooks/useHandleRedirect";
+import { useNavigate } from "~/hooks/useNavigate";
+import { useSearchQuery } from "~/hooks/useSearchQuery";
 
-export function LoginPage() {
-  const navigate = useNavigate();
-
-  const { redirect } = useSearch({
-    from: "/session/login",
-  });
+export default function LoginPage() {
   const { mutateAsync: login } = Api.session.emailLogin.useRequest({});
   const queryClient = useQueryClient();
+  const handleRedirect = useHandleRedirect();
+  const { redirect } = useSearchQuery("login");
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -44,9 +45,12 @@ export function LoginPage() {
     await queryClient.invalidateQueries({
       queryKey: queryKeys.getUserInfo(),
     });
-    navigate({
-      to: redirect || "/",
-    });
+    console.log(redirect);
+    if (redirect) {
+      handleRedirect(redirect);
+    } else {
+      navigate("login", {});
+    }
   };
 
   return (

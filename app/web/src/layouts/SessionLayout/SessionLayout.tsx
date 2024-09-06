@@ -1,6 +1,6 @@
 import { Center, Container, Paper } from "@mantine/core";
-import { Outlet } from "@tanstack/react-router";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, Suspense } from "react";
+import { Outlet } from "react-router-dom";
 
 export type SessionLayoutProps = PropsWithChildren;
 
@@ -9,7 +9,9 @@ export function SessionLayout(props: SessionLayoutProps) {
     <Container size="sm">
       <Center mih="100vh" p="sm">
         <Paper w="100%">
-        {props.children || <Outlet />}
+          <Suspense fallback={<div>loading...</div>}>
+            {props.children || <Outlet />}
+          </Suspense>
         </Paper>
       </Center>
     </Container>

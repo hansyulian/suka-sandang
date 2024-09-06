@@ -1,7 +1,7 @@
 import { AppShell, Burger, Group, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Outlet } from "@tanstack/react-router";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, Suspense } from "react";
+import { Outlet } from "react-router-dom";
 
 export type MasterLayoutProps = PropsWithChildren;
 
@@ -27,7 +27,11 @@ export function MasterLayout(props: MasterLayoutProps) {
             <Skeleton key={index} h={28} mt="sm" animate={false} />
           ))}
       </AppShell.Navbar>
-      <AppShell.Main>{props.children || <Outlet />}</AppShell.Main>
+      <AppShell.Main>
+        <Suspense fallback={<div>loading...</div>}>
+          {props.children || <Outlet />}
+        </Suspense>
+      </AppShell.Main>
     </AppShell>
   );
 }

@@ -2,7 +2,7 @@
 
 import { Text } from "@mantine/core";
 
-export function LandingPage() {
+export default function LandingPage() {
   // const query = Api.getServerInfo.useRequest({}, {});
   return <Text>This is Index </Text>;
 }

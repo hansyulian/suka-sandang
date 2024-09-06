@@ -7,11 +7,10 @@ import {
 import { JwtService } from "~/services/JwtService";
 
 // Mock the jwt module
-jest.mock("jsonwebtoken");
 jest.mock("~/config", () => ({
   appConfig: {
     app: {
-      jwtSecret: "test-secret",
+      jwtSecret: "it-secret",
       jwtExpiry: "1h",
     },
   },
@@ -21,7 +20,7 @@ describe("JwtService", () => {
   const jwtSecret = appConfig.app.jwtSecret;
   const jwtExpiry = appConfig.app.jwtExpiry;
   const userPayload = { id: "user1", email: "user@example.com" };
-  const token = "test-token";
+  const token = "it-token";
   const expiredToken = "expired-token";
 
   beforeAll(() => {
@@ -40,7 +39,7 @@ describe("JwtService", () => {
     );
   });
 
-  test("signToken should sign and return a token", async () => {
+  it("signToken should sign and return a token", async () => {
     const result = await JwtService.signToken(userPayload);
     expect(result).toBe(token);
     expect(jwt.sign).toHaveBeenCalledWith(userPayload, jwtSecret, {
@@ -48,19 +47,19 @@ describe("JwtService", () => {
     });
   });
 
-  test("verifyToken should return user payload for valid token", async () => {
+  it("verifyToken should return user payload for valid token", async () => {
     const result = await JwtService.verifyToken(token);
     expect(result).toEqual(userPayload);
     expect(jwt.verify).toHaveBeenCalledWith(token, jwtSecret);
   });
 
-  test("verifyToken should throw ExpiredJwtTokenException for expired token", async () => {
+  it("verifyToken should throw ExpiredJwtTokenException for expired token", async () => {
     await expect(JwtService.verifyToken(expiredToken)).rejects.toThrow(
       ExpiredJwtTokenException
     );
   });
 
-  test("verifyToken should throw InvalidJwtTokenException for invalid token", async () => {
+  it("verifyToken should throw InvalidJwtTokenException for invalid token", async () => {
     (jwt.verify as jest.Mock).mockImplementation(() => {
       throw new Error("Invalid token");
     });
@@ -70,9 +69,28 @@ describe("JwtService", () => {
     );
   });
 
-  test("decodeToken should return payload for valid token", async () => {
+  it("decodeToken should return payload for valid token", async () => {
     const result = await JwtService.decodeToken(token);
     expect(result).toEqual(userPayload);
     expect(jwt.decode).toHaveBeenCalledWith(token);
+  });
+
+  it("should extract the correct value to prevent stray value being added as well and some class object", async () => {
+    const result = await JwtService.signToken({
+      email: "email@email.com",
+      id: "id1234",
+      someStrayValue: "shouldBeIgnored",
+    } as any);
+
+    expect(jwt.sign).toHaveBeenCalledWith(
+      {
+        email: "email@email.com",
+        id: "id1234",
+      },
+      jwtSecret,
+      {
+        expiresIn: "1h",
+      }
+    );
   });
 });

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b tsconfig.build.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "watch": "echo 'not a library'"
@@ -14,8 +14,9 @@
     "@app/common": "workspace:*",
     "@hyulian/api-contract-client": "workspace:*",
     "@hyulian/common": "workspace:*",
-    "@mantine/core": "^7.12.1",
-    "@mantine/hooks": "^7.12.1",
+    "@mantine/core": "^7.12.2",
+    "@mantine/form": "^7.12.2",
+    "@mantine/hooks": "^7.12.2",
     "@tanstack/react-query": "^5.52.2",
     "@tanstack/react-router": "^1.51.2",
     "dotenv": "^16.4.5",
@@ -24,6 +25,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@tanstack/router-plugin": "^1.54.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

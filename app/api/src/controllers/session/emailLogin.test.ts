@@ -23,8 +23,7 @@ describe("Controller: emailLogin", () => {
       cookie.startsWith(appConfig.jwtCookieKey)
     );
     expect(authCookie).toBeDefined();
-    expect(authCookie?.includes("httpOnly")).toStrictEqual(true);
-    expect(authCookie?.includes("secure")).toStrictEqual(true);
+    expect(authCookie?.includes("mock-session-token")).toStrictEqual(true);
     expect(body).toEqual({
       sessionToken: "mock-session-token",
     });

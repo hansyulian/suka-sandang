@@ -21,7 +21,8 @@ async function signToken(
   user: UserPayload,
   expiresIn: string | number = appConfig.app.jwtExpiry
 ) {
-  return jwt.sign(user, appConfig.app.jwtSecret, { expiresIn });
+  const { id, email } = user;
+  return jwt.sign({ id, email }, appConfig.app.jwtSecret, { expiresIn });
 }
 
 // Verify a token

@@ -1,14 +1,17 @@
-import { AppShell, Burger, Group, Skeleton } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { Outlet } from '@tanstack/react-router';
+import { AppShell, Burger, Group, Skeleton } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Outlet } from "@tanstack/react-router";
+import { PropsWithChildren } from "react";
 
-export function MasterLayout() {
+export type MasterLayoutProps = PropsWithChildren;
+
+export function MasterLayout(props: MasterLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
 
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
       padding="md"
     >
       <AppShell.Header>
@@ -24,9 +27,7 @@ export function MasterLayout() {
             <Skeleton key={index} h={28} mt="sm" animate={false} />
           ))}
       </AppShell.Navbar>
-      <AppShell.Main>
-        <Outlet />
-      </AppShell.Main>
+      <AppShell.Main>{props.children || <Outlet />}</AppShell.Main>
     </AppShell>
   );
 }

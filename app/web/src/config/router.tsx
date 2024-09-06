@@ -1,29 +1,22 @@
 import {
   createRootRouteWithContext,
   createRouter,
-} from '@tanstack/react-router';
-import { MasterLayout } from '~/components/MasterLayout';
-import { indexRouter } from '~/routes/Landing';
+} from "@tanstack/react-router";
+import { indexRouter } from "~/routes/Index";
+import { sessionRouter } from "~/routes/Session";
 
-type AppRouteContext = {
-  sampleHandsome: boolean;
-};
+export const rootRoute = createRootRouteWithContext<AppRouteContext>()({});
 
-export const rootRoute = createRootRouteWithContext<AppRouteContext>()({
-  component: MasterLayout,
-});
-
-const getRootRoute = () => rootRoute;
-const routeTree = rootRoute.addChildren([indexRouter(getRootRoute)]);
+export const getRootRoute = () => rootRoute;
+const routeTree = rootRoute.addChildren([indexRouter(), sessionRouter()]);
 
 export const router = createRouter({
   routeTree,
-  context: {
-    sampleHandsome: true,
-  },
+  context: {},
+  defaultNotFoundComponent: () => <p>404 Not Found</p>,
 });
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }

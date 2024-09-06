@@ -8,7 +8,7 @@ export const emailLoginController = contractController(
   async ({ body, response }) => {
     const { email, password } = body;
     const loginResult = await SessionFacade.emailLogin(email, password);
-    response.cookie(appConfig.jwtCookieKey, {
+    response.cookie(appConfig.jwtCookieKey, loginResult.sessionToken, {
       httpOnly: true,
       secure: appConfig.env === "production",
       maxAge: appConfig.jwtExpiry,

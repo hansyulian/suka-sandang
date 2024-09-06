@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Users", {
@@ -40,7 +42,10 @@ module.exports = {
     const id = "00000000-0000-4000-8000-000000000001";
     const name = "Admin";
     const email = "admin@admin.com";
-    const password = "hashedPasswordHere";
+    const password = await bcrypt.hash(
+      "password",
+      process.env.HASH_SALT ? parseInt(process.env.HASH_SALT) : 10
+    );
     const status = "active";
     const now = new Date();
     const createdAt = now;

@@ -1,4 +1,4 @@
-import { Specs } from './types/Spec';
+import { Specs } from "./types/Spec";
 
 type ConstSchema<Keys extends string> = Record<Keys, Specs>;
 
@@ -9,7 +9,7 @@ type ConstSchema<Keys extends string> = Record<Keys, Specs>;
  */
 export function objectSchema<
   TKeys extends string,
-  TConstSchema extends ConstSchema<TKeys>,
+  TConstSchema extends ConstSchema<TKeys>
 >(objectSchema: TConstSchema) {
   return objectSchema;
 }

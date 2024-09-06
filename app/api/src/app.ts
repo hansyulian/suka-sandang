@@ -6,6 +6,7 @@ import Express from "express";
 import { appConfig } from "./config";
 import { controllers } from "./controllers";
 import { setupDatabase } from "@app/engine";
+import cookieParser from "cookie-parser";
 
 const port = appConfig.port;
 
@@ -15,6 +16,7 @@ async function init() {
     (atlas) => {
       atlas.use(morgan("combined"));
       atlas.use(Express.json());
+      atlas.use(cookieParser());
       atlas.router("/", controllers);
     },
     {

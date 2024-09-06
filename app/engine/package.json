@@ -7,8 +7,10 @@
     "build": "tsc --build tsconfig.build.json",
     "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
     "clean": "shx mkdir -p dist && shx rm -rf dist",
+    "migrate": "npx sequelize db:migrate",
+    "migrate:reset": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
     "prebuild": "pnpm run clean",
-    "watch": "pnpm build",
+    "watch": "npx nodemon",
     "test": "npx jest"
   },
   "type": "commonjs",

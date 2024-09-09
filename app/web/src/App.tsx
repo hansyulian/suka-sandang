@@ -27,7 +27,6 @@ function App() {
 
 function InnerApp() {
   const { isLoading } = useAuth();
-  console.log(isLoading);
   if (isLoading) {
     return null;
   }

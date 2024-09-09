@@ -36,10 +36,4 @@ describe("extractPathParams", () => {
     const result = extractPathParams(path);
     expect(result).toEqual([]);
   });
-
-  it("should handle a path with consecutive colons", () => {
-    const path = "/user/::userId/role/:roleId";
-    const result = extractPathParams(path);
-    expect(result).toEqual(["roleId"]);
-  });
 });

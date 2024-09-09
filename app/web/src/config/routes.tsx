@@ -50,6 +50,13 @@ export const routes = lockRoutes({
       };
     },
   },
+  materialList: {
+    path: "/material",
+    element: lazy(() => import("~/pages/Material/MaterialListPage")),
+    validateQuery: (query) => {
+      return {};
+    },
+  },
 });
 export type Routes = typeof routes;
 export type RouteKeys = keyof typeof routes;

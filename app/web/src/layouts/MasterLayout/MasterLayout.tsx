@@ -4,6 +4,7 @@ import {
   Burger,
   Group,
   Menu,
+  NavLink,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -15,6 +16,7 @@ import { LoadingSuspense } from "~/components/LoadingSuspense";
 import { Api, queryKeys } from "~/config/api";
 import { useAuth } from "~/hooks/useAuth";
 import { useNavigate } from "~/hooks/useNavigate";
+import { NavMenu } from "~/layouts/MasterLayout/NavMenu";
 
 export type MasterLayoutProps = PropsWithChildren;
 
@@ -76,7 +78,16 @@ export function MasterLayout(props: MasterLayoutProps) {
           </Group>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md"></AppShell.Navbar>
+      <AppShell.Navbar>
+        <NavLink label="Master Data" leftSection={<Icon name="masterData" />}>
+          <NavMenu
+            leftSection={<Icon name="material" />}
+            target="materialList"
+            params={{}}
+            label="Materials"
+          />
+        </NavLink>
+      </AppShell.Navbar>
       <AppShell.Main>
         <LoadingSuspense>{props.children || <Outlet />}</LoadingSuspense>
       </AppShell.Main>

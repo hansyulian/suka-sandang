@@ -24,14 +24,14 @@ describe("@hyulian/common.modules.projection.apiContractSchema", () => {
         },
       },
       query: {
-        d: { type: "string" },
+        d: { type: "string", optional: true },
       },
       method: "get",
       path: "/",
     });
     const result: InferApiContract<typeof sampleApiContract> = {
       params: { stringParam: "123", numberParam: 123 },
-      query: { d: "123" },
+      query: { d: undefined },
       response: { a: "123" },
       model: { a: "123" },
     };

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Api } from "~/config/api";
-import { calculateQueryState } from "~/utils/calculateQueryState";
 
 export interface AuthContext {
   authenticatedUser: AuthenticatedUser | null | undefined;

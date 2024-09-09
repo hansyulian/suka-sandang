@@ -29,6 +29,7 @@ export default defineConfig({
         replacement: resolve(__dirname, "../../core/$1/dist"),
       },
       { find: "~", replacement: resolve(__dirname, "src") },
+      { find: "~test", replacement: resolve(__dirname, "test") },
     ],
   },
   server: {
@@ -39,5 +40,10 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
+  },
+  test: {
+    environment: "jsdom", // Set jsdom as the test environment
+    globals: true, // Enables Jest-like global methods like 'describe', 'it', etc.
+    setupFiles: "./vitest.setup.js", // If you need a setup file (e.g., for Jest-DOM)
   },
 });

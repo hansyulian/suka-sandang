@@ -25,7 +25,7 @@ export class ReactApiContractClient extends ApiContractClient {
   }
 
   public registerMutationContract<
-    TApiContractSchema extends MutationContractSchema
+    TApiContractSchema extends MutationContractSchema,
   >(
     contract: TApiContractSchema,
     options: Partial<
@@ -69,7 +69,7 @@ export class ReactApiContractClient extends ApiContractClient {
   }
 
   public registerQueryContract<
-    TQueryContractSchema extends QueryContractSchema
+    TQueryContractSchema extends QueryContractSchema,
   >(
     contract: TQueryContractSchema,
     queryKeyFn: QueryKeyFn<any, any>, // Fixed type to accommodate query key which may include strings and other types
@@ -83,7 +83,7 @@ export class ReactApiContractClient extends ApiContractClient {
   ) {
     type Schema = InferApiContract<TQueryContractSchema>;
     type Params = Schema["params"];
-    type Query = Schema["query"];
+    type Query = Partial<Schema["query"]>;
     type Response = Schema["response"];
 
     const request = async (

@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <MasterLayout />,
-        children: mapRoutes([routes.landing]),
+        children: mapRoutes([routes.landing, routes.materialList]),
       },
     ],
   },

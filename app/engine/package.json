@@ -10,7 +10,7 @@
     "migrate": "npx sequelize db:migrate",
     "migrate:reset": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
     "prebuild": "pnpm run clean",
-    "watch": "npx nodemon",
+    "watch": "pnpm build && npx nodemon",
     "test": "npx jest"
   },
   "type": "commonjs",
@@ -29,6 +29,7 @@
     "LICENSE"
   ],
   "dependencies": {
+    "@app/common": "workspace:*",
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/common": "workspace:*",
     "bcrypt": "^5.1.1",

@@ -6,6 +6,7 @@ export function RequireAuth() {
   const { authenticatedUser } = useAuth();
   const loginRoute = useRoute("login");
   const location = useLocation();
+  console.log(authenticatedUser);
   if (!authenticatedUser) {
     return (
       <Navigate

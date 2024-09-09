@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Api } from "~/config/api";
 import { calculateQueryState } from "~/utils/calculateQueryState";
 
 export interface AuthContext {
-  state: "pending" | "loading" | "loaded" | "error";
-  authenticatedUser?: AuthenticatedUser;
+  authenticatedUser: AuthenticatedUser | null | undefined;
   isLoading: boolean;
 }
 
@@ -12,29 +11,31 @@ export const AuthContext = React.createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: user, ...rest } = Api.session.getUserInfo.useRequest({}, {});
-  const [authenticatedUser, setAuthenticatedUser] =
-    useState<AuthenticatedUser>();
+  const [authenticatedUser, setAuthenticatedUser] = useState<
+    AuthenticatedUser | null | undefined
+  >();
 
   useEffect(() => {
-    if (!rest.isError && !rest.isFetched) {
+    if (rest.isLoading) {
+      setAuthenticatedUser(undefined);
       return;
     }
     if (rest.error) {
-      return setAuthenticatedUser(undefined);
+      setAuthenticatedUser(null);
+      return;
     }
     if (user) {
       return setAuthenticatedUser({
         email: user.email,
         name: user.name,
       });
+      return;
     }
-  }, [rest.error, rest.isError, rest.isFetched, user]);
-
-  const state = calculateQueryState(rest);
+  }, [rest.error, rest.isLoading, user]);
 
   return (
     <AuthContext.Provider
-      value={{ state, authenticatedUser, isLoading: state === "loading" }}
+      value={{ authenticatedUser, isLoading: authenticatedUser === undefined }}
     >
       {children}
     </AuthContext.Provider>

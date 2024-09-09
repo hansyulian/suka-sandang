@@ -26,8 +26,9 @@ function App() {
 }
 
 function InnerApp() {
-  const { state } = useAuth();
-  if (state === "pending" || state === "loading") {
+  const { isLoading } = useAuth();
+  console.log(isLoading);
+  if (isLoading) {
     return null;
   }
   return <RouterProvider router={router} />;

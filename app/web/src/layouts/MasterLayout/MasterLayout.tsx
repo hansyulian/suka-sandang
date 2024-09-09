@@ -1,12 +1,45 @@
-import { AppShell, Burger, Group, Skeleton } from "@mantine/core";
+import {
+  AppShell,
+  Avatar,
+  Burger,
+  Group,
+  Menu,
+  UnstyledButton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { PropsWithChildren, Suspense } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { PropsWithChildren, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { Icon } from "~/components/Icon";
+import { LoadingSuspense } from "~/components/LoadingSuspense";
+import { Api, queryKeys } from "~/config/api";
+import { useAuth } from "~/hooks/useAuth";
+import { useNavigate } from "~/hooks/useNavigate";
 
 export type MasterLayoutProps = PropsWithChildren;
 
 export function MasterLayout(props: MasterLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
+  const { authenticatedUser, isLoading } = useAuth();
+  const { mutateAsync: logout } = Api.session.logout.useRequest();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout({});
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.userInfo(),
+    });
+  };
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+    if (!authenticatedUser) {
+      navigate("login", {});
+    }
+  }, [authenticatedUser, isLoading, navigate]);
 
   return (
     <AppShell
@@ -15,22 +48,37 @@ export function MasterLayout(props: MasterLayoutProps) {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+          </Group>
+          <Group>
+            <Menu>
+              <Menu.Target>
+                <UnstyledButton>
+                  <Avatar name={authenticatedUser?.name || ""} />
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<Icon name="logout" />}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))}
-      </AppShell.Navbar>
+      <AppShell.Navbar p="md"></AppShell.Navbar>
       <AppShell.Main>
-        <Suspense fallback={<div>loading...</div>}>
-          {props.children || <Outlet />}
-        </Suspense>
+        <LoadingSuspense>{props.children || <Outlet />}</LoadingSuspense>
       </AppShell.Main>
     </AppShell>
   );

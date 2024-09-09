@@ -1,24 +1,24 @@
-import { SchemaType } from '../../schema';
-import { ApiContractMethod } from './Base';
+import { SchemaType } from "../../schema";
+import { ApiContractMethod } from "./Base";
 import {
   ApiContractBodySchema,
   ApiContractBodyType,
   BodyBase,
   InferBodyType,
-} from './Body';
-import { ApiContractModelSchema } from './Model';
-import { ApiContractParamsSchema, ApiContractPathFn } from './Params';
+} from "./Body";
+import { ApiContractModelSchema } from "./Model";
+import { ApiContractParamsSchema, ApiContractPathFn } from "./Params";
 import {
   ApiContractResponseType,
   InferResponseType,
   ResponseBase,
-} from './Response';
+} from "./Response";
 
 export type MutationContract<
   TResponse extends ResponseBase<any>,
   TParams extends {},
   TBody extends BodyBase<{}>,
-  TModel = TResponse extends ResponseBase<infer M> ? M : 'unableToInferModel',
+  TModel = TResponse extends ResponseBase<infer M> ? M : "unableToInferModel",
 > = {
   model: TModel;
   params: TParams;
@@ -47,27 +47,27 @@ export type InferMutationContract<
   TMutationContractSchema extends MutationContractSchema,
 > = MutationContract<
   InferResponseType<
-    TMutationContractSchema['responseType'],
-    SchemaType<TMutationContractSchema['model']>
+    TMutationContractSchema["responseType"],
+    SchemaType<TMutationContractSchema["model"]>
   >,
-  SchemaType<TMutationContractSchema['params']>,
+  SchemaType<TMutationContractSchema["params"]>,
   InferBodyType<
-    TMutationContractSchema['bodyType'],
-    SchemaType<TMutationContractSchema['body']>
+    TMutationContractSchema["bodyType"],
+    SchemaType<TMutationContractSchema["body"]>
   >
 >;
 
 export type MutationContractModel<
   TMutationContractSchema extends MutationContractSchema,
-> = InferMutationContract<TMutationContractSchema>['model'];
+> = InferMutationContract<TMutationContractSchema>["model"];
 export type MutationContractResponse<
   TMutationContractSchema extends MutationContractSchema,
-> = InferMutationContract<TMutationContractSchema>['response'];
+> = InferMutationContract<TMutationContractSchema>["response"];
 
 export type MutationContractParams<
   TMutationContractSchema extends MutationContractSchema,
-> = InferMutationContract<TMutationContractSchema>['params'];
+> = InferMutationContract<TMutationContractSchema>["params"];
 
 export type MutationContractBody<
   TMutationContractSchema extends MutationContractSchema,
-> = InferMutationContract<TMutationContractSchema>['body'];
+> = InferMutationContract<TMutationContractSchema>["body"];

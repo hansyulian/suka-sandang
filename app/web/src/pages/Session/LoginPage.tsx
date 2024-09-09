@@ -7,6 +7,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { getHotkeyHandler } from "@mantine/hooks";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Api, queryKeys } from "~/config/api";
@@ -43,9 +44,8 @@ export default function LoginPage() {
       password: values.password,
     });
     await queryClient.invalidateQueries({
-      queryKey: queryKeys.getUserInfo(),
+      queryKey: queryKeys.userInfo(),
     });
-    console.log(redirect);
     if (redirect) {
       handleRedirect(redirect);
     } else {
@@ -59,11 +59,14 @@ export default function LoginPage() {
         <TextInput
           label="Email"
           placeholder="a@a.com"
+          type="email"
           {...form.getInputProps("email")}
         />
         <PasswordInput
           label="Password"
           placeholder="pass"
+          type="password"
+          onKeyDown={getHotkeyHandler([["Enter", handleLogin]])}
           {...form.getInputProps("password")}
         />
         <Button onClick={handleLogin}>Login</Button>

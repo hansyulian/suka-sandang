@@ -6,6 +6,7 @@ import {
   getServerInfoContract,
   getUserInfoContract,
   listMaterialsContract,
+  logoutContract,
   updateMaterialContract,
   updateUserInfoContract,
 } from "@app/common";
@@ -27,36 +28,37 @@ function lockQueryKeys<
 }
 
 export const queryKeys = lockQueryKeys({
-  getServerInfo: () => ["serverInfo"],
-  getUserInfo: () => ["userInfo"],
-  getMaterial: ({ params }) => ["material", params.id],
-  listMaterial: ({ query }) => ["material", query],
+  serverInfo: () => ["serverInfo"],
+  userInfo: () => ["userInfo"],
+  material: ({ params }) => ["material", params.id],
+  materials: ({ query }) => ["material", query],
 });
 
 export const Api = {
   getServerInfo: apiClient.registerQueryContract(
     getServerInfoContract,
-    queryKeys.getServerInfo
+    queryKeys.serverInfo
   ),
   session: {
     getUserInfo: apiClient.registerQueryContract(
       getUserInfoContract,
-      queryKeys.getUserInfo,
+      queryKeys.userInfo,
       {
         retry: false,
       }
     ),
     emailLogin: apiClient.registerMutationContract(emailLoginContract),
     updateUserInfo: apiClient.registerMutationContract(updateUserInfoContract),
+    logout: apiClient.registerMutationContract(logoutContract),
   },
   material: {
     getMaterial: apiClient.registerQueryContract(
       getMaterialContract,
-      queryKeys.getMaterial
+      queryKeys.material
     ),
     listMaterial: apiClient.registerQueryContract(
       listMaterialsContract,
-      queryKeys.listMaterial
+      queryKeys.materials
     ),
     createMaterial: apiClient.registerMutationContract(createMaterialContract),
     updateMaterial: apiClient.registerMutationContract(updateMaterialContract),

@@ -26,11 +26,12 @@ export function expressErrorHandler(config: ExpressErrorHandlerConfig) {
     const exception: Exception =
       err instanceof Exception ? err : convertGenericErrorToException(err);
     config.onError?.(exception);
+    const processedStack = exception.stack?.split("\n") ?? [];
     const exceptionJson = {
       name: exception.name,
       reference: exception.reference,
       details: exception.details,
-      stack: config.debug ? exception.stack : undefined,
+      stack: config.debug ? processedStack : undefined,
     };
     if (err instanceof UnauthorizedException) {
       response.status(401).json(exceptionJson);
@@ -38,7 +39,6 @@ export function expressErrorHandler(config: ExpressErrorHandlerConfig) {
       response.status(500).json(exceptionJson);
     }
     if (config.debug) {
-      const processedStack = exception.stack?.split("\n") ?? [];
       console.error(
         JSON.stringify({ ...exceptionJson, stack: processedStack }, null, 4)
       );

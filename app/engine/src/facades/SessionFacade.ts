@@ -2,7 +2,7 @@ import {
   InvalidCredentialException,
   UserNotFoundException,
 } from "~/exceptions";
-import { User, UserUpdateAttributes } from "~/models";
+import { User } from "~/models";
 import { JwtService } from "~/services";
 import { verifyPassword } from "~/utils";
 

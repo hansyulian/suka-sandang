@@ -5,8 +5,11 @@ import { contractController } from "@hyulian/express-api-contract";
 export const getMaterialController = contractController(
   getMaterialContract,
   async ({ params }) => {
-    const { id } = params;
-    const result = await MaterialFacade.findById(id);
-    return result;
+    const { idOrCode } = params;
+    const record = await MaterialFacade.findByIdOrCode(idOrCode);
+    if (record) {
+      return record;
+    }
+    return record;
   }
 );

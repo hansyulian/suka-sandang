@@ -1,4 +1,6 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
+import { modelBase } from "~/base/modelBase";
+import { materialStatus } from "~/types";
 
 export const updateMaterialContract = apiContractSchema({
   method: "put",
@@ -8,24 +10,26 @@ export const updateMaterialContract = apiContractSchema({
     id: { type: "string" },
   },
   body: {
-    name: { type: "string", optional: true },
-    code: { type: "string", optional: true },
-    purchasePrice: { type: "number", optional: true },
-    retailPrice: { type: "number", optional: true },
-  },
-  bodyType: "object",
-  model: {
-    id: { type: "string" },
     name: { type: "string" },
     code: { type: "string" },
     purchasePrice: { type: "number", optional: true },
     retailPrice: { type: "number", optional: true },
-    status: { type: "enum", values: ["pending", "active", "inactive"] },
-    createdAt: { type: "dateString" },
-    updatedAt: { type: "dateString" },
-    deletedAt: { type: "dateString" },
+    color: { type: "string", optional: true },
+    status: {
+      type: "enum",
+      values: materialStatus,
+    },
   },
-});
+  bodyType: "object",
+  model: {
+    ...modelBase,
+    name: { type: "string" },
+    code: { type: "string" },
+    purchasePrice: { type: "number", optional: true },
+    retailPrice: { type: "number", optional: true },
+    status: { type: "enum", values: materialStatus },
+  },
+} as const);
 
 export type UpdateMaterialContract = InferApiContract<
   typeof updateMaterialContract

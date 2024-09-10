@@ -1,9 +1,19 @@
-import { IconDatabase, IconLogout, IconPackage } from "@tabler/icons-react";
+import {
+  IconDatabase,
+  IconDeviceFloppy,
+  IconLogout,
+  IconPackage,
+  IconPlus,
+  IconX,
+} from "@tabler/icons-react";
 
 const iconMap = {
   logout: IconLogout,
   masterData: IconDatabase,
   material: IconPackage,
+  add: IconPlus,
+  save: IconDeviceFloppy,
+  close: IconX,
 };
 
 export type IconNames = keyof typeof iconMap;

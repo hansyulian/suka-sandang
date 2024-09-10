@@ -1,8 +1,5 @@
-import {
-  MaterialAttributes,
-  MaterialCreationAttributes,
-  MaterialFacade,
-} from "@app/engine";
+import { MaterialCreationAttributes, MaterialAttributes } from "@app/common";
+import { MaterialFacade } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -19,11 +16,11 @@ describe("Controller: createMaterialController", () => {
     const payload: MaterialCreationAttributes = {
       name: "Material 1",
       code: "material-1",
+      status: "pending",
     };
     const material: MaterialAttributes = {
       id,
       createdAt: new Date(),
-      status: "active",
       updatedAt: new Date(),
 
       ...payload,
@@ -48,7 +45,7 @@ describe("Controller: createMaterialController", () => {
     expect(body.retailPrice).toStrictEqual(undefined);
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
-    expect(body.status).toStrictEqual("active");
+    expect(body.status).toStrictEqual("pending");
     expect(body.deletedAt).toBeUndefined();
 
     checkStrayValues(body);
@@ -61,11 +58,12 @@ describe("Controller: createMaterialController", () => {
       code: "material-1",
       purchasePrice: 100,
       retailPrice: 110,
+      status: "pending",
+      color: "#000000",
     };
     const material: MaterialAttributes = {
       id,
       createdAt: new Date(),
-      status: "active",
       updatedAt: new Date(),
 
       ...payload,
@@ -88,7 +86,7 @@ describe("Controller: createMaterialController", () => {
     expect(body.retailPrice).toStrictEqual(110);
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
-    expect(body.status).toStrictEqual("active");
+    expect(body.status).toStrictEqual("pending");
     expect(body.deletedAt).toBeUndefined();
     checkStrayValues(body);
   });

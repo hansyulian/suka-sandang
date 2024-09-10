@@ -1,25 +1,11 @@
-import { Column, Table } from "sequelize-typescript";
-
-import { BaseAttributes, BaseModel, MutationOmit } from "./BaseModel";
-
-export const materialStatuses = ["pending", "active", "inactive"] as const;
-export type MaterialStatus = (typeof materialStatuses)[number];
-export type MaterialAttributes = BaseAttributes & {
-  name: string;
-  code: string;
-  status: MaterialStatus;
-  purchasePrice?: number;
-  retailPrice?: number;
-  deletedAt?: Date;
-};
-export type MaterialCreationAttributes = MutationOmit<
+import type {
   MaterialAttributes,
-  "status"
->;
-export type MaterialUpdateAttributes = MutationOmit<
-  Partial<MaterialAttributes>,
-  "status"
->;
+  MaterialCreationAttributes,
+  MaterialStatus,
+} from "@app/common";
+import { Column, Table } from "sequelize-typescript";
+import { BaseModel } from "~/models/BaseModel";
+
 @Table({
   paranoid: true,
 })
@@ -38,6 +24,9 @@ export class Material extends BaseModel<
 
   @Column
   declare retailPrice?: number;
+
+  @Column
+  declare color?: string;
 
   @Column({
     defaultValue: "active",

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSearchParams } from "react-router-dom";
-import { InferQuery, RouteKeys } from "~/config/routes";
+import { InferQuery, RouteNames } from "~/config/routes";
 
-export function useSearchQuery<RouteKey extends RouteKeys>(key: RouteKey) {
+export function useSearchQuery<RouteKey extends RouteNames>(key: RouteKey) {
   const [searchParams] = useSearchParams();
   const entries = searchParams.entries();
   const result: any = {};

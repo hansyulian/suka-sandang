@@ -10,30 +10,19 @@ import {
   updateMaterialContract,
   updateUserInfoContract,
 } from "@app/common";
-import {
-  QueryKeyFn,
-  ReactApiContractClient,
-} from "@hyulian/react-api-contract-client";
+import { ReactApiContractClient } from "@hyulian/react-api-contract-client";
 
 import { appConfig } from "~/config/app";
+import { queryKeys } from "~/config/queryKeys";
 
-const apiClient = new ReactApiContractClient({ baseUrl: appConfig.apiBaseUrl });
-
-type ConstQueryKeys<Keys extends string> = Record<Keys, QueryKeyFn>;
-function lockQueryKeys<
-  TKeys extends string,
-  TConstQueryKeys extends ConstQueryKeys<TKeys>,
->(queryKeys: TConstQueryKeys): TConstQueryKeys {
-  return queryKeys;
-}
-
-export const queryKeys = lockQueryKeys({
-  serverInfo: () => ["serverInfo"],
-  userInfo: () => ["userInfo"],
-  material: ({ params }) => ["material", params.id],
-  materials: ({ query }) => ["material", query],
+const apiClient = new ReactApiContractClient({
+  baseUrl: appConfig.apiBaseUrl,
+  retry: false,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
+  refetchOnWindowFocus: false,
+  retryOnMount: true,
 });
-
 export const Api = {
   getServerInfo: apiClient.registerQueryContract(
     getServerInfoContract,
@@ -42,10 +31,7 @@ export const Api = {
   session: {
     getUserInfo: apiClient.registerQueryContract(
       getUserInfoContract,
-      queryKeys.userInfo,
-      {
-        retry: false,
-      }
+      queryKeys.userInfo
     ),
     emailLogin: apiClient.registerMutationContract(emailLoginContract),
     updateUserInfo: apiClient.registerMutationContract(updateUserInfoContract),
@@ -58,7 +44,7 @@ export const Api = {
     ),
     listMaterial: apiClient.registerQueryContract(
       listMaterialsContract,
-      queryKeys.materials
+      queryKeys.material
     ),
     createMaterial: apiClient.registerMutationContract(createMaterialContract),
     updateMaterial: apiClient.registerMutationContract(updateMaterialContract),

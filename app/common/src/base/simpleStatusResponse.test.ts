@@ -1,4 +1,4 @@
-import { SimpleStatusResponse } from "~/common/simpleStatusResponse";
+import { SimpleStatusResponse } from "~/base/simpleStatusResponse";
 
 describe("@app/common", () => {
   it("should be able to correctly typing", () => {

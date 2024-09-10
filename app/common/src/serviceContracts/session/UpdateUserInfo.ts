@@ -1,5 +1,5 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
-import { simpleStatusResponse } from "~/common/simpleStatusResponse";
+import { simpleStatusResponse } from "~/base/simpleStatusResponse";
 
 export const updateUserInfoContract = apiContractSchema({
   method: "put",
@@ -21,7 +21,7 @@ export const updateUserInfoContract = apiContractSchema({
       type: "string",
     },
   },
-});
+} as const);
 
 export type UpdateUserInfoContract = InferApiContract<
   typeof updateUserInfoContract

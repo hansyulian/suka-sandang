@@ -28,12 +28,15 @@ function lockRoutes<
   return routes;
 }
 type ExtractRouteParams<T extends string> =
-  // Match each segment that starts with ':' and map it to a key-value pair with string type
+  // If T contains a segment with a parameter (e.g., ':id') and more segments after it
   T extends `${infer _Start}:${infer Param}/${infer Rest}`
-    ? { [K in Param | keyof ExtractRouteParams<Rest>]: string }
-    : T extends `${infer _Start}:${infer Param}`
+    ? // Extract the parameter from the segment and recursively extract params from the rest
+      { [K in Param | keyof ExtractRouteParams<Rest>]: string }
+    : // If T contains only a single segment with a parameter (e.g., ':id')
+      T extends `${infer _Start}:${infer Param}`
       ? { [K in Param]: string }
-      : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      : // If T contains no parameters
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         {};
 
 export const routes = lockRoutes({
@@ -57,15 +60,23 @@ export const routes = lockRoutes({
       return {};
     },
   },
-});
+  materialAdd: {
+    path: "/material/add",
+    element: lazy(() => import("~/pages/Material/MaterialPage")),
+  },
+  materialEdit: {
+    path: "/material/:idOrCode",
+    element: lazy(() => import("~/pages/Material/MaterialPage")),
+  },
+} as const);
 export type Routes = typeof routes;
-export type RouteKeys = keyof typeof routes;
+export type RouteNames = keyof typeof routes;
 
-export type InferParams<RouteKey extends RouteKeys> = ExtractRouteParams<
+export type InferParams<RouteKey extends RouteNames> = ExtractRouteParams<
   Routes[RouteKey]["path"]
 >;
 
-export type InferQuery<RouteKey extends RouteKeys> =
+export type InferQuery<RouteKey extends RouteNames> =
   Routes[RouteKey] extends CustomRouteWithValidateSearch
     ? Partial<ReturnType<Routes[RouteKey]["validateQuery"]>>
     : undefined;

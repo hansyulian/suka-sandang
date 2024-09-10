@@ -1,5 +1,5 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
-import { simpleStatusResponse } from "~/common/simpleStatusResponse";
+import { simpleStatusResponse } from "~/base/simpleStatusResponse";
 
 export const deleteMaterialContract = apiContractSchema({
   method: "delete",
@@ -10,7 +10,7 @@ export const deleteMaterialContract = apiContractSchema({
   body: {},
   bodyType: "object",
   ...simpleStatusResponse,
-});
+} as const);
 
 export type DeleteMaterialContract = InferApiContract<
   typeof deleteMaterialContract

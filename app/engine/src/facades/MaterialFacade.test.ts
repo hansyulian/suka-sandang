@@ -1,13 +1,13 @@
 import { Op } from "sequelize";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
-import {
-  Material,
-  MaterialCreationAttributes,
-  MaterialUpdateAttributes,
-} from "~/models/Material";
+import { Material } from "~/models/Material";
 import { processQueryOptions } from "~/utils";
 import { MaterialFacade } from "~/facades/MaterialFacade";
 import { QueryOptions } from "~/types";
+import {
+  MaterialCreationAttributes,
+  MaterialUpdateAttributes,
+} from "@app/common";
 
 jest.mock("~/models/Material", () => ({
   Material: {
@@ -16,6 +16,7 @@ jest.mock("~/models/Material", () => ({
     create: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
+    findOne: jest.fn(),
   },
 }));
 
@@ -106,6 +107,63 @@ describe("MaterialFacade", () => {
       expect(Material.findByPk).toHaveBeenCalledWith("1");
     });
   });
+  describe("findByIdOrCode", () => {
+    it("should return the material if found when using code", async () => {
+      // Arrange
+      const mockMaterial = {
+        id: "13761e01-f409-40f5-bb3a-f4c8c16988be",
+        code: "ABC",
+        name: "Material 1",
+        purchasePrice: 100,
+        retailPrice: 150,
+      };
+      (Material.findOne as jest.Mock).mockResolvedValue(mockMaterial);
+
+      // Act
+      const result = await MaterialFacade.findByIdOrCode("ABC");
+
+      // Assert
+      expect(result).toEqual(mockMaterial);
+      expect(Material.findOne).toHaveBeenCalledWith({
+        where: { code: "ABC" },
+      });
+    });
+    it("should return the material if found when using id", async () => {
+      // Arrange
+      const mockMaterial = {
+        id: "13761e01-f409-40f5-bb3a-f4c8c16988be",
+        code: "ABC",
+        name: "Material 1",
+        purchasePrice: 100,
+        retailPrice: 150,
+      };
+      (Material.findOne as jest.Mock).mockResolvedValue(mockMaterial);
+
+      // Act
+      const result = await MaterialFacade.findByIdOrCode(
+        "13761e01-f409-40f5-bb3a-f4c8c16988be"
+      );
+
+      // Assert
+      expect(result).toEqual(mockMaterial);
+      expect(Material.findOne).toHaveBeenCalledWith({
+        where: { id: "13761e01-f409-40f5-bb3a-f4c8c16988be" },
+      });
+    });
+
+    it("should throw MaterialNotFoundException if the material is not found", async () => {
+      // Arrange
+      (Material.findOne as jest.Mock).mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(MaterialFacade.findByIdOrCode("ABC")).rejects.toThrow(
+        MaterialNotFoundException
+      );
+      expect(Material.findOne).toHaveBeenCalledWith({
+        where: { code: "ABC" },
+      });
+    });
+  });
 
   describe("create", () => {
     it("should create and return a new material", async () => {
@@ -115,6 +173,7 @@ describe("MaterialFacade", () => {
         name: "Material 1",
         purchasePrice: 100,
         retailPrice: 150,
+        status: "pending",
       };
       const mockMaterial = { ...mockData, id: "1" };
       (Material.create as jest.Mock).mockResolvedValue(mockMaterial);
@@ -133,6 +192,8 @@ describe("MaterialFacade", () => {
         name: "Material 1",
         purchasePrice: 100,
         retailPrice: 150,
+        status: "pending",
+        color: "#998877",
       };
       const mockMaterial = { ...mockData, id: "1" };
       (Material.create as jest.Mock).mockResolvedValue(mockMaterial);
@@ -159,12 +220,17 @@ describe("MaterialFacade", () => {
         name: "Material 1",
         purchasePrice: 100,
         retailPrice: 150,
+        status: "pending",
+        color: "#000000",
+
         update: jest.fn().mockResolvedValue({
           id: "1",
           code: "XYZ",
           name: "Material Updated",
           purchasePrice: 120,
           retailPrice: 170,
+          status: "active",
+          color: "#ffffff",
         }),
       };
       const updateData: MaterialUpdateAttributes = {
@@ -172,6 +238,8 @@ describe("MaterialFacade", () => {
         name: "Material Updated",
         purchasePrice: 120,
         retailPrice: 170,
+        status: "active",
+        color: "#ffffff",
       };
       (Material.findByPk as jest.Mock).mockResolvedValue(mockMaterial);
 
@@ -185,6 +253,8 @@ describe("MaterialFacade", () => {
         name: "Material Updated",
         purchasePrice: 120,
         retailPrice: 170,
+        status: "active",
+        color: "#ffffff",
       });
       expect(Material.findByPk).toHaveBeenCalledWith("1");
       expect(mockMaterial.update).toHaveBeenCalledWith(updateData);
@@ -196,7 +266,11 @@ describe("MaterialFacade", () => {
 
       // Act & Assert
       await expect(
-        MaterialFacade.update("1", { name: "Updated Name" })
+        MaterialFacade.update("1", {
+          name: "Updated Name",
+          code: "Updated Code",
+          status: "pending",
+        })
       ).rejects.toThrow(MaterialNotFoundException);
       expect(Material.findByPk).toHaveBeenCalledWith("1");
     });

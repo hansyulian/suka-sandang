@@ -1,5 +1,6 @@
+import { UserUpdateAttributes } from "@app/common";
 import { UserNotFoundException } from "~/exceptions";
-import { User, UserUpdateAttributes } from "~/models";
+import { User } from "~/models";
 
 export const UserFacade = {
   findById,

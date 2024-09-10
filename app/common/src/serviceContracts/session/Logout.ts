@@ -1,5 +1,5 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
-import { simpleStatusResponse } from "~/common";
+import { simpleStatusResponse } from "~/base";
 
 export const logoutContract = apiContractSchema({
   method: "post",
@@ -8,6 +8,6 @@ export const logoutContract = apiContractSchema({
   body: {},
   bodyType: "object",
   ...simpleStatusResponse,
-});
+} as const);
 
 export type LogoutContract = InferApiContract<typeof logoutContract>;

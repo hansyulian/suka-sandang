@@ -9,15 +9,15 @@ import {
 import { useForm } from "@mantine/form";
 import { getHotkeyHandler } from "@mantine/hooks";
 
-import { useQueryClient } from "@tanstack/react-query";
-import { Api, queryKeys } from "~/config/api";
+import { Api } from "~/config/api";
 import { useHandleRedirect } from "~/hooks/useHandleRedirect";
+import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 
 export default function LoginPage() {
   const { mutateAsync: login } = Api.session.emailLogin.useRequest({});
-  const queryClient = useQueryClient();
+  const invalidateQuery = useInvalidateQuery();
   const handleRedirect = useHandleRedirect();
   const { redirect } = useSearchQuery("login");
   const navigate = useNavigate();
@@ -43,9 +43,7 @@ export default function LoginPage() {
       email: values.email,
       password: values.password,
     });
-    await queryClient.invalidateQueries({
-      queryKey: queryKeys.userInfo(),
-    });
+    invalidateQuery("userInfo");
     if (redirect) {
       handleRedirect(redirect);
     } else {

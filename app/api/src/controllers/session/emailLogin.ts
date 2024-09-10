@@ -11,7 +11,7 @@ export const emailLoginController = contractController(
     response.cookie(appConfig.jwtCookieKey, loginResult.sessionToken, {
       httpOnly: true,
       secure: appConfig.env === "production",
-      maxAge: appConfig.jwtExpiry,
+      maxAge: appConfig.jwtExpiry * 1000,
       sameSite: "strict",
     });
     return {

@@ -6,12 +6,14 @@ export const createMaterialController = contractController(
   createMaterialContract,
   async (context) => {
     const { body } = context;
-    const { code, name, purchasePrice, retailPrice } = body;
+    const { code, name, purchasePrice, retailPrice, color, status } = body;
     const result = await MaterialFacade.create({
       code,
       name,
       purchasePrice,
       retailPrice,
+      status: status || "pending",
+      color,
     });
     return result;
   }

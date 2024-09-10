@@ -1,5 +1,6 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
-import { paginationQuery } from "~/common";
+import { paginationQuery } from "~/base";
+import { modelBase } from "~/base/modelBase";
 
 export const listMaterialsContract = apiContractSchema({
   method: "get",
@@ -18,17 +19,15 @@ export const listMaterialsContract = apiContractSchema({
   },
   responseType: "paginatedArray",
   model: {
-    id: { type: "string" },
+    ...modelBase,
     name: { type: "string" },
     code: { type: "string" },
     purchasePrice: { type: "number", optional: true },
     retailPrice: { type: "number", optional: true },
     status: { type: "enum", values: ["pending", "active", "inactive"] },
-    createdAt: { type: "dateString" },
-    updatedAt: { type: "dateString" },
-    deletedAt: { type: "dateString" },
+    color: { type: "string", optional: true },
   },
-});
+} as const);
 
 export type ListMaterialsContract = InferApiContract<
   typeof listMaterialsContract

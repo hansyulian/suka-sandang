@@ -3,7 +3,7 @@ import {
   InvalidCredentialException,
 } from "~/exceptions";
 import { SessionFacade } from "~/facades/SessionFacade";
-import { User, UserUpdateAttributes } from "~/models";
+import { User } from "~/models";
 import { JwtService } from "~/services";
 import { verifyPassword } from "~/utils";
 

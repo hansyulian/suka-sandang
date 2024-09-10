@@ -21,9 +21,6 @@ module.exports = {
 
       name: {
         type: Sequelize.STRING,
-      },
-      name: {
-        type: Sequelize.STRING,
         allowNull: false,
       },
       code: {
@@ -39,11 +36,19 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      color: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       status: {
         type: Sequelize.ENUM("pending", "active", "inactive"),
         allowNull: false,
         defaultValue: "active",
       },
+    });
+    await queryInterface.addIndex("Users", ["email"], {
+      name: "materials_code",
+      unique: true,
     });
   },
   async down(queryInterface, Sequelize) {

@@ -6,12 +6,14 @@ export const updateMaterialController = contractController(
   updateMaterialContract,
   async ({ params, body }) => {
     const { id } = params;
-    const { code, name, purchasePrice, retailPrice } = body;
+    const { code, name, purchasePrice, retailPrice, color, status } = body;
     const result = await MaterialFacade.update(id, {
       code,
       name,
       purchasePrice,
       retailPrice,
+      color,
+      status,
     });
     return result;
   }

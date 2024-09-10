@@ -1,19 +1,10 @@
+import type {
+  UserAttributes,
+  UserCreationAttributes,
+  UserStatus,
+} from "@app/common";
 import { Column, Table } from "sequelize-typescript";
-
-import { BaseAttributes, BaseModel, MutationOmit } from "./BaseModel";
-
-export type UserStatus = "pending" | "active" | "suspended";
-export type UserAttributes = BaseAttributes & {
-  name: string;
-  email: string;
-  password: string;
-  status: UserStatus;
-};
-export type UserCreationAttributes = MutationOmit<UserAttributes, "status">;
-export type UserUpdateAttributes = MutationOmit<
-  Partial<UserAttributes>,
-  "status" | "email"
->;
+import { BaseModel } from "~/models/BaseModel";
 
 @Table({
   paranoid: true,

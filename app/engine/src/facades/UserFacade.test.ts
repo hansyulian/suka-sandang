@@ -1,11 +1,7 @@
-import {
-  UserNotFoundException,
-  InvalidCredentialException,
-} from "~/exceptions";
+import { UserUpdateAttributes } from "@app/common";
+import { UserNotFoundException } from "~/exceptions";
 import { UserFacade } from "~/facades/UserFacade";
-import { User, UserUpdateAttributes } from "~/models";
-import { JwtService } from "~/services";
-import { verifyPassword } from "~/utils";
+import { User } from "~/models";
 
 jest.mock("~/models", () => ({
   User: {

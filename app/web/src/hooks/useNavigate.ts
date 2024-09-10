@@ -1,10 +1,11 @@
-import { InferParams, InferQuery, RouteKeys, routes } from "~/config/routes";
+import { InferParams, InferQuery, RouteNames, routes } from "~/config/routes";
 import { useNavigate as useNavigateBase } from "react-router-dom";
 import { replacePathParams } from "~/utils/replacePathParams";
+import { serializeStringQuery } from "~/utils/serializeStringQuery";
 
 export function useNavigate() {
   const navigate = useNavigateBase();
-  return <Key extends RouteKeys>(
+  return <Key extends RouteNames>(
     to: Key,
     params: InferParams<Key>,
     query: Partial<InferQuery<Key>> = {}
@@ -14,9 +15,9 @@ export function useNavigate() {
       route.path,
       params as Record<string, string | number | boolean>
     );
-    navigate({
+    return navigate({
       pathname: target,
-      search: query as never,
+      search: serializeStringQuery(query as Record<string, string>),
     });
   };
 }

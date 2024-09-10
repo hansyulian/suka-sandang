@@ -1,8 +1,5 @@
-import {
-  MaterialAttributes,
-  MaterialUpdateAttributes,
-  MaterialFacade,
-} from "@app/engine";
+import { MaterialUpdateAttributes, MaterialAttributes } from "@app/common";
+import { MaterialFacade } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -19,14 +16,12 @@ describe("Controller: updateMaterialController", () => {
     const payload: MaterialUpdateAttributes = {
       name: "Material 1",
       code: "material-1",
+      status: "active",
     };
     const material: MaterialAttributes = {
       id,
       createdAt: new Date(),
-      status: "active",
       updatedAt: new Date(),
-      name: "",
-      code: "",
       ...payload,
     };
     (MaterialFacade.update as jest.Mock).mockResolvedValueOnce(
@@ -36,9 +31,10 @@ describe("Controller: updateMaterialController", () => {
       .withAuthentication()
       .put(`/material/${id}`)
       .send(injectStrayValues(payload));
+    const { status, body } = response;
+    expect(status).toStrictEqual(200);
 
     expect(MaterialFacade.update).toHaveBeenCalledWith(id, payload);
-    const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Material 1");
     expect(body.code).toStrictEqual("material-1");
@@ -53,14 +49,15 @@ describe("Controller: updateMaterialController", () => {
 
   it("should call material facade update function while even with empty payload", async () => {
     const id = "mock-id";
-    const payload: MaterialUpdateAttributes = {};
+    const payload: MaterialUpdateAttributes = {
+      code: "material-1",
+      name: "Material 1",
+      status: "active",
+    };
     const material: MaterialAttributes = {
       id,
       createdAt: new Date(),
-      status: "active",
       updatedAt: new Date(),
-      code: "material-1",
-      name: "Material 1",
       purchasePrice: 100,
       retailPrice: 110,
       ...payload,
@@ -72,14 +69,14 @@ describe("Controller: updateMaterialController", () => {
       .withAuthentication()
       .put(`/material/${id}`)
       .send(injectStrayValues(payload));
+    const { body, status } = response;
+    expect(status).toStrictEqual(200);
 
     expect(MaterialFacade.update).toHaveBeenCalledWith(id, {
-      code: undefined,
-      name: undefined,
-      purchasePrice: undefined,
-      retailPrice: undefined,
+      code: "material-1",
+      name: "Material 1",
+      status: "active",
     });
-    const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Material 1");
     expect(body.code).toStrictEqual("material-1");

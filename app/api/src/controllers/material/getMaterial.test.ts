@@ -7,9 +7,9 @@ describe("Controller: getMaterialController", () => {
     await apiTest.testRequireAuthentication().get("/material/mock-id");
   });
   it("should call material facade get function", async () => {
-    const id = "mock-id";
-    (MaterialFacade.findById as jest.Mock).mockResolvedValueOnce({
-      id: id,
+    const idOrCode = "mock-id";
+    (MaterialFacade.findByIdOrCode as jest.Mock).mockResolvedValueOnce({
+      id: idOrCode,
       name: "Material 1",
       code: "material-1",
       purchasePrice: null,
@@ -20,12 +20,12 @@ describe("Controller: getMaterialController", () => {
     });
     const response = await apiTest
       .withAuthentication()
-      .get(`/material/${id}`)
+      .get(`/material/${idOrCode}`)
       .send();
 
-    expect(MaterialFacade.findById).toHaveBeenCalledWith(id);
+    expect(MaterialFacade.findByIdOrCode).toHaveBeenCalledWith(idOrCode);
     const { body } = response;
-    expect(body.id).toStrictEqual(id);
+    expect(body.id).toStrictEqual(idOrCode);
     expect(body.name).toStrictEqual("Material 1");
     expect(body.code).toStrictEqual("material-1");
     expect(body.purchasePrice).toStrictEqual(undefined);
@@ -36,18 +36,18 @@ describe("Controller: getMaterialController", () => {
     expect(body.deletedAt).toBeUndefined();
   });
   it("should handle not found exception if id not found", async () => {
-    const id = "mock-id";
-    (MaterialFacade.findById as jest.Mock).mockRejectedValueOnce(
+    const idOrCode = "mock-id";
+    (MaterialFacade.findByIdOrCode as jest.Mock).mockRejectedValueOnce(
       new MaterialNotFoundException({
-        id,
+        idOrCode,
       })
     );
     const response = await apiTest
       .withAuthentication()
-      .get(`/material/${id}`)
+      .get(`/material/${idOrCode}`)
       .send();
 
-    expect(MaterialFacade.findById).toHaveBeenCalledWith(id);
-    expectRejection(response, new MaterialNotFoundException({ id }));
+    expect(MaterialFacade.findByIdOrCode).toHaveBeenCalledWith(idOrCode);
+    expectRejection(response, new MaterialNotFoundException({ idOrCode }));
   });
 });

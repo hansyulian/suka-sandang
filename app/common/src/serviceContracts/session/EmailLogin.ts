@@ -13,6 +13,6 @@ export const emailLoginContract = apiContractSchema({
   model: {
     sessionToken: { type: "string" },
   },
-});
+} as const);
 
 export type EmailLoginContract = InferApiContract<typeof emailLoginContract>;

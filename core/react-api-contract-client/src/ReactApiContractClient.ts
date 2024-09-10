@@ -12,31 +12,56 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 
+export type ReactApiContractQueryOptions = Pick<
+  UseQueryOptions,
+  | "behavior"
+  | "refetchInterval"
+  | "refetchOnMount"
+  | "refetchOnWindowFocus"
+  | "refetchOnReconnect"
+  | "retry"
+  | "retryOnMount"
+>;
 export type ApiContractClientOptions = {
   baseUrl: string;
-};
-export type QueryKeyFn<Query = any, Params = any> = (context: {
-  query: Query;
-  params: Params;
-}) => string[];
+} & ReactApiContractQueryOptions;
 export class ReactApiContractClient extends ApiContractClient {
+  public queryOptions: ReactApiContractQueryOptions;
   public constructor(options: ApiContractClientOptions) {
     super(options);
+    const {
+      behavior,
+      refetchInterval,
+      refetchOnMount,
+      refetchOnWindowFocus,
+      refetchOnReconnect,
+      retry,
+      retryOnMount,
+    } = options;
+    this.queryOptions = {
+      behavior,
+      refetchInterval,
+      refetchOnMount,
+      refetchOnWindowFocus,
+      refetchOnReconnect,
+      retry,
+      retryOnMount,
+    };
   }
 
   public registerMutationContract<
-    TApiContractSchema extends MutationContractSchema,
+    TMutationContractSchema extends MutationContractSchema,
   >(
-    contract: TApiContractSchema,
+    contract: TMutationContractSchema,
     options: Partial<
       UseMutationOptions<
-        InferApiContract<TApiContractSchema>["response"],
+        InferApiContract<TMutationContractSchema>["response"],
         unknown, // Error type
-        InferApiContract<TApiContractSchema>["body"]
+        InferApiContract<TMutationContractSchema>["body"]
       >
     > = {}
   ) {
-    type Schema = InferApiContract<TApiContractSchema>;
+    type Schema = InferApiContract<TMutationContractSchema>;
     type Params = Schema["params"];
     type Body = Schema["body"];
     type Response = Schema["response"];
@@ -58,6 +83,7 @@ export class ReactApiContractClient extends ApiContractClient {
     const useRequest = (params: Params = {}) => {
       return useMutation<Response, unknown, Body, unknown>({
         mutationFn: (data) => request(params, data),
+
         ...options,
       });
     };
@@ -72,12 +98,12 @@ export class ReactApiContractClient extends ApiContractClient {
     TQueryContractSchema extends QueryContractSchema,
   >(
     contract: TQueryContractSchema,
-    queryKeyFn: QueryKeyFn<any, any>, // Fixed type to accommodate query key which may include strings and other types
-    options: Partial<
+    queryKey: string,
+    baseOptions: Partial<
       UseQueryOptions<
-        InferApiContract<TQueryContractSchema>["response"], // Success type
-        unknown, // Error type
-        InferApiContract<TQueryContractSchema>["response"] // Data type
+        InferApiContract<TQueryContractSchema>["response"],
+        unknown,
+        InferApiContract<TQueryContractSchema>["response"]
       >
     > = {}
   ) {
@@ -85,6 +111,7 @@ export class ReactApiContractClient extends ApiContractClient {
     type Params = Schema["params"];
     type Query = Partial<Schema["query"]>;
     type Response = Schema["response"];
+    const self = this;
 
     const request = async (
       params: Params,
@@ -100,12 +127,24 @@ export class ReactApiContractClient extends ApiContractClient {
       });
     };
 
-    const useRequest = (params: Params, query: Query) => {
+    const useRequest = (
+      params: Params,
+      query: Query,
+      options: Partial<
+        UseQueryOptions<
+          InferApiContract<TQueryContractSchema>["response"],
+          unknown,
+          InferApiContract<TQueryContractSchema>["response"]
+        >
+      > = {}
+    ) => {
       return useQuery<Response, unknown>({
-        queryKey: queryKeyFn({ params, query }),
+        ...(self.queryOptions as any),
+        queryKey: [queryKey, { ...query, ...params }],
         queryFn: () => {
           return request(params, query);
         },
+        ...baseOptions,
         ...options,
       });
     };

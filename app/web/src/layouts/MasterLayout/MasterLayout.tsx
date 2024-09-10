@@ -8,13 +8,13 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQueryClient } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Icon } from "~/components/Icon";
 import { LoadingSuspense } from "~/components/LoadingSuspense";
-import { Api, queryKeys } from "~/config/api";
+import { Api } from "~/config/api";
 import { useAuth } from "~/hooks/useAuth";
+import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { NavMenu } from "~/layouts/MasterLayout/NavMenu";
 
@@ -24,14 +24,12 @@ export function MasterLayout(props: MasterLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const { authenticatedUser, isLoading } = useAuth();
   const { mutateAsync: logout } = Api.session.logout.useRequest();
-  const queryClient = useQueryClient();
+  const invalidateQuery = useInvalidateQuery();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout({});
-    await queryClient.invalidateQueries({
-      queryKey: queryKeys.userInfo(),
-    });
+    await invalidateQuery("material");
   };
 
   useEffect(() => {

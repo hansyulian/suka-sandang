@@ -1,5 +1,5 @@
 import {
-  ApiContractModelSpec,
+  ApiContractModelSchema,
   ApiContractResponseType,
   SchemaType,
 } from "@hyulian/api-contract";
@@ -9,8 +9,8 @@ export const simpleStatusResponse = {
   model: {
     status: {
       type: "string",
-    } as ApiContractModelSpec,
-  },
+    },
+  } as ApiContractModelSchema,
 };
 export type SimpleStatusResponse = SchemaType<
   (typeof simpleStatusResponse)["model"]

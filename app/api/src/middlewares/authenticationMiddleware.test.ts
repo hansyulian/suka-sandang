@@ -1,4 +1,5 @@
-import { JwtService, UserAttributes, UserFacade } from "@app/engine";
+import { UserAttributes } from "@app/common";
+import { JwtService, UserFacade } from "@app/engine";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { appConfig } from "~/config";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";

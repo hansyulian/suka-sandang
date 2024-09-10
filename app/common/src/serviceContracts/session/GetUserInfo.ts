@@ -11,6 +11,6 @@ export const getUserInfoContract = apiContractSchema({
     email: { type: "string" },
     status: { type: "string" },
   },
-});
+} as const);
 
 export type GetUserInfoContract = InferApiContract<typeof getUserInfoContract>;

@@ -36,4 +36,7 @@ describe("@hyulian/common.pad", () => {
   it("should handle cases when no options are provided", () => {
     expect(pad("test", 10)).toBe("      test");
   });
+  it("should accept number as well", () => {
+    expect(pad(10, 5, { char: "0" })).toBe("00010");
+  });
 });

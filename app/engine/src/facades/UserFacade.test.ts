@@ -2,136 +2,78 @@ import { UserUpdateAttributes } from "@app/common";
 import { UserNotFoundException } from "~/exceptions";
 import { UserFacade } from "~/facades/UserFacade";
 import { User } from "~/models";
-
-jest.mock("~/models", () => ({
-  User: {
-    findOne: jest.fn(),
-    findByPk: jest.fn(),
-  },
-}));
-
-jest.mock("~/utils", () => ({
-  verifyPassword: jest.fn(),
-}));
-
-jest.mock("~/services", () => ({
-  JwtService: {
-    signToken: jest.fn(),
-  },
-}));
+import { userFixtures } from "~test/fixtures/userFixtures";
+import { checkStrayValues } from "~test/utils/checkStrayValues";
+import { idGenerator } from "~test/utils/idGenerator";
+import { initializeDatabase } from "~test/utils/initializeDatabase";
+import { injectStrayValues } from "~test/utils/injectStrayValues";
+import { resetData } from "~test/utils/resetData";
 
 describe("UserFacade", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+  let findByPkSpy = jest.spyOn(User, "findByPk");
+  beforeAll(async () => {
+    initializeDatabase();
+  });
+  beforeEach(async () => {
+    await resetData();
+    await userFixtures();
+    findByPkSpy.mockClear();
   });
 
   describe("findById", () => {
     it("should return the user object if the user is found", async () => {
-      // Arrange
-      const mockUser = {
-        id: "1",
-        email: "test@example.com",
-        password: "hashed_password",
-      };
-      (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
-
-      // Act
-      const result = await UserFacade.findById("1");
-
-      // Assert
-      expect(result).toEqual(mockUser);
-      expect(User.findByPk).toHaveBeenCalledWith("1");
+      const userId = idGenerator.user(1);
+      const result = await UserFacade.findById(userId);
+      const user = await User.findByPk(userId);
+      expect(result).toEqual(user);
+      expect(findByPkSpy).toHaveBeenCalledWith(userId);
     });
 
     it("should throw UserNotFoundException if the user is not found", async () => {
-      // Arrange
-      (User.findByPk as jest.Mock).mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(UserFacade.findById("1")).rejects.toThrow(
+      const userId = idGenerator.user(99);
+      const findByPkSpy = jest.spyOn(User, "findByPk");
+      await expect(UserFacade.findById(userId)).rejects.toThrow(
         UserNotFoundException
       );
-      expect(User.findByPk).toHaveBeenCalledWith("1");
+      expect(findByPkSpy).toHaveBeenCalledWith(userId);
     });
   });
 
   describe("update", () => {
     it("should update user info and return the updated user", async () => {
-      // Arrange
-      const mockUser = {
-        id: "1",
-        email: "test@example.com",
-        password: "hashed_password",
-        update: jest.fn().mockResolvedValue({
-          id: "1",
-          email: "test@example.com",
-          password: "hashed_password",
-          name: "New Name",
-        }),
-      };
-      (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
-
+      const userId = idGenerator.user(1);
       const updateData: UserUpdateAttributes = { name: "New Name" };
+      const result = await UserFacade.update(userId, updateData);
+      const updatedUser = await User.findByPk(userId);
 
-      // Act
-      const result = await UserFacade.update("1", updateData);
-
-      // Assert
-      expect(result).toEqual({
-        id: "1",
-        email: "test@example.com",
-        password: "hashed_password",
-        name: "New Name",
-      });
-      expect(User.findByPk).toHaveBeenCalledWith("1");
-      expect(mockUser.update).toHaveBeenCalledWith({ name: "New Name" });
+      expect(result).toEqual(updatedUser);
+      expect(result.name).toStrictEqual(updatedUser?.name);
+      expect(User.findByPk).toHaveBeenCalledWith(userId);
     });
     it("should update user info and return the updated user and ignore stray values", async () => {
-      // Arrange
-      const mockUser = {
-        id: "1",
-        email: "test@example.com",
-        password: "hashed_password",
-        update: jest.fn().mockResolvedValue({
-          id: "1",
-          email: "test@example.com",
-          password: "hashed_password",
-          name: "New Name",
-        }),
-      };
-      (User.findByPk as jest.Mock).mockResolvedValue(mockUser);
-
+      const userId = idGenerator.user(1);
       const updateData: UserUpdateAttributes = {
         name: "New Name",
       };
 
-      // Act
-      const result = await UserFacade.update("1", {
-        ...updateData,
-        a: "stray value",
-        b: "stray value",
-      } as any);
+      const result = await UserFacade.update(
+        userId,
+        injectStrayValues(updateData)
+      );
+      const updatedUser = await User.findByPk(userId);
 
-      // Assert
-      expect(result).toEqual({
-        id: "1",
-        email: "test@example.com",
-        password: "hashed_password",
-        name: "New Name",
-      });
-      expect(User.findByPk).toHaveBeenCalledWith("1");
-      expect(mockUser.update).toHaveBeenCalledWith({ name: "New Name" });
+      expect(result).toEqual(updatedUser);
+      expect(findByPkSpy).toHaveBeenCalledWith(userId);
+      checkStrayValues(updatedUser);
     });
 
     it("should throw UserNotFoundException if the user is not found", async () => {
-      // Arrange
-      (User.findByPk as jest.Mock).mockResolvedValue(null);
+      const userId = idGenerator.user(99);
 
-      // Act & Assert
       await expect(
-        UserFacade.update("1", { name: "New Name" })
+        UserFacade.update(userId, { name: "New Name" })
       ).rejects.toThrow(UserNotFoundException);
-      expect(User.findByPk).toHaveBeenCalledWith("1");
+      expect(findByPkSpy).toHaveBeenCalledWith(userId);
     });
   });
 });

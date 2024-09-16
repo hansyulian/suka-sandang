@@ -5,7 +5,14 @@ export type BaseAttributes = {
   deletedAt?: Date;
 };
 
-export type MutationOmit<T, K extends keyof T = never> = Omit<
+export type CreateOmit<T, K extends keyof T = never> = Omit<
   T,
-  "id" | "createdAt" | "updatedAt" | "deletedAt" | K
+  keyof BaseAttributes | K
+> &
+  Partial<BaseAttributes>;
+
+// UpdateOmit reuses CreateOmit and additionally omits "id"
+export type UpdateOmit<T, K extends keyof T = never> = Omit<
+  T,
+  keyof BaseAttributes | K
 >;

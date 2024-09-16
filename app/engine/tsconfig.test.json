@@ -5,9 +5,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types", "@types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "~/*": ["src/*"],
-      "~tests/*": ["tests/*"]
+      "~test/*": ["test/*"]
     },
     "esModuleInterop": true,
     "skipLibCheck": true,

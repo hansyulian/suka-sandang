@@ -1,8 +1,6 @@
 const actual = jest.requireActual("jsonwebtoken");
+const { deepMockFunctions } = require("@hyulian/common");
 
 module.exports = {
-  ...actual,
-  sign: jest.fn(),
-  verify: jest.fn(),
-  decode: jest.fn(),
+  ...deepMockFunctions(actual),
 };

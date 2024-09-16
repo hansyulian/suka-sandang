@@ -30,11 +30,11 @@
   "devDependencies": {
     "@app/web": "link:d:/Sources/Projects/suka-sandang/app/web",
     "@eslint/js": "^9.10.0",
-    "@tanstack/router-plugin": "^1.56.4",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

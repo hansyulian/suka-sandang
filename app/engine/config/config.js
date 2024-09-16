@@ -1,16 +1,21 @@
-const dotenv = require('dotenv');
-const path = require('path');
-const envPath = path.resolve(__dirname, '../../../.env');
-dotenv.config({ path: envPath });
+const { config } = require("dotenv");
+const path = require("path");
+const relativeRoot = "../../../";
+
+const pe = process.env;
+const envFile = pe.NODE_ENV === "test" ? ".test" : "";
+const envPath = path.resolve(__dirname, `${relativeRoot}.env${envFile}`);
+config({ path: envPath });
 
 const databaseConfig = {
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: process.env.DB_DIALECT,
+  username: pe.DB_USERNAME,
+  password: pe.DB_PASSWORD,
+  database: pe.DB_DATABASE,
+  host: pe.DB_HOST,
+  port: pe.DB_PORT,
+  dialect: pe.DB_DIALECT,
+  storage: pe.DB_STORAGE,
 };
 
-console.log('database configuration', databaseConfig);
+console.log("database configuration", databaseConfig);
 module.exports = databaseConfig;

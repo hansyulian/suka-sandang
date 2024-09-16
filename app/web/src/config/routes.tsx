@@ -23,7 +23,7 @@ export type CustomRoute =
 type ConstRoutes<Keys extends string> = Record<Keys, CustomRoute>;
 function lockRoutes<
   Keys extends string,
-  TConstRoutes extends ConstRoutes<Keys>,
+  TConstRoutes extends ConstRoutes<Keys>
 >(routes: TConstRoutes) {
   return routes;
 }
@@ -33,11 +33,11 @@ type ExtractRouteParams<T extends string> =
     ? // Extract the parameter from the segment and recursively extract params from the rest
       { [K in Param | keyof ExtractRouteParams<Rest>]: string }
     : // If T contains only a single segment with a parameter (e.g., ':id')
-      T extends `${infer _Start}:${infer Param}`
-      ? { [K in Param]: string }
-      : // If T contains no parameters
-        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        {};
+    T extends `${infer _Start}:${infer Param}`
+    ? { [K in Param]: string }
+    : // If T contains no parameters
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      {};
 
 export const routes = lockRoutes({
   landing: {
@@ -56,7 +56,7 @@ export const routes = lockRoutes({
   materialList: {
     path: "/material",
     element: lazy(() => import("~/pages/Material/MaterialListPage")),
-    validateQuery: (query) => {
+    validateQuery: (_query) => {
       return {};
     },
   },

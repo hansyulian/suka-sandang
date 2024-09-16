@@ -1,11 +1,5 @@
-import { config } from "dotenv";
-import path from "path";
 import { Dialect } from "sequelize";
-
-const envPath = path.resolve(__dirname, "../../../.env");
-config({ path: envPath });
 const pe = process.env;
-
 export const appConfig = {
   app: {
     port: pe.API_PORT ? parseInt(pe.API_PORT) : 3000,
@@ -15,12 +9,13 @@ export const appConfig = {
     maximumRetrieval: parseInt(pe.MAXIMUM_RETRIEVAL || "100"),
   },
   database: {
-    username: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_DATABASE || "app",
-    host: process.env.DB_HOST || "127.0.0.1",
-    port: parseInt(process.env.DB_PORT || "5432"),
-    dialect: (process.env.DB_DIALECT || "postgresql") as Dialect,
+    username: pe.DB_USERNAME || "root",
+    password: pe.DB_PASSWORD || "",
+    database: pe.DB_DATABASE || "app",
+    host: pe.DB_HOST || "127.0.0.1",
+    port: parseInt(pe.DB_PORT || "5432"),
+    dialect: (pe.DB_DIALECT || "postgresql") as Dialect,
+    storage: pe.DB_STORAGE,
   },
 };
 export type AppConfig = typeof appConfig;

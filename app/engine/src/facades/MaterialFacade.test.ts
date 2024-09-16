@@ -1,238 +1,212 @@
 import { Op } from "sequelize";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import { Material } from "~/models/Material";
-import { processQueryOptions } from "~/utils";
 import { MaterialFacade } from "~/facades/MaterialFacade";
-import { QueryOptions } from "~/types";
 import {
   MaterialCreationAttributes,
   MaterialUpdateAttributes,
 } from "@app/common";
-
-jest.mock("~/models/Material", () => ({
-  Material: {
-    findAndCountAll: jest.fn(),
-    findByPk: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    destroy: jest.fn(),
-    findOne: jest.fn(),
-  },
-}));
-
-jest.mock("~/utils", () => ({
-  processQueryOptions: jest.fn(),
-}));
+import { initializeDatabase } from "~test/utils/initializeDatabase";
+import { resetData } from "~test/utils/resetData";
+import { materialFixtures } from "~test/fixtures/materialFixtures";
+import { idGenerator } from "~test/utils/idGenerator";
+import { injectStrayValues } from "~test/utils/injectStrayValues";
+import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
+import { checkStrayValues } from "~test/utils/checkStrayValues";
 
 describe("MaterialFacade", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+  const findAndCountAllSpy = jest.spyOn(Material, "findAndCountAll");
+  const findByPkSpy = jest.spyOn(Material, "findByPk");
+  const createSpy = jest.spyOn(Material, "create");
+  const findOneSpy = jest.spyOn(Material, "findOne");
+  beforeAll(async () => {
+    await initializeDatabase();
   });
 
   describe("list", () => {
+    beforeAll(async () => {
+      await resetData();
+      await materialFixtures();
+    });
     it("should return the count and records of materials", async () => {
-      // Arrange
-      const mockQuery = { code: "ABC" };
-      const mockOptions: QueryOptions = { limit: 10, offset: 0 };
-      const mockResult = {
-        count: 2,
-        rows: [
-          {
-            id: "1",
-            code: "ABC",
-            name: "Material 1",
-            purchasePrice: 100,
-            retailPrice: 150,
-          },
-          {
-            id: "2",
-            code: "DEF",
-            name: "Material 2",
-            purchasePrice: 200,
-            retailPrice: 250,
-          },
-        ],
-      };
-      (Material.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
-      (processQueryOptions as jest.Mock).mockReturnValue(mockOptions);
-
-      // Act
-      const result = await MaterialFacade.list(mockQuery, mockOptions);
-
-      // Assert
-      expect(result).toEqual({
-        count: mockResult.count,
-        records: mockResult.rows,
-      });
-      expect(Material.findAndCountAll).toHaveBeenCalledWith({
+      const query = {};
+      const mockOptions = {};
+      const findOptions = {
         where: {
           status: {
             [Op.ne]: "deleted",
           },
-          ...mockQuery,
+          ...query,
         },
         ...mockOptions,
+      };
+      const expectedResult = await Material.findAndCountAll(findOptions);
+      jest.clearAllMocks();
+
+      const result = await MaterialFacade.list(query, mockOptions);
+      expect(findAndCountAllSpy).toHaveBeenCalledWith(findOptions);
+
+      expect(result).toEqual({
+        count: expectedResult.count,
+        records: expectedResult.rows,
+      });
+    });
+    it("should return the count and records of materials with query", async () => {
+      const query = {
+        name: {
+          [Op.like]: "%1%",
+        },
+      };
+      const mockOptions = {};
+      const findOptions = {
+        where: {
+          status: {
+            [Op.ne]: "deleted",
+          },
+          ...query,
+        },
+        ...mockOptions,
+      };
+      const expectedResult = await Material.findAndCountAll(findOptions);
+      jest.clearAllMocks();
+      const result = await MaterialFacade.list(query, mockOptions);
+      expect(findAndCountAllSpy).toHaveBeenCalledWith(findOptions);
+
+      expect(result).toEqual({
+        count: expectedResult.count,
+        records: expectedResult.rows,
       });
     });
   });
 
   describe("findById", () => {
+    beforeAll(async () => {
+      await resetData();
+      await materialFixtures();
+    });
     it("should return the material if found", async () => {
-      // Arrange
-      const mockMaterial = {
-        id: "1",
-        code: "ABC",
-        name: "Material 1",
-        purchasePrice: 100,
-        retailPrice: 150,
-      };
-      (Material.findByPk as jest.Mock).mockResolvedValue(mockMaterial);
+      const id = idGenerator.material(1);
+      const material = await Material.findByPk(id);
+      jest.clearAllMocks();
+      const result = await MaterialFacade.findById(id);
 
-      // Act
-      const result = await MaterialFacade.findById("1");
-
-      // Assert
-      expect(result).toEqual(mockMaterial);
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
+      expect(result).toEqual(material);
+      expect(findByPkSpy).toHaveBeenCalledWith(id);
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
-      // Arrange
-      (Material.findByPk as jest.Mock).mockResolvedValue(null);
+      const id = idGenerator.material(9999);
 
-      // Act & Assert
-      await expect(MaterialFacade.findById("1")).rejects.toThrow(
+      await expect(MaterialFacade.findById(id)).rejects.toThrow(
         MaterialNotFoundException
       );
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
+      expect(findByPkSpy).toHaveBeenCalledWith(id);
     });
   });
   describe("findByIdOrCode", () => {
+    beforeAll(async () => {
+      await resetData();
+      await materialFixtures();
+    });
     it("should return the material if found when using code", async () => {
-      // Arrange
-      const mockMaterial = {
-        id: "13761e01-f409-40f5-bb3a-f4c8c16988be",
-        code: "ABC",
-        name: "Material 1",
-        purchasePrice: 100,
-        retailPrice: 150,
-      };
-      (Material.findOne as jest.Mock).mockResolvedValue(mockMaterial);
+      const code = "material-01";
+      const record = await Material.findOne({ where: { code } });
+      jest.clearAllMocks();
 
-      // Act
-      const result = await MaterialFacade.findByIdOrCode("ABC");
+      const result = await MaterialFacade.findByIdOrCode(code);
 
-      // Assert
-      expect(result).toEqual(mockMaterial);
-      expect(Material.findOne).toHaveBeenCalledWith({
-        where: { code: "ABC" },
+      expect(result).toEqual(record);
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: { code },
       });
     });
     it("should return the material if found when using id", async () => {
-      // Arrange
-      const mockMaterial = {
-        id: "13761e01-f409-40f5-bb3a-f4c8c16988be",
-        code: "ABC",
-        name: "Material 1",
-        purchasePrice: 100,
-        retailPrice: 150,
-      };
-      (Material.findOne as jest.Mock).mockResolvedValue(mockMaterial);
+      const id = idGenerator.material(1);
+      const material = await Material.findByPk(id);
+      jest.clearAllMocks();
+      const result = await MaterialFacade.findByIdOrCode(id);
 
-      // Act
-      const result = await MaterialFacade.findByIdOrCode(
-        "13761e01-f409-40f5-bb3a-f4c8c16988be"
-      );
-
-      // Assert
-      expect(result).toEqual(mockMaterial);
-      expect(Material.findOne).toHaveBeenCalledWith({
-        where: { id: "13761e01-f409-40f5-bb3a-f4c8c16988be" },
-      });
+      expect(result).toEqual(material);
+      expect(findOneSpy).toHaveBeenCalledWith({ where: { id } });
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
-      // Arrange
-      (Material.findOne as jest.Mock).mockResolvedValue(null);
+      const code = "materia-01";
+      const record = await Material.findOne({ where: { code } });
+      jest.clearAllMocks();
 
-      // Act & Assert
-      await expect(MaterialFacade.findByIdOrCode("ABC")).rejects.toThrow(
+      await expect(MaterialFacade.findByIdOrCode(code)).rejects.toThrow(
         MaterialNotFoundException
       );
-      expect(Material.findOne).toHaveBeenCalledWith({
-        where: { code: "ABC" },
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: { code },
       });
     });
   });
 
   describe("create", () => {
+    beforeEach(async () => {
+      await resetData();
+      await materialFixtures();
+    });
     it("should create and return a new material", async () => {
-      // Arrange
-      const mockData: MaterialCreationAttributes = {
-        code: "ABC",
-        name: "Material 1",
+      const createData: MaterialCreationAttributes = {
+        code: "my-new-material",
+        name: "My new material",
         purchasePrice: 100,
         retailPrice: 150,
         status: "pending",
       };
-      const mockMaterial = { ...mockData, id: "1" };
-      (Material.create as jest.Mock).mockResolvedValue(mockMaterial);
 
-      // Act
-      const result = await MaterialFacade.create(mockData);
+      jest.clearAllMocks();
+      const result = await MaterialFacade.create(createData);
+      const foundRecord = await MaterialFacade.findByIdOrCode(
+        "my-new-material"
+      );
 
-      // Assert
-      expect(result).toEqual(mockMaterial);
-      expect(Material.create).toHaveBeenCalledWith(mockData);
+      expect(result).toEqual(foundRecord);
+      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should create and return a new material and ignore stray values", async () => {
-      // Arrange
-      const mockData: MaterialCreationAttributes = {
-        code: "ABC",
-        name: "Material 1",
+      const createData: MaterialCreationAttributes = {
+        code: "my-new-material",
+        name: "My new material",
         purchasePrice: 100,
         retailPrice: 150,
         status: "pending",
-        color: "#998877",
       };
-      const mockMaterial = { ...mockData, id: "1" };
-      (Material.create as jest.Mock).mockResolvedValue(mockMaterial);
+      jest.clearAllMocks();
+      const result = await MaterialFacade.create(injectStrayValues(createData));
+      const foundRecord = await MaterialFacade.findByIdOrCode(
+        "my-new-material"
+      );
 
-      // Act
-      const result = await MaterialFacade.create({
-        ...mockData,
-        a: "stray value",
-        b: "stray value",
-      } as any);
-
-      // Assert
-      expect(result).toEqual(mockMaterial);
-      expect(Material.create).toHaveBeenCalledWith(mockData);
+      expect(result).toEqual(foundRecord);
+      expect(createSpy).toHaveBeenCalledWith(createData);
+    });
+    it("should throw duplicated material if code already exists", async () => {
+      const createData: MaterialCreationAttributes = {
+        code: "material-01",
+        name: "My new material",
+        purchasePrice: 100,
+        retailPrice: 150,
+        status: "pending",
+      };
+      jest.clearAllMocks();
+      await expect(MaterialFacade.create(createData)).rejects.toThrow(
+        MaterialDuplicationException
+      );
+      expect(Material.create).toHaveBeenCalledTimes(0);
     });
   });
 
   describe("update", () => {
+    beforeEach(async () => {
+      await resetData();
+      await materialFixtures();
+    });
     it("should update and return the updated material", async () => {
-      // Arrange
-      const mockMaterial = {
-        id: "1",
-        code: "ABC",
-        name: "Material 1",
-        purchasePrice: 100,
-        retailPrice: 150,
-        status: "pending",
-        color: "#000000",
-
-        update: jest.fn().mockResolvedValue({
-          id: "1",
-          code: "XYZ",
-          name: "Material Updated",
-          purchasePrice: 120,
-          retailPrice: 170,
-          status: "active",
-          color: "#ffffff",
-        }),
-      };
+      const id = idGenerator.material(1);
       const updateData: MaterialUpdateAttributes = {
         code: "XYZ",
         name: "Material Updated",
@@ -241,71 +215,75 @@ describe("MaterialFacade", () => {
         status: "active",
         color: "#ffffff",
       };
-      (Material.findByPk as jest.Mock).mockResolvedValue(mockMaterial);
+      const result = await MaterialFacade.update(id, updateData);
+      const record = await Material.findByPk(id);
 
-      // Act
-      const result = await MaterialFacade.update("1", updateData);
-
-      // Assert
-      expect(result).toEqual({
-        id: "1",
-        code: "XYZ",
-        name: "Material Updated",
-        purchasePrice: 120,
-        retailPrice: 170,
-        status: "active",
-        color: "#ffffff",
-      });
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
-      expect(mockMaterial.update).toHaveBeenCalledWith(updateData);
+      expect(result).toEqual(record);
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
-      // Arrange
-      (Material.findByPk as jest.Mock).mockResolvedValue(null);
-
-      // Act & Assert
+      const id = idGenerator.material(199);
       await expect(
-        MaterialFacade.update("1", {
+        MaterialFacade.update(id, {
           name: "Updated Name",
           code: "Updated Code",
           status: "pending",
         })
       ).rejects.toThrow(MaterialNotFoundException);
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
+      expect(Material.findByPk).toHaveBeenCalledWith(id);
+    });
+    it("should throw MaterialDuplicationException if the material code exists", async () => {
+      const id = idGenerator.material(1);
+      await expect(
+        MaterialFacade.update(id, {
+          name: "Updated Name",
+          code: "material-02",
+          status: "pending",
+        })
+      ).rejects.toThrow(MaterialDuplicationException);
+      expect(Material.findByPk).toHaveBeenCalledWith(id);
+    });
+    it("should be fine if the material code inputted is it's own code", async () => {
+      const id = idGenerator.material(1);
+      const updateData: MaterialUpdateAttributes = {
+        code: "material-01",
+        name: "Material Updated",
+        purchasePrice: 120,
+        retailPrice: 170,
+        status: "active",
+        color: "#ffffff",
+      };
+      const result = await MaterialFacade.update(id, updateData);
+      const record = await Material.findByPk(id);
+
+      expect(result).toEqual(record);
     });
   });
 
   describe("remove", () => {
+    beforeEach(async () => {
+      await resetData();
+      await materialFixtures();
+    });
+
     it("should delete the material", async () => {
-      // Arrange
-      const mockMaterial = {
-        id: "1",
-        code: "ABC",
-        name: "Material 1",
-        purchasePrice: 100,
-        retailPrice: 150,
-        destroy: jest.fn(),
-      };
-      (Material.findByPk as jest.Mock).mockResolvedValue(mockMaterial);
+      const id = idGenerator.material(1);
+      await MaterialFacade.delete(id);
 
-      // Act
-      await MaterialFacade.delete("1");
-
-      // Assert
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
-      expect(mockMaterial.destroy).toHaveBeenCalled();
+      expect(Material.findByPk).toHaveBeenCalledWith(id);
+      const record = await Material.findByPk(id);
+      expect(record).toBeNull();
+      const paranoidRecord = await Material.findByPk(id, { paranoid: false });
+      expect(paranoidRecord?.deletedAt).toBeDefined();
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
-      // Arrange
-      (Material.findByPk as jest.Mock).mockResolvedValue(null);
+      const id = idGenerator.material(199);
 
-      // Act & Assert
-      await expect(MaterialFacade.delete("1")).rejects.toThrow(
+      await expect(MaterialFacade.delete(id)).rejects.toThrow(
         MaterialNotFoundException
       );
-      expect(Material.findByPk).toHaveBeenCalledWith("1");
+      expect(Material.findByPk).toHaveBeenCalledWith(id);
     });
   });
 });

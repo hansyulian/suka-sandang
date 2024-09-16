@@ -1,0 +1,8 @@
+const path = require("path");
+
+const rc = {
+  config: path.resolve(__dirname, "../engine/config/config.js"),
+  "migrations-path": path.resolve(__dirname, "../engine/migrations"),
+};
+console.log("sequelizerc", rc);
+module.exports = rc;

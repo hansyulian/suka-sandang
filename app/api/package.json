@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "pnpm build && node dist/index.js",
+    "start": "pnpm build && node dist/src/app.js",
     "dev": "npx nodemon",
     "build": "tsc -p tsconfig.build.json",
     "postbuild": "tsc-alias",
@@ -40,6 +40,7 @@
     "ts-jest": "^29.2.5",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
+    "tslib": "^2.7.0",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   },

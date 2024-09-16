@@ -3,8 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types", "@types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "~test/*": ["test/*"]
     }
   },
   "exclude": ["node_modules", "dist"],

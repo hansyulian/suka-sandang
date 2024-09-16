@@ -1,4 +1,4 @@
-import { BaseAttributes, MutationOmit } from "~/types/base";
+import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/base";
 
 export type UserStatus = "pending" | "active" | "suspended";
 export type UserAttributes = BaseAttributes & {
@@ -7,8 +7,8 @@ export type UserAttributes = BaseAttributes & {
   password: string;
   status: UserStatus;
 };
-export type UserCreationAttributes = MutationOmit<UserAttributes, "status">;
-export type UserUpdateAttributes = MutationOmit<
+export type UserCreationAttributes = CreateOmit<UserAttributes, "status">;
+export type UserUpdateAttributes = UpdateOmit<
   Partial<UserAttributes>,
   "status" | "email"
 >;

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { defineConfig, UserConfig } from "vite";
 
 import react from "@vitejs/plugin-react";
 
@@ -9,7 +9,8 @@ const apiPort = process.env.API_PORT;
 const apiEndpoint = process.env.VITE_API_URL || "/api";
 console.log(`forwarding /api to localhost:${apiPort}`);
 // https://vitejs.dev/config/
-export default defineConfig({
+const config: UserConfig = {
+  base: "./",
   plugins: [react()],
   css: {
     preprocessorOptions: {
@@ -41,9 +42,11 @@ export default defineConfig({
       },
     },
   },
-  test: {
-    environment: "jsdom", // Set jsdom as the test environment
-    globals: true, // Enables Jest-like global methods like 'describe', 'it', etc.
-    setupFiles: "./vitest.setup.js", // If you need a setup file (e.g., for Jest-DOM)
-  },
-});
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(config as any).test = {
+  environment: "jsdom", // Set jsdom as the test environment
+  globals: true, // Enables Jest-like global methods like 'describe', 'it', etc.
+  setupFiles: "./vitest.setup.js", // If you need a setup file (e.g., for Jest-DOM)
+};
+export default defineConfig(config);

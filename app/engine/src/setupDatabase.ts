@@ -1,5 +1,5 @@
 import { Dialect } from "sequelize";
-import { Sequelize } from "sequelize-typescript";
+import { Sequelize, SequelizeOptions } from "sequelize-typescript";
 import { appConfig } from "~/config";
 
 import { User } from "./models";
@@ -12,20 +12,27 @@ type DBConfig = {
   host: string;
   port: number;
   dialect: Dialect;
+  storage?: string;
   logging?: "console";
 };
 
-export async function setupDatabase(dbConfig: DBConfig = appConfig.database) {
+export function setupDatabase(
+  dbConfig: DBConfig = appConfig.database,
+  sequelizeOptions: Partial<SequelizeOptions> = {}
+) {
   const logging = dbConfig.logging === "console" ? console.log : () => {};
-  const sequelize = new Sequelize({
+  const sequelizeConfig: SequelizeOptions = {
     username: dbConfig.username,
     password: dbConfig.password,
     database: dbConfig.database,
     host: dbConfig.host,
     port: dbConfig.port,
     dialect: dbConfig.dialect,
+    storage: dbConfig.storage,
     logging,
     models: [User, Material],
-  });
+    ...sequelizeOptions,
+  };
+  const sequelize = new Sequelize(sequelizeConfig);
   return sequelize;
 }

@@ -3,7 +3,7 @@
 import { useSearchParams } from "react-router-dom";
 import { InferQuery, RouteNames } from "~/config/routes";
 
-export function useSearchQuery<RouteKey extends RouteNames>(key: RouteKey) {
+export function useSearchQuery<RouteKey extends RouteNames>(_key: RouteKey) {
   const [searchParams] = useSearchParams();
   const entries = searchParams.entries();
   const result: any = {};

@@ -1,4 +1,4 @@
-import { BaseAttributes, MutationOmit } from "~/types/base";
+import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/base";
 
 export const materialStatus = ["pending", "active", "inactive"] as const;
 export type MaterialStatus = (typeof materialStatus)[number];
@@ -10,5 +10,5 @@ export type MaterialAttributes = BaseAttributes & {
   retailPrice?: number;
   color?: string;
 };
-export type MaterialCreationAttributes = MutationOmit<MaterialAttributes>;
-export type MaterialUpdateAttributes = MutationOmit<MaterialAttributes>;
+export type MaterialCreationAttributes = CreateOmit<MaterialAttributes>;
+export type MaterialUpdateAttributes = UpdateOmit<MaterialAttributes>;

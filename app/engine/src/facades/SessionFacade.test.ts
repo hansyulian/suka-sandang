@@ -3,77 +3,41 @@ import {
   InvalidCredentialException,
 } from "~/exceptions";
 import { SessionFacade } from "~/facades/SessionFacade";
-import { User } from "~/models";
 import { JwtService } from "~/services";
-import { verifyPassword } from "~/utils";
-
-jest.mock("~/models", () => ({
-  User: {
-    findOne: jest.fn(),
-    findByPk: jest.fn(),
-  },
-}));
-
-jest.mock("~/utils", () => ({
-  verifyPassword: jest.fn(),
-}));
-
-jest.mock("~/services", () => ({
-  JwtService: {
-    signToken: jest.fn(),
-  },
-}));
+import { userFixtures } from "~test/fixtures/userFixtures";
+import { idGenerator } from "~test/utils/idGenerator";
+import { initializeDatabase } from "~test/utils/initializeDatabase";
+import { resetData } from "~test/utils/resetData";
 
 describe("SessionFacade", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+  beforeAll(async () => {
+    initializeDatabase();
+    await resetData();
+    await userFixtures();
   });
-
   describe("emailLogin", () => {
-    it("should throw UserNotFoundException if user is not found", async () => {
-      // Arrange
-      (User.findOne as jest.Mock).mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(
-        SessionFacade.emailLogin("test@example.com", "password")
-      ).rejects.toThrow(UserNotFoundException);
+    it("should be able to login", async () => {
+      const email = "test-user-1@email.com";
+      const password = "password";
+      const result = await SessionFacade.emailLogin(email, password);
+      expect(result.sessionToken).toBeDefined();
+      const decode = await JwtService.verifyToken(result.sessionToken);
+      expect(decode.email).toStrictEqual(email);
+      expect(decode.id).toStrictEqual(idGenerator.user(1));
     });
-
-    it("should throw InvalidCredentialException if password is incorrect", async () => {
-      // Arrange
-      const mockUser = {
-        email: "test@example.com",
-        password: "hashedPassword",
-      };
-      (User.findOne as jest.Mock).mockResolvedValue(mockUser);
-      (verifyPassword as jest.Mock).mockResolvedValue(false); // Password mismatch
-
-      // Act & Assert
-      await expect(
-        SessionFacade.emailLogin("test@example.com", "wrongPassword")
-      ).rejects.toThrow(InvalidCredentialException);
-    });
-
-    it("should return a token if email and password are valid", async () => {
-      // Arrange
-      const mockUser = {
-        email: "test@example.com",
-        password: "hashedPassword",
-      };
-      const mockToken = "validToken";
-      (User.findOne as jest.Mock).mockResolvedValue(mockUser);
-      (verifyPassword as jest.Mock).mockResolvedValue(true); // Password match
-      (JwtService.signToken as jest.Mock).mockResolvedValue(mockToken);
-
-      // Act
-      const result = await SessionFacade.emailLogin(
-        "test@example.com",
-        "password"
+    it("should throw UserNotFoundException when email not exists", async () => {
+      const email = "test-user-nonexist@email.com";
+      const password = "password";
+      expect(SessionFacade.emailLogin(email, password)).rejects.toEqual(
+        new UserNotFoundException({ email })
       );
-
-      // Assert
-      expect(result).toEqual({ sessionToken: mockToken });
+    });
+    it("should throw InvalidCredentialException when password is wrong", async () => {
+      const email = "test-user-1@email.com";
+      const password = "wrongpassword";
+      expect(SessionFacade.emailLogin(email, password)).rejects.toEqual(
+        new InvalidCredentialException()
+      );
     });
   });
 });

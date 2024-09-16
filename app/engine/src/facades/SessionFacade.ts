@@ -24,7 +24,7 @@ async function emailLogin(
     },
   });
   if (!user) {
-    throw new UserNotFoundException();
+    throw new UserNotFoundException({ email });
   }
   if (!(await verifyPassword(password, user.password))) {
     throw new InvalidCredentialException();

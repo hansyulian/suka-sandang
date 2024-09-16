@@ -8,6 +8,7 @@ import {
   MaterialUpdateAttributes,
 } from "@app/common";
 import { isUuid } from "~/utils/isUuid";
+import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
 
 export const MaterialFacade = {
   list,
@@ -62,6 +63,10 @@ async function findByIdOrCode(idOrCode: string) {
 
 async function create(data: MaterialCreationAttributes) {
   const { code, name, purchasePrice, retailPrice, status, color } = data;
+  const recordByCode = await Material.findOne({ where: { code } });
+  if (recordByCode) {
+    throw new MaterialDuplicationException({ code });
+  }
   const result = await Material.create({
     code,
     name,
@@ -70,12 +75,18 @@ async function create(data: MaterialCreationAttributes) {
     status,
     color,
   });
-  return result;
+  return Material.findByPk(result.id);
 }
 
 async function update(id: string, data: MaterialUpdateAttributes) {
   const record = await findById(id);
   const { code, name, purchasePrice, retailPrice, status, color } = data;
+  if (record.code !== code) {
+    const recordByCode = await Material.findOne({ where: { code } });
+    if (recordByCode) {
+      throw new MaterialDuplicationException({ code });
+    }
+  }
   const result = await record.update({
     code,
     name,
@@ -84,7 +95,7 @@ async function update(id: string, data: MaterialUpdateAttributes) {
     color,
     status,
   });
-  return result;
+  return Material.findByPk(result.id);
 }
 
 async function remove(id: string) {

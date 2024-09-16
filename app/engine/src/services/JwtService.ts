@@ -5,10 +5,10 @@ import {
   InvalidJwtTokenException,
 } from "~/exceptions";
 
-interface UserPayload {
+export type UserTokenPayload = {
   id: string;
   email: string;
-}
+};
 
 export const JwtService = {
   signToken,
@@ -18,7 +18,7 @@ export const JwtService = {
 
 // Sign a token
 async function signToken(
-  user: UserPayload,
+  user: UserTokenPayload,
   expiresIn: string | number = appConfig.app.jwtExpiry
 ) {
   const { id, email } = user;
@@ -28,7 +28,7 @@ async function signToken(
 // Verify a token
 async function verifyToken(token: string) {
   try {
-    return jwt.verify(token, appConfig.app.jwtSecret) as UserPayload;
+    return jwt.verify(token, appConfig.app.jwtSecret) as UserTokenPayload;
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       throw new ExpiredJwtTokenException();

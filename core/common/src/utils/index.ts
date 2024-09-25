@@ -12,3 +12,4 @@ export * from "./wait";
 export * from "./pad";
 export * from "./mergePaths";
 export * from "./unslash";
+export * from "./cleanUndefined";

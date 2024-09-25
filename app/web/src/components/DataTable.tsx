@@ -20,7 +20,11 @@ export function DataTable<T extends object>(props: DataTableProps<T>) {
           <Table.Tr>{headers}</Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {data?.records.map((record, index) => renderRow(record, index))}
+          {data?.records.map((record, index) => (
+            <Table.Tr key={`data-table-row-${index}`}>
+              {renderRow(record, index)}
+            </Table.Tr>
+          ))}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>

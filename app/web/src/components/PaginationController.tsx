@@ -41,7 +41,6 @@ export const PaginationController = (props: PaginationControllerProps) => {
     onChange(currentPage + 1);
   };
 
-  console.log(info?.count, lastInfo?.count);
   if (total < 2) {
     return null;
   }

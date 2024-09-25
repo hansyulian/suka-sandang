@@ -4,9 +4,19 @@ import { useEffect, useState } from "react";
 const defaultLimit = 20;
 const defaultOffset = 0;
 
+export type PaginationManagerValue = Partial<
+  Pick<QueryParameters, "limit" | "offset">
+>;
+
+export type PaginationManagerOptions = {
+  onChange?: (value: PaginationManagerValue) => void;
+};
+
 export function usePaginationManager(
-  initialState: Partial<Pick<QueryParameters, "limit" | "offset">> = {}
+  initialState: PaginationManagerValue = {},
+  options: PaginationManagerOptions = {}
 ) {
+  const { onChange } = options;
   const [limit, setLimit] = useState<number>(
     initialState.limit || defaultLimit
   );
@@ -28,8 +38,14 @@ export function usePaginationManager(
       offset,
     },
     set: {
-      limit: setLimit,
-      offset: setOffset,
+      limit: (value: number) => {
+        setLimit(value);
+        onChange?.({ limit: value, offset });
+      },
+      offset: (value: number) => {
+        setLimit(value);
+        onChange?.({ limit, offset: value });
+      },
     },
   };
 }

@@ -1,5 +1,4 @@
 import { Center, Group, Stack, Table } from "@mantine/core";
-import { useState } from "react";
 import { AppLink } from "~/components/AppLink";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -9,35 +8,34 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { TextBox } from "~/components/TextBox";
 import { Api } from "~/config/api";
-import { useNavigate } from "~/hooks/useNavigate";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
+import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
+import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 
 export default function MaterialListPage() {
-  const { search } = useSearchQuery("materialList");
-  const [searchText, setSearchText] = useState(search || "");
-  const paginationManager = usePaginationManager();
-  const sortManager = useSortManager();
-  const navigate = useNavigate();
-  const { data } = Api.material.listMaterial.useRequest(
-    {},
-    {
-      search,
-      ...paginationManager.value,
-      ...sortManager.value,
-    }
-  );
-  const updateSearch = () => {
-    navigate(
-      "materialList",
-      {},
-      {
-        search: searchText,
-      }
-    );
-  };
+  const query = useSearchQuery("materialList");
+  const [searchText, setSearchText] = useReactiveState(query.search || "");
+  const updateSearchQuery = useUpdateSearchQuery("materialList", {}, query);
+  const paginationManager = usePaginationManager(query, {
+    onChange: updateSearchQuery,
+  });
+  const sortManager = useSortManager(query, {
+    onChange: updateSearchQuery,
+  });
 
+  const { data } = Api.material.listMaterial.useRequest({}, query);
+  const updateSearch = () => {
+    updateSearchQuery({
+      search: searchText,
+    });
+  };
+  const onClear = () => {
+    updateSearchQuery({
+      search: "",
+    });
+  };
   return (
     <Stack>
       <PageHeader title="Materials">
@@ -47,6 +45,8 @@ export default function MaterialListPage() {
           onChangeText={setSearchText}
           icon="search"
           onEnterKey={updateSearch}
+          onClear={onClear}
+          clearable
         />
         <LinkButton iconName="add" target="materialAdd" params={{}}>
           Add
@@ -80,7 +80,7 @@ export default function MaterialListPage() {
           </>
         }
         renderRow={(record) => (
-          <Table.Tr>
+          <>
             <Table.Td>{record.name}</Table.Td>
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>{record.color}</Table.Td>
@@ -98,7 +98,7 @@ export default function MaterialListPage() {
                 <IconButton color="red" name="delete"></IconButton>
               </Group>
             </Table.Td>
-          </Table.Tr>
+          </>
         )}
       />
       <Center>

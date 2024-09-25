@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { lazy, LazyExoticComponent, ReactNode } from "react";
+import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
 
 export type CustomRouteWithValidateSearch = {
   path: string;
@@ -59,6 +60,7 @@ export const routes = lockRoutes({
     validateQuery: (query) => {
       return {
         search: query.search as string,
+        ...extractPaginationQuery(query),
       };
     },
   },

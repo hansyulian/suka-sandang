@@ -1,63 +1,60 @@
-import { PaginationQuery } from "@app/common"; // Adjust the import path
-import { extractPaginationQuery } from "~/utils";
+import { QueryParameters } from "@app/common"; // Adjust the import path
+import { extractQueryParameters } from "~/utils";
 
 describe("extractPaginationQuery", () => {
   it("should return all properties when all are provided", () => {
-    const query: PaginationQuery = {
+    const query: QueryParameters = {
       limit: 10,
       offset: 20,
       orderBy: "name",
       orderDirection: "asc",
     };
 
-    const result = extractPaginationQuery(query);
+    const result = extractQueryParameters(query);
 
     expect(result).toEqual({
       limit: 10,
       offset: 20,
-      orderBy: "name",
-      orderDirection: "asc",
+      order: [["name", "asc"]],
     });
   });
 
   it("should return undefined for missing properties", () => {
-    const query: PaginationQuery = {
+    const query: QueryParameters = {
       limit: 10,
       offset: 20,
     } as any;
 
-    const result = extractPaginationQuery(query);
+    const result = extractQueryParameters(query);
 
     expect(result).toEqual({
       limit: 10,
       offset: 20,
-      orderBy: undefined,
-      orderDirection: undefined,
+      order: undefined,
     });
   });
 
   it("should handle an empty query object", () => {
-    const query: PaginationQuery = {} as any;
+    const query: QueryParameters = {} as any;
 
-    const result = extractPaginationQuery(query);
+    const result = extractQueryParameters(query);
 
     expect(result).toEqual({
       limit: undefined,
       offset: undefined,
-      orderBy: undefined,
-      orderDirection: undefined,
+      order: undefined,
     });
   });
 
   it("should return all while filtering stray values", () => {
-    const query: PaginationQuery = {
+    const query: QueryParameters = {
       limit: 10,
       offset: 20,
       orderBy: "name",
       orderDirection: "asc",
     };
 
-    const result = extractPaginationQuery({
+    const result = extractQueryParameters({
       ...query,
       a: "stray value",
       b: "stray value",
@@ -66,14 +63,13 @@ describe("extractPaginationQuery", () => {
     expect(result).toEqual({
       limit: 10,
       offset: 20,
-      orderBy: "name",
-      orderDirection: "asc",
+      order: [["name", "asc"]],
     });
   });
-  it("should handle empty", () => {
-    const query: Partial<PaginationQuery> = {};
+  it("should handle empty with stray values", () => {
+    const query: Partial<QueryParameters> = {};
 
-    const result = extractPaginationQuery({
+    const result = extractQueryParameters({
       ...query,
       a: "stray value",
       b: "stray value",
@@ -82,8 +78,7 @@ describe("extractPaginationQuery", () => {
     expect(result).toEqual({
       limit: undefined,
       offset: undefined,
-      orderBy: undefined,
-      orderDirection: undefined,
+      order: undefined,
     });
   });
 });

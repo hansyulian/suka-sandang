@@ -1,10 +1,23 @@
 import {
   IconDatabase,
   IconDeviceFloppy,
+  IconFilter,
+  IconFilterFilled,
   IconLogout,
+  IconMinus,
   IconPackage,
   IconPlus,
+  IconSortAscending,
+  IconSortDescending,
   IconX,
+  IconProps as BaseIconProps,
+  IconEdit,
+  IconTrash,
+  IconCheck,
+  IconCross,
+  IconSearch,
+  IconArrowsSort,
+  IconCurrencyDollar,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -14,11 +27,23 @@ const iconMap = {
   add: IconPlus,
   save: IconDeviceFloppy,
   close: IconX,
+  sortAscending: IconSortAscending,
+  sortDescending: IconSortDescending,
+  minus: IconMinus,
+  filterInactive: IconFilter,
+  filterActive: IconFilterFilled,
+  edit: IconEdit,
+  delete: IconTrash,
+  notificationSuccess: IconCheck,
+  notificationError: IconCross,
+  search: IconSearch,
+  sortable: IconArrowsSort,
+  price: IconCurrencyDollar,
 };
 
 export type IconNames = keyof typeof iconMap;
 
-export type IconProps = {
+export type IconProps = BaseIconProps & {
   name: IconNames;
 };
 

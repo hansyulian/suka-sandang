@@ -8,7 +8,6 @@
     "web": "pnpm --filter ./app/web dev",
     "migrate": "pnpm --filter ./app/engine migrate",
     "migrate:reset": "pnpm --filter ./app/engine migrate:reset",
-    "watch": "node scripts/watch-all.js",
     "build": "pnpm --recursive build",
     "test": "pnpm --recursive test",
     "integrity-test": "pnpm build && pnpm test",

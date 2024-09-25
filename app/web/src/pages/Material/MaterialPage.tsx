@@ -19,6 +19,7 @@ import { useBack } from "~/hooks/useBack";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
+import { usePersistable } from "~/hooks/usePersistable";
 import { calculateSlug } from "~/utils/calculateSlug";
 import { formValidations } from "~/utils/formValidations";
 
@@ -30,14 +31,18 @@ export default function MaterialPage() {
   const [autoSlug, setAutoSlug] = useState(true);
   const { mutateAsync: create, isPending: isCreatePending } =
     Api.material.createMaterial.useRequest();
-  const { data, error } = Api.material.getMaterial.useRequest(
+  const {
+    data: d,
+    error,
+    isLoading,
+  } = Api.material.getMaterial.useRequest(
     { idOrCode },
     {},
     {
       enabled: isEditMode,
     }
   );
-
+  const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
     Api.material.updateMaterial.useRequest({ id: data?.id ?? "" });
   const back = useBack();
@@ -82,7 +87,7 @@ export default function MaterialPage() {
     return handleCreate();
   };
 
-  const isLoading = isCreatePending || isUpdatePending;
+  const isActing = isCreatePending || isUpdatePending;
 
   useEffect(() => {
     if (data) {
@@ -166,7 +171,7 @@ export default function MaterialPage() {
             onClick={save}
             fullWidth
             leftSection={<Icon name="save" />}
-            loading={isLoading}
+            loading={isActing}
           >
             Save
           </Button>

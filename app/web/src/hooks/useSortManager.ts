@@ -1,18 +1,20 @@
-import { PaginationQuery } from "@app/common";
+import { QueryParameters } from "@app/common";
 import { useState } from "react";
 
 export function useSortManager(
-  initialState: Partial<Pick<PaginationQuery, "orderBy" | "orderDirection">>
+  initialState: Partial<
+    Pick<QueryParameters, "orderBy" | "orderDirection">
+  > = {}
 ) {
   const [orderBy, setOrderBy] = useState(initialState.orderBy);
   const [orderDirection, setOrderDirection] = useState<
-    PaginationQuery["orderDirection"]
+    QueryParameters["orderDirection"]
   >(initialState.orderDirection || "asc");
 
   return {
     value: {
       orderBy,
-      orderDirection,
+      orderDirection: orderBy !== undefined ? orderDirection : undefined,
     },
     set: {
       orderBy: setOrderBy,

@@ -6,8 +6,8 @@ export type CustomRouteWithValidateSearch = {
   path: string;
   element: LazyExoticComponent<() => ReactNode>;
   validateQuery: (
-    search: Record<string, string>
-  ) => Record<string, string | number | boolean>;
+    search: StringQuery // by right all search string params are optional
+  ) => StringQuery;
 };
 
 export type CustomRouteWithoutValidateSearch = {
@@ -49,15 +49,17 @@ export const routes = lockRoutes({
     element: lazy(() => import("~/pages/Session/LoginPage")),
     validateQuery: (query) => {
       return {
-        redirect: query.redirect,
+        redirect: query.redirect as string,
       };
     },
   },
   materialList: {
     path: "/material",
     element: lazy(() => import("~/pages/Material/MaterialListPage")),
-    validateQuery: (_query) => {
-      return {};
+    validateQuery: (query) => {
+      return {
+        search: query.search as string,
+      };
     },
   },
   materialAdd: {
@@ -79,4 +81,5 @@ export type InferParams<RouteKey extends RouteNames> = ExtractRouteParams<
 export type InferQuery<RouteKey extends RouteNames> =
   Routes[RouteKey] extends CustomRouteWithValidateSearch
     ? Partial<ReturnType<Routes[RouteKey]["validateQuery"]>>
-    : undefined;
+    : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      {};

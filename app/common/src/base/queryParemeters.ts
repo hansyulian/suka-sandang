@@ -1,13 +1,14 @@
 import { SchemaType } from "@hyulian/api-contract";
+import { orderDirections } from "~/types/values";
 
-export const paginationQuery = {
+export const queryParameters = {
   offset: { type: "number", optional: true },
   limit: { type: "number", optional: true },
   orderBy: { type: "string", optional: true },
   orderDirection: {
     type: "enum",
-    values: ["asc", "desc"],
+    values: orderDirections,
     optional: true,
   },
 } as const;
-export type PaginationQuery = SchemaType<typeof paginationQuery>;
+export type QueryParameters = Partial<SchemaType<typeof queryParameters>>;

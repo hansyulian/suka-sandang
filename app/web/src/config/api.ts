@@ -14,14 +14,17 @@ import { ReactApiContractClient } from "@hyulian/react-api-contract-client";
 
 import { appConfig } from "~/config/app";
 import { queryKeys } from "~/config/queryKeys";
+import { apiMutationOptions } from "~/utils/apiMutationOptions";
 
 const apiClient = new ReactApiContractClient({
   baseUrl: appConfig.apiBaseUrl,
-  retry: false,
-  refetchOnMount: false,
-  refetchOnReconnect: false,
-  refetchOnWindowFocus: false,
-  retryOnMount: true,
+  queryOptions: {
+    retry: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retryOnMount: true,
+  },
 });
 export const Api = {
   getServerInfo: apiClient.registerQueryContract(
@@ -46,9 +49,30 @@ export const Api = {
       listMaterialsContract,
       queryKeys.material
     ),
-    createMaterial: apiClient.registerMutationContract(createMaterialContract),
-    updateMaterial: apiClient.registerMutationContract(updateMaterialContract),
-    deleteMaterial: apiClient.registerMutationContract(deleteMaterialContract),
+    createMaterial: apiClient.registerMutationContract(
+      createMaterialContract,
+      apiMutationOptions({
+        title: "Material",
+        message: "Adding new material",
+        successMessage: "New material added!",
+      })
+    ),
+    updateMaterial: apiClient.registerMutationContract(
+      updateMaterialContract,
+      apiMutationOptions({
+        title: "Material",
+        message: "Updating material",
+        successMessage: "Material updated!",
+      })
+    ),
+    deleteMaterial: apiClient.registerMutationContract(
+      deleteMaterialContract,
+      apiMutationOptions({
+        title: "Material",
+        message: "Deleting material",
+        successMessage: "Material deleted!",
+      })
+    ),
   },
 };
 if (appConfig.exposeApiClient) {

@@ -1,4 +1,6 @@
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+
 import "./App.css";
 
 import { router } from "~/config/router";
@@ -6,6 +8,8 @@ import { theme } from "~/config/theme";
 
 import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Notifications } from "@mantine/notifications";
+
 import { RouterProvider } from "react-router-dom";
 import "~/config/api";
 import { AuthProvider } from "~/contexts";
@@ -19,6 +23,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <InnerApp />
+          <Notifications />
         </AuthProvider>
       </QueryClientProvider>
     </MantineProvider>

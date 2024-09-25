@@ -1,2 +1,2 @@
-export * from "./extractPaginationQuery";
+export * from "./extractQueryParemeters";
 export * from "./generateStringLikeQuery";

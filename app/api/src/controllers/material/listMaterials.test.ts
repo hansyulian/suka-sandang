@@ -1,5 +1,5 @@
 import { MaterialFacade } from "@app/engine";
-import { extractPaginationQuery, generateStringLikeQuery } from "~/utils";
+import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
 import { apiTest, injectStrayValues } from "~test/utils";
 
 describe("Controller: listMaterialsController", () => {
@@ -27,7 +27,7 @@ describe("Controller: listMaterialsController", () => {
 
     expect(MaterialFacade.list).toHaveBeenCalledWith(
       {},
-      extractPaginationQuery({})
+      extractQueryParameters({})
     );
     const { body } = response;
     expect(body.info).toEqual({ count: 1 });
@@ -72,7 +72,54 @@ describe("Controller: listMaterialsController", () => {
 
     expect(MaterialFacade.list).toHaveBeenCalledWith(
       generateStringLikeQuery(query),
-      extractPaginationQuery({})
+      extractQueryParameters({})
+    );
+    const { body } = response;
+    expect(body.info).toEqual({ count: 1 });
+    expect(body.records.length).toStrictEqual(1);
+    const firstRecord = body.records[0];
+    expect(firstRecord.id).toStrictEqual(id);
+    expect(firstRecord.name).toStrictEqual("Material 1");
+    expect(firstRecord.code).toStrictEqual("material-1");
+    expect(firstRecord.purchasePrice).toStrictEqual(undefined);
+    expect(firstRecord.retailPrice).toStrictEqual(undefined);
+    expect(firstRecord.status).toStrictEqual("active");
+    expect(firstRecord.createdAt).toBeDefined();
+    expect(firstRecord.updatedAt).toBeDefined();
+    expect(firstRecord.deletedAt).toBeUndefined();
+  });
+  it("should handle search query", async () => {
+    const id = "mock-id";
+    (MaterialFacade.list as jest.Mock).mockResolvedValueOnce({
+      records: [
+        {
+          id: id,
+          name: "Material 1",
+          code: "material-1",
+          purchasePrice: null,
+          retailPrice: null,
+          createdAt: new Date(),
+          status: "active",
+          updatedAt: new Date(),
+        },
+      ],
+      count: 1,
+    });
+    const query = {
+      search: "search-test",
+    };
+    const response = await apiTest
+      .withAuthentication()
+      .get(`/material`)
+      .query(injectStrayValues(query))
+      .send();
+
+    expect(MaterialFacade.list).toHaveBeenCalledWith(
+      generateStringLikeQuery({
+        code: query.search,
+        name: query.search,
+      }),
+      extractQueryParameters({})
     );
     const { body } = response;
     expect(body.info).toEqual({ count: 1 });

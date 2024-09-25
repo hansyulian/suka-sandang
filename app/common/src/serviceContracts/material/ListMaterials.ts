@@ -1,5 +1,5 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
-import { paginationQuery } from "~/base";
+import { queryParameters } from "~/base";
 import { modelBase } from "~/base/modelBase";
 
 export const listMaterialsContract = apiContractSchema({
@@ -15,7 +15,11 @@ export const listMaterialsContract = apiContractSchema({
       type: "string",
       optional: true,
     },
-    ...paginationQuery,
+    search: {
+      type: "string",
+      optional: true,
+    },
+    ...queryParameters,
   },
   responseType: "paginatedArray",
   model: {

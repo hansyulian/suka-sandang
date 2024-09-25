@@ -1,11 +1,11 @@
-import { PaginationQuery } from "@app/common";
+import { QueryParameters } from "@app/common";
 import { useEffect, useState } from "react";
 
 const defaultLimit = 20;
 const defaultOffset = 0;
 
 export function usePaginationManager(
-  initialState: Partial<Pick<PaginationQuery, "limit" | "offset">> = {}
+  initialState: Partial<Pick<QueryParameters, "limit" | "offset">> = {}
 ) {
   const [limit, setLimit] = useState<number>(
     initialState.limit || defaultLimit

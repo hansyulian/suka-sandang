@@ -1,19 +1,19 @@
 import { listMaterialsContract } from "@app/common";
 import { MaterialFacade } from "@app/engine";
 import { contractController } from "@hyulian/express-api-contract";
-import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 export const listMaterialsController = contractController(
   listMaterialsContract,
   async ({ query }) => {
-    const { code, name } = query;
+    const { code, name, search } = query;
     const result = await MaterialFacade.list(
       generateStringLikeQuery({
-        code,
-        name,
+        code: code || search,
+        name: name || search,
       }),
-      extractPaginationQuery(query)
+      extractQueryParameters(query)
     );
     return {
       info: {

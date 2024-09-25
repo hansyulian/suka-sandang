@@ -1,2 +1,2 @@
 export * from "./simpleStatusResponse";
-export * from "./paginationQuery";
+export * from "./queryParemeters";

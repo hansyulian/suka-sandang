@@ -9,4 +9,4 @@ type AppRouteContext = {
 
 type QueryState = "pending" | "loading" | "loaded" | "error";
 
-type StringQuery = Record<string, string | number | boolean>;
+type StringQuery = Record<string, string | number | boolean | undefined>;

@@ -1,15 +1,19 @@
 import { ListInfo } from "@hyulian/api-contract";
 import { Group, Pagination, PaginationProps } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
 
 export type PaginationControllerProps = {
   paginationManager: ReturnType<typeof usePaginationManager>;
-  info?: ListInfo;
+  info: ListInfo | undefined;
 } & Omit<PaginationProps, "total">;
 
 export const PaginationController = (props: PaginationControllerProps) => {
   const { info, paginationManager } = props;
-  const total = Math.ceil((info?.count || 0) / paginationManager.value.limit);
+  const [lastInfo, setLastInfo] = useState<ListInfo>();
+  const total = Math.ceil(
+    (info?.count || lastInfo?.count || 0) / paginationManager.value.limit
+  );
 
   const currentPage =
     Math.floor(paginationManager.value.offset / paginationManager.value.limit) +
@@ -17,6 +21,12 @@ export const PaginationController = (props: PaginationControllerProps) => {
   const onChange = (page: number) => {
     paginationManager.set.offset((page - 1) * paginationManager.value.limit);
   };
+
+  useEffect(() => {
+    if (info) {
+      setLastInfo(info);
+    }
+  }, [info]);
 
   const previous = () => {
     if (currentPage <= 1) {
@@ -31,6 +41,7 @@ export const PaginationController = (props: PaginationControllerProps) => {
     onChange(currentPage + 1);
   };
 
+  console.log(info?.count, lastInfo?.count);
   if (total < 2) {
     return null;
   }

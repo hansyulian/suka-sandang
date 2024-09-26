@@ -1,4 +1,4 @@
-import { Center, Group, Stack, Table } from "@mantine/core";
+import { Box, Center, Group, Stack, Table } from "@mantine/core";
 import { AppLink } from "~/components/AppLink";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -83,7 +83,9 @@ export default function MaterialListPage() {
           <>
             <Table.Td>{record.name}</Table.Td>
             <Table.Td>{record.code}</Table.Td>
-            <Table.Td>{record.color}</Table.Td>
+            <Table.Td>
+              {record.color && <Box bg={record.color} h={20} w={20} />}
+            </Table.Td>
             <Table.Td>{record.status}</Table.Td>
             <Table.Td>{record.purchasePrice}</Table.Td>
             <Table.Td>{record.retailPrice}</Table.Td>

@@ -41,14 +41,10 @@ module.exports = {
         allowNull: true,
       },
       status: {
-        type: Sequelize.ENUM("pending", "active", "inactive"),
+        type: Sequelize.ENUM("pending", "active", "inactive", "deleted"),
         allowNull: false,
         defaultValue: "active",
       },
-    });
-    await queryInterface.addIndex("Users", ["email"], {
-      name: "materials_code",
-      unique: true,
     });
   },
   async down(queryInterface, Sequelize) {

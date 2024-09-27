@@ -12,7 +12,6 @@ import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { idGenerator } from "~test/utils/idGenerator";
 import { injectStrayValues } from "~test/utils/injectStrayValues";
 import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
-import { checkStrayValues } from "~test/utils/checkStrayValues";
 
 describe("MaterialFacade", () => {
   const findAndCountAllSpy = jest.spyOn(Material, "findAndCountAll");
@@ -33,9 +32,6 @@ describe("MaterialFacade", () => {
       const mockOptions = {};
       const findOptions = {
         where: {
-          status: {
-            [Op.ne]: "deleted",
-          },
           ...query,
         },
         ...mockOptions,
@@ -60,9 +56,6 @@ describe("MaterialFacade", () => {
       const mockOptions = {};
       const findOptions = {
         where: {
-          status: {
-            [Op.ne]: "deleted",
-          },
           ...query,
         },
         ...mockOptions,
@@ -91,7 +84,7 @@ describe("MaterialFacade", () => {
       const result = await MaterialFacade.findById(id);
 
       expect(result).toEqual(material);
-      expect(findByPkSpy).toHaveBeenCalledWith(id);
+      expect(findByPkSpy).toHaveBeenCalledWith(id, { paranoid: false });
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
@@ -100,7 +93,16 @@ describe("MaterialFacade", () => {
       await expect(MaterialFacade.findById(id)).rejects.toThrow(
         MaterialNotFoundException
       );
-      expect(findByPkSpy).toHaveBeenCalledWith(id);
+      expect(findByPkSpy).toHaveBeenCalledWith(id, { paranoid: false });
+    });
+
+    it("should allow finding deleted material", async () => {
+      const id = idGenerator.material(100);
+      jest.clearAllMocks();
+      const record = await MaterialFacade.findById(id);
+      expect(record).toBeDefined();
+      expect(record.deletedAt).toBeDefined();
+      expect(findByPkSpy).toHaveBeenCalledWith(id, { paranoid: false });
     });
   });
   describe("findByIdOrCode", () => {
@@ -110,7 +112,10 @@ describe("MaterialFacade", () => {
     });
     it("should return the material if found when using code", async () => {
       const code = "material-01";
-      const record = await Material.findOne({ where: { code } });
+      const record = await Material.findOne({
+        where: { code },
+        paranoid: false,
+      });
       jest.clearAllMocks();
 
       const result = await MaterialFacade.findByIdOrCode(code);
@@ -118,21 +123,28 @@ describe("MaterialFacade", () => {
       expect(result).toEqual(record);
       expect(findOneSpy).toHaveBeenCalledWith({
         where: { code },
+        paranoid: false,
       });
     });
     it("should return the material if found when using id", async () => {
       const id = idGenerator.material(1);
-      const material = await Material.findByPk(id);
+      const material = await Material.findByPk(id, { paranoid: false });
       jest.clearAllMocks();
       const result = await MaterialFacade.findByIdOrCode(id);
 
       expect(result).toEqual(material);
-      expect(findOneSpy).toHaveBeenCalledWith({ where: { id } });
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: { id },
+        paranoid: false,
+      });
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
       const code = "materia-01";
-      const record = await Material.findOne({ where: { code } });
+      const record = await Material.findOne({
+        where: { code },
+        paranoid: false,
+      });
       jest.clearAllMocks();
 
       await expect(MaterialFacade.findByIdOrCode(code)).rejects.toThrow(
@@ -140,6 +152,19 @@ describe("MaterialFacade", () => {
       );
       expect(findOneSpy).toHaveBeenCalledWith({
         where: { code },
+        paranoid: false,
+      });
+    });
+
+    it("should allow finding deleted material", async () => {
+      const code = "deleted-material-test";
+      jest.clearAllMocks();
+      const record = await MaterialFacade.findByIdOrCode(code);
+      expect(record).toBeDefined();
+      expect(record.deletedAt).toBeDefined();
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: { code },
+        paranoid: false,
       });
     });
   });
@@ -230,7 +255,7 @@ describe("MaterialFacade", () => {
           status: "pending",
         })
       ).rejects.toThrow(MaterialNotFoundException);
-      expect(Material.findByPk).toHaveBeenCalledWith(id);
+      expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });
     });
     it("should throw MaterialDuplicationException if the material code exists", async () => {
       const id = idGenerator.material(1);
@@ -241,7 +266,7 @@ describe("MaterialFacade", () => {
           status: "pending",
         })
       ).rejects.toThrow(MaterialDuplicationException);
-      expect(Material.findByPk).toHaveBeenCalledWith(id);
+      expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });
     });
     it("should be fine if the material code inputted is it's own code", async () => {
       const id = idGenerator.material(1);
@@ -258,6 +283,42 @@ describe("MaterialFacade", () => {
 
       expect(result).toEqual(record);
     });
+
+    it("should be able to update deleted material, if the status got changed, it will be restored", async () => {
+      const id = idGenerator.material(100);
+
+      const updateData: MaterialUpdateAttributes = {
+        name: "Material Restored",
+        status: "active",
+      };
+      const result = await MaterialFacade.update(id, updateData);
+      const record = await Material.findByPk(id, { paranoid: false });
+      expect(record?.deletedAt).toBeNull();
+      expect(record?.status).toStrictEqual(updateData.status);
+      expect(record?.name).toStrictEqual(updateData.name);
+      expect(result?.deletedAt).toBeNull();
+      expect(result?.status).toStrictEqual(updateData.status);
+      expect(result?.name).toStrictEqual(updateData.name);
+    });
+
+    it("should be able to update deleted material, without restoring the record", async () => {
+      const id = idGenerator.material(100);
+
+      const updateData: MaterialUpdateAttributes = {
+        name: "Material Restored",
+        color: "#388388",
+      };
+      const result = await MaterialFacade.update(id, updateData);
+      const record = await Material.findByPk(id, { paranoid: false });
+      expect(record?.deletedAt).toBeDefined();
+      expect(record?.status).toStrictEqual("deleted");
+      expect(record?.color).toStrictEqual(updateData.color);
+      expect(record?.name).toStrictEqual(updateData.name);
+      expect(result?.deletedAt).toBeDefined();
+      expect(result?.status).toStrictEqual("deleted");
+      expect(result?.color).toStrictEqual(updateData.color);
+      expect(result?.name).toStrictEqual(updateData.name);
+    });
   });
 
   describe("remove", () => {
@@ -270,11 +331,12 @@ describe("MaterialFacade", () => {
       const id = idGenerator.material(1);
       await MaterialFacade.delete(id);
 
-      expect(Material.findByPk).toHaveBeenCalledWith(id);
+      expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });
       const record = await Material.findByPk(id);
       expect(record).toBeNull();
       const paranoidRecord = await Material.findByPk(id, { paranoid: false });
       expect(paranoidRecord?.deletedAt).toBeDefined();
+      expect(paranoidRecord?.status).toStrictEqual("deleted");
     });
 
     it("should throw MaterialNotFoundException if the material is not found", async () => {
@@ -283,7 +345,7 @@ describe("MaterialFacade", () => {
       await expect(MaterialFacade.delete(id)).rejects.toThrow(
         MaterialNotFoundException
       );
-      expect(Material.findByPk).toHaveBeenCalledWith(id);
+      expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });
     });
   });
 });

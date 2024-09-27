@@ -1,6 +1,11 @@
 import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/base";
 
-export const materialStatus = ["pending", "active", "inactive"] as const;
+export const materialStatus = [
+  "pending",
+  "active",
+  "inactive",
+  "deleted",
+] as const;
 export type MaterialStatus = (typeof materialStatus)[number];
 export type MaterialAttributes = BaseAttributes & {
   name: string;

@@ -14,5 +14,12 @@ export async function materialFixtures() {
       })
     );
   }
+  await Material.create({
+    id: idGenerator.material(100),
+    code: "deleted-material-test",
+    name: "Deleted material Test",
+    status: "deleted",
+    deletedAt: new Date(),
+  });
   await Promise.all(promises);
 }

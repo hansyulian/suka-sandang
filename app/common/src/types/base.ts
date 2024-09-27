@@ -13,6 +13,6 @@ export type CreateOmit<T, K extends keyof T = never> = Omit<
 
 // UpdateOmit reuses CreateOmit and additionally omits "id"
 export type UpdateOmit<T, K extends keyof T = never> = Omit<
-  T,
+  Partial<T>,
   keyof BaseAttributes | K
 >;

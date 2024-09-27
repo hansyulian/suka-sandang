@@ -1,5 +1,5 @@
-import { Op, WhereOptions } from "sequelize";
-import { FindAndCountAllResult, QueryOptions } from "~/types";
+import { WhereOptions } from "sequelize";
+import { FindAndCountAllResult, LiteQueryOptions } from "~/types";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import { Material } from "~/models/Material";
 import { processQueryOptions } from "~/utils";
@@ -19,17 +19,12 @@ export const MaterialFacade = {
   delete: remove,
 };
 
-export type MaterialQuery = {};
-
 async function list(
   query: WhereOptions<Material>,
-  options: QueryOptions
+  options: LiteQueryOptions
 ): Promise<FindAndCountAllResult<Material>> {
   const result = await Material.findAndCountAll({
     where: {
-      status: {
-        [Op.ne]: "deleted",
-      },
       ...query,
     },
     ...processQueryOptions(options),
@@ -41,7 +36,7 @@ async function list(
 }
 
 async function findById(id: string) {
-  const result = await Material.findByPk(id);
+  const result = await Material.findByPk(id, { paranoid: false });
   if (!result) {
     throw new MaterialNotFoundException({ id });
   }
@@ -54,6 +49,7 @@ async function findByIdOrCode(idOrCode: string) {
     : { code: idOrCode };
   const result = await Material.findOne({
     where,
+    paranoid: false,
   });
   if (!result) {
     throw new MaterialNotFoundException({ idOrCode });
@@ -81,11 +77,17 @@ async function create(data: MaterialCreationAttributes) {
 async function update(id: string, data: MaterialUpdateAttributes) {
   const record = await findById(id);
   const { code, name, purchasePrice, retailPrice, status, color } = data;
-  if (record.code !== code) {
-    const recordByCode = await Material.findOne({ where: { code } });
+  if (code && record.code !== code) {
+    const recordByCode = await Material.findOne({
+      where: { code },
+      paranoid: false,
+    });
     if (recordByCode) {
       throw new MaterialDuplicationException({ code });
     }
+  }
+  if (status && status !== "deleted") {
+    await record.restore({});
   }
   const result = await record.update({
     code,
@@ -95,10 +97,12 @@ async function update(id: string, data: MaterialUpdateAttributes) {
     color,
     status,
   });
-  return Material.findByPk(result.id);
+  return Material.findByPk(result.id, { paranoid: false });
 }
 
 async function remove(id: string) {
   const record = await findById(id);
+  record.status = "deleted";
+  await record.save();
   await record.destroy();
 }

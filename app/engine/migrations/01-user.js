@@ -39,10 +39,6 @@ module.exports = {
         defaultValue: "active",
       },
     });
-    await queryInterface.addIndex("Users", ["email"], {
-      name: "users_email",
-      unique: true,
-    });
     const id = "00000000-0000-4000-8000-000000000001";
     const name = "Admin";
     const email = "admin@admin.com";

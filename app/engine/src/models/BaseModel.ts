@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 
 export abstract class BaseModel<
   ModelAttributes extends {},
-  ModelCreationAttributes extends {},
+  ModelCreationAttributes extends {}
 > extends Model<ModelAttributes, ModelCreationAttributes> {
   @Column({
     primaryKey: true,
@@ -12,5 +12,5 @@ export abstract class BaseModel<
   declare id: string;
 
   @DeletedAt
-  declare deletedAt: Date | null;
+  declare deletedAt: Date | undefined;
 }

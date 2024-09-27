@@ -1,8 +1,10 @@
 import { materialStatus, UpdateMaterialContract } from "@app/common";
 import {
+  Badge,
   Button,
   ColorPicker,
   Grid,
+  Group,
   NumberInput,
   Select,
   Stack,
@@ -48,6 +50,7 @@ export default function MaterialPage() {
   const back = useBack();
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
+  const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<
     UpdateMaterialContract["body"]
   >({
@@ -122,7 +125,10 @@ export default function MaterialPage() {
 
   return (
     <Stack>
-      <Title>{isEditMode ? data?.name : "New Material"}</Title>
+      <Group>
+        <Title>{isEditMode ? data?.name : "New Material"}</Title>
+        {isDeleted && <Badge color="red">Deleted</Badge>}
+      </Group>
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
           <TextInput label="Name" required {...getInputProps("name")} />

@@ -1,3 +1,4 @@
+import { ContractResponseModel } from "@hyulian/react-api-contract-client";
 import { Box, Center, Group, Stack, Table } from "@mantine/core";
 import { AppLink } from "~/components/AppLink";
 import { DataTable } from "~/components/DataTable";
@@ -8,6 +9,8 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { TextBox } from "~/components/TextBox";
 import { Api } from "~/config/api";
+import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
+import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
 import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
@@ -18,6 +21,8 @@ export default function MaterialListPage() {
   const query = useSearchQuery("materialList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("materialList", {}, query);
+  const confirmationDialog = useConfirmationDialog();
+  const invalidateQuery = useInvalidateQuery();
   const paginationManager = usePaginationManager(query, {
     onChange: updateSearchQuery,
   });
@@ -36,6 +41,21 @@ export default function MaterialListPage() {
       search: "",
     });
   };
+  const promptDelete = (
+    record: ContractResponseModel<typeof Api.material.listMaterial>
+  ) => {
+    confirmationDialog({
+      title: "Confirm Deletion?",
+      children: `Are you sure want to delete ${record.name}`,
+      highlight: [record.name],
+      variant: "danger",
+      onConfirm: async () => {
+        await Api.material.deleteMaterial.request({ id: record.id }, {});
+        await invalidateQuery("material");
+      },
+    });
+  };
+
   return (
     <Stack>
       <PageHeader title="Materials">
@@ -97,7 +117,11 @@ export default function MaterialListPage() {
                   params={{ idOrCode: record.code }}
                   name="edit"
                 ></IconButton>
-                <IconButton color="red" name="delete"></IconButton>
+                <IconButton
+                  color="red"
+                  name="delete"
+                  onClick={() => promptDelete(record)}
+                ></IconButton>
               </Group>
             </Table.Td>
           </>

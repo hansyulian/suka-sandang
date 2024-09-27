@@ -26,6 +26,7 @@ export type ApiContractClientOptions = {
   queryOptions?: ReactApiContractClientQueryOptions;
   mutationOptions?: ReactApiContractClientMutationOptions;
 };
+
 export class ReactApiContractClient extends ApiContractClient {
   public queryOptions: ReactApiContractClientQueryOptions;
   public mutationOptions: ReactApiContractClientMutationOptions;

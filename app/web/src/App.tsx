@@ -9,6 +9,7 @@ import { theme } from "~/config/theme";
 import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 import { RouterProvider } from "react-router-dom";
 import "~/config/api";
@@ -22,7 +23,9 @@ function App() {
     <MantineProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <InnerApp />
+          <ModalsProvider>
+            <InnerApp />
+          </ModalsProvider>
           <Notifications />
         </AuthProvider>
       </QueryClientProvider>

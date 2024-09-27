@@ -15,7 +15,8 @@ export type ArrayResponse<Model extends {}> = {
 };
 export type PaginatedArrayResponse<Model extends {}> = {
   info: ListInfo;
-} & ArrayResponse<Model>;
+  records: Model[];
+};
 
 export type ApiContractResponseType = "object" | "array" | "paginatedArray";
 
@@ -29,3 +30,12 @@ export type InferResponseType<
   : RT extends "paginatedArray"
   ? PaginatedArrayResponse<Model>
   : "failToInferContractResponse";
+
+export type ResponseModel<Response extends ResponseBase<any>> =
+  Response extends ArrayResponse<infer Model>
+    ? Model
+    : Response extends PaginatedArrayResponse<infer Model>
+    ? Model
+    : Response extends ObjectResponse<infer Model>
+    ? Model
+    : "failToInferModel";

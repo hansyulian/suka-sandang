@@ -1,6 +1,6 @@
 import { Order } from "sequelize";
 
-export type QueryOptions = {
+export type SequelizePaginationOptions = {
   limit?: number;
   offset?: number;
   order?: Order;

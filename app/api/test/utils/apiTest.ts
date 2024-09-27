@@ -3,11 +3,12 @@ import Express from "express";
 import { controllers } from "~/controllers";
 import supertest, { Response } from "supertest";
 import { mockAuthenticated } from "~test/utils/mockAuthenticated";
+import { initializationMiddleware } from "~/middlewares/initializationMiddleware";
 
 const app = atlas(
   (atlas) => {
     atlas.use(Express.json());
-
+    atlas.middleware(initializationMiddleware);
     atlas.router("/", controllers);
   },
   {

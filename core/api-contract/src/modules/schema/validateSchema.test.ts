@@ -25,6 +25,28 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
 
     expect(result).toEqual({ errors: [], value: { age: 25 } });
   });
+  it("should validate a schema with a number field", () => {
+    const schema = objectSchema({
+      age: { type: "number" },
+    });
+
+    const values = { age: "25" } as any;
+
+    const result = validateSchema(values, schema);
+
+    expect(result).toEqual({
+      errors: [
+        {
+          actual: "string",
+          expected: "number",
+          key: "age",
+          type: "invalidType",
+          value: "25",
+        },
+      ],
+      value: { age: 25 },
+    });
+  });
 
   it("should validate a schema with a boolean field", () => {
     const schema = objectSchema({

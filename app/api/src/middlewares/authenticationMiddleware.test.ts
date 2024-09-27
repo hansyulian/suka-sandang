@@ -1,5 +1,5 @@
 import { UserAttributes } from "@app/common";
-import { JwtService, UserFacade } from "@app/engine";
+import { JwtService } from "@app/engine";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { appConfig } from "~/config";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
@@ -18,36 +18,17 @@ describe("authenticationMidleware", () => {
     (JwtService.verifyToken as jest.Mock).mockResolvedValueOnce({
       id: "mock-id",
     });
-    const user: UserAttributes = {
-      id: "mock-id",
-      email: "test@email.com",
-      name: "name",
-      password: "password",
-      status: "active",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    (UserFacade.findById as jest.Mock).mockResolvedValueOnce(user);
     const testData = generateMiddlewareTestData();
+    const mockUser = mockAuthenticated();
     testData.request.cookies[appConfig.jwtCookieKey] = "mock-jwt";
     await authenticationMiddleware(testData);
-    expect(testData.response.locals.user).toEqual(user);
+    expect(testData.response.locals.user).toEqual(mockUser);
   });
   it("should throw unauthorized if there aren't any authorization used", async () => {
     (JwtService.verifyToken as jest.Mock).mockResolvedValueOnce({
       id: "mock-id",
     });
-    const user: UserAttributes = {
-      id: "mock-id",
-      email: "test@email.com",
-      name: "name",
-      password: "password",
-      status: "active",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    (UserFacade.findById as jest.Mock).mockResolvedValueOnce(user);
-
+    mockAuthenticated();
     const testData = generateMiddlewareTestData();
 
     expect(authenticationMiddleware(testData)).rejects.toThrow(

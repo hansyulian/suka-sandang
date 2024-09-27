@@ -7,7 +7,7 @@ describe("Controller: updateUserInfo", () => {
     await apiTest.testRequireAuthentication().put("/session/me");
   });
   it("should call UserFacade.update", async () => {
-    (UserFacade.update as jest.Mock).mockResolvedValueOnce({
+    UserFacade.prototype.update = jest.fn().mockResolvedValueOnce({
       ...mockAuthenticatedUser,
       name: "updated-name",
     });
@@ -22,9 +22,12 @@ describe("Controller: updateUserInfo", () => {
           status: "suspended",
         })
       );
-    expect(UserFacade.update).toHaveBeenCalledWith(mockAuthenticatedUser.id, {
-      name: "updated-name",
-    });
+    expect(UserFacade.prototype.update).toHaveBeenCalledWith(
+      mockAuthenticatedUser.id,
+      {
+        name: "updated-name",
+      }
+    );
     const { body, status } = response;
     expect(status).toStrictEqual(200);
     expect(body).toEqual({

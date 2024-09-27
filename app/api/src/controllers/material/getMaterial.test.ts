@@ -8,7 +8,7 @@ describe("Controller: getMaterialController", () => {
   });
   it("should call material facade get function", async () => {
     const idOrCode = "mock-id";
-    (MaterialFacade.findByIdOrCode as jest.Mock).mockResolvedValueOnce({
+    MaterialFacade.prototype.findByIdOrCode = jest.fn().mockResolvedValueOnce({
       id: idOrCode,
       name: "Material 1",
       code: "material-1",
@@ -23,7 +23,9 @@ describe("Controller: getMaterialController", () => {
       .get(`/material/${idOrCode}`)
       .send();
 
-    expect(MaterialFacade.findByIdOrCode).toHaveBeenCalledWith(idOrCode);
+    expect(MaterialFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+      idOrCode
+    );
     const { body } = response;
     expect(body.id).toStrictEqual(idOrCode);
     expect(body.name).toStrictEqual("Material 1");
@@ -37,7 +39,7 @@ describe("Controller: getMaterialController", () => {
   });
   it("should handle not found exception if id not found", async () => {
     const idOrCode = "mock-id";
-    (MaterialFacade.findByIdOrCode as jest.Mock).mockRejectedValueOnce(
+    MaterialFacade.prototype.findByIdOrCode = jest.fn().mockRejectedValueOnce(
       new MaterialNotFoundException({
         idOrCode,
       })
@@ -47,7 +49,9 @@ describe("Controller: getMaterialController", () => {
       .get(`/material/${idOrCode}`)
       .send();
 
-    expect(MaterialFacade.findByIdOrCode).toHaveBeenCalledWith(idOrCode);
+    expect(MaterialFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+      idOrCode
+    );
     expectRejection(response, new MaterialNotFoundException({ idOrCode }));
   });
 });

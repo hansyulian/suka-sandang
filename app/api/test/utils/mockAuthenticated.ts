@@ -17,6 +17,6 @@ export function mockAuthenticated() {
   const mockUser = {
     ...mockAuthenticatedUser,
   };
-  (UserFacade.findById as jest.Mock).mockResolvedValueOnce(mockUser);
+  UserFacade.prototype.findById = jest.fn().mockResolvedValueOnce(mockUser);
   return mockUser;
 }

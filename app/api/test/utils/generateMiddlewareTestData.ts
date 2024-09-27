@@ -1,3 +1,4 @@
+import { Engine } from "@app/engine";
 import {
   generateMockExpressRequest,
   RequestContext,
@@ -11,6 +12,8 @@ export function generateMiddlewareTestData<
   context?: Partial<RequestContext<TParams, TQuery, TBody>>
 ): RequestContext<TParams, TQuery, TBody> {
   const [mockRequest, mockResponse] = generateMockExpressRequest();
+  mockResponse.locals.engine = new Engine();
+
   return {
     body: {} as any,
     locals: mockResponse.locals as any,

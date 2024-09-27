@@ -4,7 +4,7 @@ import { apiTest, injectStrayValues, schemaValidationBody } from "~test/utils";
 
 describe("Controller: emailLogin", () => {
   it("should call SessionFacade.emailLogin function with required parameters", async () => {
-    (SessionFacade.emailLogin as jest.Mock).mockResolvedValueOnce({
+    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {
@@ -29,7 +29,7 @@ describe("Controller: emailLogin", () => {
     });
   });
   it("should be error when email or password is empty", async () => {
-    (SessionFacade.emailLogin as jest.Mock).mockResolvedValueOnce({
+    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {};
@@ -54,7 +54,7 @@ describe("Controller: emailLogin", () => {
     );
   });
   it("email must be string and password must be string", async () => {
-    (SessionFacade.emailLogin as jest.Mock).mockResolvedValueOnce({
+    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {

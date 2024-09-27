@@ -166,7 +166,7 @@ function validateNumber(
   spec: NumberSpecOptions
 ): ValidationReturn {
   const errors: SchemaValidationExceptionDetail[] = [];
-  if (typeof value !== "number" && Number.isNaN(value)) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
     errors.push({
       type: "invalidType",
       key,

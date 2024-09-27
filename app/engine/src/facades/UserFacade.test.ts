@@ -1,4 +1,5 @@
 import { UserUpdateAttributes } from "@app/common";
+import { Engine } from "~/Engine";
 import { UserNotFoundException } from "~/exceptions";
 import { UserFacade } from "~/facades/UserFacade";
 import { User } from "~/models";
@@ -10,6 +11,7 @@ import { injectStrayValues } from "~test/utils/injectStrayValues";
 import { resetData } from "~test/utils/resetData";
 
 describe("UserFacade", () => {
+  const engine = new Engine();
   let findByPkSpy = jest.spyOn(User, "findByPk");
   beforeAll(async () => {
     initializeDatabase();
@@ -23,7 +25,7 @@ describe("UserFacade", () => {
   describe("findById", () => {
     it("should return the user object if the user is found", async () => {
       const userId = idGenerator.user(1);
-      const result = await UserFacade.findById(userId);
+      const result = await engine.user.findById(userId);
       const user = await User.findByPk(userId);
       expect(result).toEqual(user);
       expect(findByPkSpy).toHaveBeenCalledWith(userId);
@@ -32,7 +34,7 @@ describe("UserFacade", () => {
     it("should throw UserNotFoundException if the user is not found", async () => {
       const userId = idGenerator.user(99);
       const findByPkSpy = jest.spyOn(User, "findByPk");
-      await expect(UserFacade.findById(userId)).rejects.toThrow(
+      await expect(engine.user.findById(userId)).rejects.toThrow(
         UserNotFoundException
       );
       expect(findByPkSpy).toHaveBeenCalledWith(userId);
@@ -43,7 +45,7 @@ describe("UserFacade", () => {
     it("should update user info and return the updated user", async () => {
       const userId = idGenerator.user(1);
       const updateData: UserUpdateAttributes = { name: "New Name" };
-      const result = await UserFacade.update(userId, updateData);
+      const result = await engine.user.update(userId, updateData);
       const updatedUser = await User.findByPk(userId);
 
       expect(result).toEqual(updatedUser);
@@ -56,7 +58,7 @@ describe("UserFacade", () => {
         name: "New Name",
       };
 
-      const result = await UserFacade.update(
+      const result = await engine.user.update(
         userId,
         injectStrayValues(updateData)
       );
@@ -71,7 +73,7 @@ describe("UserFacade", () => {
       const userId = idGenerator.user(99);
 
       await expect(
-        UserFacade.update(userId, { name: "New Name" })
+        engine.user.update(userId, { name: "New Name" })
       ).rejects.toThrow(UserNotFoundException);
       expect(findByPkSpy).toHaveBeenCalledWith(userId);
     });

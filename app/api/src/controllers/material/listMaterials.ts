@@ -1,14 +1,14 @@
 import { listMaterialsContract } from "@app/common";
-import { MaterialFacade } from "@app/engine";
 import { contractController } from "@hyulian/express-api-contract";
 import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 export const listMaterialsController = contractController(
   listMaterialsContract,
-  async ({ query }) => {
+  async ({ query, locals }) => {
+    const { engine } = locals;
     const { code, name, search } = query;
-    const result = await MaterialFacade.list(
+    const result = await engine.material.list(
       generateStringLikeQuery({
         code: code || search,
         name: name || search,

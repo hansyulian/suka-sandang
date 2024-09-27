@@ -1,13 +1,12 @@
 import { createMaterialContract } from "@app/common";
-import { MaterialFacade } from "@app/engine";
 import { contractController } from "@hyulian/express-api-contract";
 
 export const createMaterialController = contractController(
   createMaterialContract,
-  async (context) => {
-    const { body } = context;
+  async ({ body, locals }) => {
+    const { engine } = locals;
     const { code, name, purchasePrice, retailPrice, color, status } = body;
-    const result = await MaterialFacade.create({
+    const result = await engine.material.create({
       code,
       name,
       purchasePrice,

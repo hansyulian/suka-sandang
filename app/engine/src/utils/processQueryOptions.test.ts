@@ -1,5 +1,5 @@
 import { appConfig } from "~/config";
-import { QueryOptions } from "~/types";
+import { SequelizePaginationOptions } from "~/types";
 import { processQueryOptions } from "~/utils/processQueryOptions";
 
 // Mock appConfig
@@ -13,13 +13,16 @@ jest.mock("~/config", () => ({
 
 describe("processQueryOptions", () => {
   it("should return the original query if limit is not provided", () => {
-    const query: QueryOptions = { offset: 10, order: [["name", "ASC"]] };
+    const query: SequelizePaginationOptions = {
+      offset: 10,
+      order: [["name", "ASC"]],
+    };
     const result = processQueryOptions(query);
     expect(result).toEqual(query);
   });
 
   it("should return the original query if limit is within bounds", () => {
-    const query: QueryOptions = {
+    const query: SequelizePaginationOptions = {
       limit: 50,
       offset: 10,
       order: [["name", "ASC"]],
@@ -29,7 +32,7 @@ describe("processQueryOptions", () => {
   });
 
   it("should cap the limit to maximumRetrieval if it exceeds the maximum", () => {
-    const query: QueryOptions = {
+    const query: SequelizePaginationOptions = {
       limit: 150,
       offset: 10,
       order: [["name", "ASC"]],
@@ -41,13 +44,13 @@ describe("processQueryOptions", () => {
   });
 
   it("should handle empty query options", () => {
-    const query: QueryOptions = {};
+    const query: SequelizePaginationOptions = {};
     const result = processQueryOptions(query);
     expect(result).toEqual(query);
   });
 
   it("should not modify the query if limit equals maximumRetrieval", () => {
-    const query: QueryOptions = {
+    const query: SequelizePaginationOptions = {
       limit: appConfig.app.maximumRetrieval,
       offset: 20,
     };

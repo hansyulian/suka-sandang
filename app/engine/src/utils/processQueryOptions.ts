@@ -1,7 +1,7 @@
-import { QueryOptions } from "~/types";
+import { SequelizePaginationOptions } from "~/types";
 import { appConfig } from "~/config";
 
-export function processQueryOptions(query: QueryOptions) {
+export function processQueryOptions(query: SequelizePaginationOptions) {
   const result = {
     ...query,
   };

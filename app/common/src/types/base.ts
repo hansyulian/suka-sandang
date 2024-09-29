@@ -16,3 +16,5 @@ export type UpdateOmit<T, K extends keyof T = never> = Omit<
   Partial<T>,
   keyof BaseAttributes | K
 >;
+
+export type OmitBase<T> = Omit<T, keyof BaseAttributes>;

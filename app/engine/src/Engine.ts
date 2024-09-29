@@ -1,4 +1,9 @@
-import { MaterialFacade, SessionFacade, UserFacade } from "~/facades";
+import {
+  EnumFacade,
+  MaterialFacade,
+  SessionFacade,
+  UserFacade,
+} from "~/facades";
 
 export type EngineOptions = {};
 export class Engine {
@@ -7,11 +12,13 @@ export class Engine {
   public user: UserFacade;
   public session: SessionFacade;
   public material: MaterialFacade;
+  public enum: EnumFacade;
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
     this.user = new UserFacade(this);
     this.session = new SessionFacade(this);
     this.material = new MaterialFacade(this);
+    this.enum = new EnumFacade(this);
   }
 }

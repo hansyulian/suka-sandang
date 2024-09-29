@@ -11,4 +11,8 @@ export type FindAndCountAllResult<T> = {
   count: number;
 };
 
+export type FindAllResult<T> = {
+  records: T[];
+};
+
 export { Op } from "sequelize";

@@ -2,12 +2,13 @@ import { pad } from "@hyulian/common";
 const width = 2;
 export const idGenerator = {
   user,
+  enum: enumValue,
   material,
 };
 
 ("00000000-0000-4000-8000-000000000000");
 
-const entityKeys = ["user", "material"] as const;
+const entityKeys = ["user", "enum", "material"] as const;
 type EntityKey = (typeof entityKeys)[number];
 const entityKeyIndex: Record<EntityKey, number> = {} as any;
 entityKeys.forEach((value: EntityKey, index) => {
@@ -32,4 +33,8 @@ function user(id: number) {
 
 function material(id: number) {
   return generator("material", [id]);
+}
+
+function enumValue(id: number) {
+  return generator("enum", [id]);
 }

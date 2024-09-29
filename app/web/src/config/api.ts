@@ -5,6 +5,7 @@ import {
   getMaterialContract,
   getServerInfoContract,
   getUserInfoContract,
+  listEnumsContract,
   listMaterialsContract,
   logoutContract,
   updateMaterialContract,
@@ -31,6 +32,12 @@ export const Api = {
     getServerInfoContract,
     queryKeys.serverInfo
   ),
+  enum: {
+    listEnums: apiClient.registerQueryContract(
+      listEnumsContract,
+      queryKeys.enum
+    ),
+  },
   session: {
     getUserInfo: apiClient.registerQueryContract(
       getUserInfoContract,

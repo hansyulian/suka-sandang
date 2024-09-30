@@ -1,9 +1,12 @@
+import { isEmail } from "@hyulian/common";
+
 type FormValidations = {
   required?: boolean;
+  email?: boolean;
 };
 
 export function formValidations(settings: FormValidations) {
-  const { required } = settings;
+  const { required, email } = settings;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (value: any) => {
     if (
@@ -14,6 +17,9 @@ export function formValidations(settings: FormValidations) {
         value.length === 0)
     ) {
       return "Required";
+    }
+    if (email && value && !isEmail(value)) {
+      return "Invalid Email";
     }
     return undefined;
   };

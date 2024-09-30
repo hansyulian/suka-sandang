@@ -43,7 +43,7 @@ export function usePaginationManager(
         onChange?.({ limit: value, offset });
       },
       offset: (value: number) => {
-        setLimit(value);
+        setOffset(value);
         onChange?.({ limit, offset: value });
       },
     },

@@ -11,6 +11,7 @@ export const queryKeys = lockQueryKeys({
   userInfo: "userInfo",
   material: "material",
   enum: "enum",
+  supplier: "supplier",
 } as const);
 
 export type QueryKeys = typeof queryKeys;

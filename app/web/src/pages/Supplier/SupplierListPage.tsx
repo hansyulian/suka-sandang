@@ -1,5 +1,5 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract-client";
-import { Box, Center, Group, Stack, Table } from "@mantine/core";
+import { Center, Group, Stack, Table } from "@mantine/core";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -17,10 +17,10 @@ import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 
-export default function MaterialListPage() {
-  const query = useSearchQuery("materialList");
+export default function SupplierListPage() {
+  const query = useSearchQuery("supplierList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
-  const updateSearchQuery = useUpdateSearchQuery("materialList", {}, query);
+  const updateSearchQuery = useUpdateSearchQuery("supplierList", {}, query);
   const confirmationDialog = useConfirmationDialog();
   const invalidateQuery = useInvalidateQuery();
   const paginationManager = usePaginationManager(query, {
@@ -30,7 +30,7 @@ export default function MaterialListPage() {
     onChange: updateSearchQuery,
   });
 
-  const { data } = Api.material.listMaterial.useRequest({}, query);
+  const { data } = Api.supplier.listSupplier.useRequest({}, query);
   const updateSearch = () => {
     updateSearchQuery({
       search: searchText,
@@ -42,7 +42,7 @@ export default function MaterialListPage() {
     });
   };
   const promptDelete = (
-    record: ContractResponseModel<typeof Api.material.listMaterial>
+    record: ContractResponseModel<typeof Api.supplier.listSupplier>
   ) => {
     confirmationDialog({
       title: "Confirm Deletion?",
@@ -50,15 +50,15 @@ export default function MaterialListPage() {
       highlight: [record.name],
       variant: "danger",
       onConfirm: async () => {
-        await Api.material.deleteMaterial.request({ id: record.id }, {});
-        await invalidateQuery("material");
+        await Api.supplier.deleteSupplier.request({ id: record.id }, {});
+        await invalidateQuery("supplier");
       },
     });
   };
 
   return (
     <Stack>
-      <PageHeader title="Materials">
+      <PageHeader title="Suppliers">
         <TextBox
           placeholder="Search"
           value={searchText}
@@ -68,7 +68,7 @@ export default function MaterialListPage() {
           onClear={onClear}
           clearable
         />
-        <LinkButton iconName="add" target="materialAdd" params={{}}>
+        <LinkButton iconName="add" target="supplierAdd" params={{}}>
           Add
         </LinkButton>
       </PageHeader>
@@ -80,21 +80,17 @@ export default function MaterialListPage() {
             <SortableTableHeader sortManager={sortManager} column="name">
               Name
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="code">
-              Code
+            <SortableTableHeader sortManager={sortManager} column="email">
+              Email
             </SortableTableHeader>
-            <Table.Th>Color</Table.Th>
+            <SortableTableHeader sortManager={sortManager} column="phone">
+              Phone
+            </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="address">
+              Address
+            </SortableTableHeader>
             <SortableTableHeader sortManager={sortManager} column="status">
               Status
-            </SortableTableHeader>
-            <SortableTableHeader
-              sortManager={sortManager}
-              column="purchasePrice"
-            >
-              Purchase
-            </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="retailPrice">
-              Retail
             </SortableTableHeader>
             <Table.Th></Table.Th>
           </>
@@ -102,18 +98,15 @@ export default function MaterialListPage() {
         renderRow={(record) => (
           <>
             <Table.Td>{record.name}</Table.Td>
-            <Table.Td>{record.code}</Table.Td>
-            <Table.Td>
-              {record.color && <Box bg={record.color} h={20} w={20} />}
-            </Table.Td>
+            <Table.Td>{record.email}</Table.Td>
+            <Table.Td>{record.phone}</Table.Td>
+            <Table.Td>{record.address}</Table.Td>
             <Table.Td>{record.status}</Table.Td>
-            <Table.Td>{record.purchasePrice}</Table.Td>
-            <Table.Td>{record.retailPrice}</Table.Td>
             <Table.Td>
               <Group>
                 <AppLinkIcon
-                  target="materialEdit"
-                  params={{ idOrCode: record.code }}
+                  target="supplierEdit"
+                  params={{ id: record.id }}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton

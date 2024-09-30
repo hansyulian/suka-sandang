@@ -5,10 +5,12 @@ import { createRouter } from "@hyulian/express-api-contract";
 import { getServerInfoController } from "./getServerInfo";
 import { materialController } from "~/controllers/material";
 import { enumController } from "~/controllers/enum";
+import { supplierController } from "~/controllers/supplier";
 
 export const controllers = createRouter((atlas) => {
   atlas.controller(getServerInfoController);
   atlas.router("enum", enumController);
   atlas.router("session", sessionController);
   atlas.router("material", materialController);
+  atlas.router("supplier", supplierController);
 });

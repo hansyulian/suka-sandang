@@ -18,6 +18,7 @@ export const updateMaterialContract = apiContractSchema({
     status: {
       type: "enum",
       values: materialStatus,
+      optional: true,
     },
   },
   bodyType: "object",

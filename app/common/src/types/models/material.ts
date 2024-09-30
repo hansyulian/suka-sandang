@@ -1,4 +1,5 @@
-import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/base";
+import { Optional } from "@hyulian/common";
+import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
 export const materialStatus = [
   "pending",
@@ -15,5 +16,7 @@ export type MaterialAttributes = BaseAttributes & {
   retailPrice?: number;
   color?: string;
 };
-export type MaterialCreationAttributes = CreateOmit<MaterialAttributes>;
+export type MaterialCreationAttributes = CreateOmit<
+  Optional<MaterialAttributes, "status">
+>;
 export type MaterialUpdateAttributes = UpdateOmit<MaterialAttributes>;

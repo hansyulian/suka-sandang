@@ -1,18 +1,17 @@
-import { materialStatus } from "@app/common";
+import { supplierStatus } from "@app/common";
 import {
   Badge,
   Button,
-  ColorPicker,
   Grid,
   Group,
-  NumberInput,
   Select,
   Stack,
+  Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -21,24 +20,22 @@ import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
-import { MaterialForm } from "~/types/forms";
-import { calculateSlug } from "~/utils/calculateSlug";
+import { SupplierForm } from "~/types/forms";
 import { formValidations } from "~/utils/formValidations";
 
 const defaultSpan = {};
 
-export default function MaterialPage() {
-  const { idOrCode } = useParams("materialEdit");
-  const isEditMode = idOrCode !== undefined;
-  const [autoSlug, setAutoSlug] = useState(true);
+export default function SupplierPage() {
+  const { id } = useParams("supplierEdit");
+  const isEditMode = id !== undefined;
   const { mutateAsync: create, isPending: isCreatePending } =
-    Api.material.createMaterial.useRequest();
+    Api.supplier.createSupplier.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.material.getMaterial.useRequest(
-    { idOrCode },
+  } = Api.supplier.getSupplier.useRequest(
+    { id },
     {},
     {
       enabled: isEditMode,
@@ -46,35 +43,34 @@ export default function MaterialPage() {
   );
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
-    Api.material.updateMaterial.useRequest({ id: data?.id ?? "" });
-
+    Api.supplier.updateSupplier.useRequest({ id: data?.id ?? "" });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
-  const { setValues, getInputProps, validate, values } = useForm<MaterialForm>({
+  const { setValues, getInputProps, validate, values } = useForm<SupplierForm>({
     initialValues: {
       name: "",
-      code: "",
-      color: "",
-      purchasePrice: undefined,
-      retailPrice: undefined,
+      address: "",
+      email: "",
+      phone: "",
+      remarks: "",
       status: "pending",
     },
     validate: {
       name: formValidations({ required: true }),
-      code: formValidations({ required: true }),
+      email: formValidations({ required: true }),
     },
   });
 
   const handleCreate = async () => {
     const result = await create(values);
-    await invalidateQuery("material");
-    navigate("materialEdit", { idOrCode: result.code });
+    await invalidateQuery("supplier");
+    navigate("supplierEdit", { id: result.id });
   };
 
   const handleUpdate = async () => {
     await update(values);
-    await invalidateQuery("material");
+    await invalidateQuery("supplier");
   };
 
   const save = () => {
@@ -95,27 +91,10 @@ export default function MaterialPage() {
       setValues({
         ...data,
       });
-      setAutoSlug(false);
     }
   }, [data, setValues]);
-
-  useEffect(() => {
-    if (!autoSlug) {
-      return;
-    }
-    if (values.name) {
-      setValues({
-        code: calculateSlug(values.name),
-      });
-    }
-  }, [autoSlug, setValues, values.name]);
-
-  const onSlugChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setAutoSlug(false);
-    return getInputProps("code").onChange(e);
-  };
   const onCancel = () => {
-    navigate("materialList", {});
+    navigate("supplierList", {});
   };
 
   if (isLoading) {
@@ -128,7 +107,7 @@ export default function MaterialPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? data?.name : "New Material"}</Title>
+        <Title>{isEditMode ? data?.name : "New Supplier"}</Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">
@@ -136,40 +115,24 @@ export default function MaterialPage() {
           <TextInput label="Name" required {...getInputProps("name")} />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <TextInput
-            label="Code"
-            required
-            {...getInputProps("code")}
-            onChange={onSlugChange}
-          />
+          <TextInput label="Email" {...getInputProps("email")} />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
-            label="Purchase Price"
-            hideControls
-            {...getInputProps("purchasePrice")}
-          />
+          <TextInput label="Phone" {...getInputProps("phone")} />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
-            label="Retail Price"
-            hideControls
-            {...getInputProps("retailPrice")}
-          />
+          <Textarea rows={5} label="Address" {...getInputProps("address")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
         </Grid.Col>
         <Grid.Col>
           <Select
             required
             label="Status"
-            data={materialStatus}
+            data={supplierStatus}
             {...getInputProps("status")}
           />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <Stack>
-            <TextInput label="Color" {...getInputProps("color")} />
-            <ColorPicker format="hex" fullWidth {...getInputProps("color")} />
-          </Stack>
         </Grid.Col>
       </Grid>
       <Grid>

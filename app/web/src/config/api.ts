@@ -1,14 +1,19 @@
 import {
   createMaterialContract,
+  createSupplierContract,
   deleteMaterialContract,
+  deleteSupplierContract,
   emailLoginContract,
   getMaterialContract,
   getServerInfoContract,
+  getSupplierContract,
   getUserInfoContract,
   listEnumsContract,
   listMaterialsContract,
+  listSuppliersContract,
   logoutContract,
   updateMaterialContract,
+  updateSupplierContract,
   updateUserInfoContract,
 } from "@app/common";
 import { ReactApiContractClient } from "@hyulian/react-api-contract-client";
@@ -78,6 +83,40 @@ export const Api = {
         title: "Material",
         message: "Deleting material",
         successMessage: "Material deleted!",
+      })
+    ),
+  },
+  supplier: {
+    getSupplier: apiClient.registerQueryContract(
+      getSupplierContract,
+      queryKeys.supplier
+    ),
+    listSupplier: apiClient.registerQueryContract(
+      listSuppliersContract,
+      queryKeys.supplier
+    ),
+    createSupplier: apiClient.registerMutationContract(
+      createSupplierContract,
+      apiMutationOptions({
+        title: "Supplier",
+        message: "Adding new supplier",
+        successMessage: "New supplier added!",
+      })
+    ),
+    updateSupplier: apiClient.registerMutationContract(
+      updateSupplierContract,
+      apiMutationOptions({
+        title: "Supplier",
+        message: "Updating supplier",
+        successMessage: "Supplier updated!",
+      })
+    ),
+    deleteSupplier: apiClient.registerMutationContract(
+      deleteSupplierContract,
+      apiMutationOptions({
+        title: "Supplier",
+        message: "Deleting supplier",
+        successMessage: "Supplier deleted!",
       })
     ),
   },

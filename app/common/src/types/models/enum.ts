@@ -1,4 +1,4 @@
-import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/base";
+import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
 export type EnumAttributes = BaseAttributes & {
   value: string;

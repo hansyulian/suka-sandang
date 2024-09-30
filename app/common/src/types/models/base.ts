@@ -9,7 +9,7 @@ export type CreateOmit<T, K extends keyof T = never> = Omit<
   T,
   keyof BaseAttributes | K
 > &
-  Partial<BaseAttributes>;
+  Partial<Pick<BaseAttributes, "id">>;
 
 // UpdateOmit reuses CreateOmit and additionally omits "id"
 export type UpdateOmit<T, K extends keyof T = never> = Omit<

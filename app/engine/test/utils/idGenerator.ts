@@ -4,11 +4,10 @@ export const idGenerator = {
   user,
   enum: enumValue,
   material,
+  supplier,
 };
 
-("00000000-0000-4000-8000-000000000000");
-
-const entityKeys = ["user", "enum", "material"] as const;
+const entityKeys = ["user", "enum", "material", "supplier"] as const;
 type EntityKey = (typeof entityKeys)[number];
 const entityKeyIndex: Record<EntityKey, number> = {} as any;
 entityKeys.forEach((value: EntityKey, index) => {
@@ -37,4 +36,8 @@ function material(id: number) {
 
 function enumValue(id: number) {
   return generator("enum", [id]);
+}
+
+function supplier(id: number) {
+  return generator("supplier", [id]);
 }

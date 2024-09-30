@@ -7,10 +7,10 @@ import { useCallback } from "react";
 export function useNavigate() {
   const navigate = useNavigateBase();
   return useCallback(
-    <Key extends RouteNames>(
-      to: Key,
-      params: InferParams<Key>,
-      query: Partial<InferQuery<Key>> = {}
+    <RouteName extends RouteNames>(
+      to: RouteName,
+      params: InferParams<RouteName>,
+      query: Partial<InferQuery<RouteName>> = {}
     ) => {
       const route = routes[to];
       const target = replacePathParams(

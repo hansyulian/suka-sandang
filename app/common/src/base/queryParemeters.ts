@@ -1,5 +1,5 @@
 import { SchemaType } from "@hyulian/api-contract";
-import { orderDirections } from "~/types/values";
+import { orderDirections } from "~/types/common";
 
 export const queryParameters = {
   offset: { type: "number", optional: true },

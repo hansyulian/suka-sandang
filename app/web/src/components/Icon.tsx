@@ -18,6 +18,7 @@ import {
   IconSearch,
   IconArrowsSort,
   IconCurrencyDollar,
+  IconTruck,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -39,6 +40,7 @@ const iconMap = {
   search: IconSearch,
   sortable: IconArrowsSort,
   price: IconCurrencyDollar,
+  supplier: IconTruck,
 };
 
 export type IconNames = keyof typeof iconMap;

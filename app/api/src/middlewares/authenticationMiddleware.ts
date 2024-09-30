@@ -5,7 +5,7 @@ import { appConfig } from "~/config";
 
 export const authenticationMiddleware: AtlasMiddlewareWrapperFn =
   async function ({ request, locals }) {
-    const tokenFromCookie = request.cookies?.[appConfig.jwtCookieKey];
+    const tokenFromCookie = request.cookies?.[appConfig.jwt.cookieKey];
     const tokenFromHeader = request.headers?.["authorization"];
     const token = tokenFromCookie || tokenFromHeader;
     if (!token) {

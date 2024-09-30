@@ -5,7 +5,7 @@ import { appConfig } from "~/config";
 export const logoutController = contractController(
   logoutContract,
   async ({ body, response }) => {
-    response.cookie(appConfig.jwtCookieKey, "", {
+    response.cookie(appConfig.jwt.cookieKey, "", {
       httpOnly: true,
       secure: appConfig.env === "production",
       maxAge: 0,

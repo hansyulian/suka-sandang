@@ -10,7 +10,7 @@ describe("authenticationMidleware", () => {
   it("should be able to accept token in cookie", async () => {
     const mockUser = mockAuthenticated();
     const testData = generateMiddlewareTestData();
-    testData.request.cookies[appConfig.jwtCookieKey] = "mock-jwt";
+    testData.request.cookies[appConfig.jwt.cookieKey] = "mock-jwt";
     await authenticationMiddleware(testData);
     expect(testData.response.locals.user).toEqual(mockUser);
   });
@@ -20,7 +20,7 @@ describe("authenticationMidleware", () => {
     });
     const testData = generateMiddlewareTestData();
     const mockUser = mockAuthenticated();
-    testData.request.cookies[appConfig.jwtCookieKey] = "mock-jwt";
+    testData.request.cookies[appConfig.jwt.cookieKey] = "mock-jwt";
     await authenticationMiddleware(testData);
     expect(testData.response.locals.user).toEqual(mockUser);
   });

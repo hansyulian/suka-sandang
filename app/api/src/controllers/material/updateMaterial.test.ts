@@ -89,34 +89,18 @@ describe("Controller: updateMaterialController", () => {
     checkStrayValues(body);
   });
 
-  it("should require name and code", async () => {
-    const response = await apiTest.withAuthentication().post("/material").send({
-      // ensure the filtering of stray values
-      strayValue1: "stray value 1",
-      handsomeValue: 123456,
-    });
-    validationRejection(response, [
-      {
-        type: "required",
-        key: "body.name",
-      },
-      {
-        type: "required",
-        key: "body.code",
-      },
-    ]);
-  });
-
   it("should only accept correct data type", async () => {
-    const response = await apiTest.withAuthentication().post("/material").send({
-      name: 125258284,
-      code: true,
-      purchasePrice: "21591295",
-      retailPrice: true,
-      // ensure the filtering of stray values
-      strayValue1: "stray value 1",
-      handsomeValue: 123456,
-    });
+    const response = await apiTest
+      .withAuthentication()
+      .post("/material")
+      .send(
+        injectStrayValues({
+          name: 125258284,
+          code: true,
+          purchasePrice: "21591295",
+          retailPrice: true,
+        })
+      );
     validationRejection(response, [
       {
         type: "invalidType",

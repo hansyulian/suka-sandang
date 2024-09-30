@@ -7,8 +7,8 @@ import {
 import { JwtService, UserTokenPayload } from "~/services/JwtService";
 
 describe("JwtService", () => {
-  const jwtSecret = appConfig.app.jwtSecret;
-  const jwtExpiry = appConfig.app.jwtExpiry;
+  const jwtSecret = appConfig.jwt.secret;
+  const jwtExpiry = appConfig.jwt.expiry;
 
   it("signToken should sign and return a token and decodeable using jwt.decode", async () => {
     const userPayload: UserTokenPayload = {

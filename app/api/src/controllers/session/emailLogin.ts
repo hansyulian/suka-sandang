@@ -8,10 +8,10 @@ export const emailLoginController = contractController(
     const { engine } = locals;
     const { email, password } = body;
     const loginResult = await engine.session.emailLogin(email, password);
-    response.cookie(appConfig.jwtCookieKey, loginResult.sessionToken, {
+    response.cookie(appConfig.jwt.cookieKey, loginResult.sessionToken, {
       httpOnly: true,
       secure: appConfig.env === "production",
-      maxAge: appConfig.jwtExpiry * 1000,
+      maxAge: appConfig.jwt.expiry * 1000,
       sameSite: "strict",
     });
     return {

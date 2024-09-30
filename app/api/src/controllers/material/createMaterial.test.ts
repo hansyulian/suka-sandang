@@ -22,7 +22,7 @@ describe("Controller: createMaterialController", () => {
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
-
+      status: "pending",
       ...payload,
     };
     MaterialFacade.prototype.create = jest
@@ -66,6 +66,7 @@ describe("Controller: createMaterialController", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
 
+      status: "pending",
       ...payload,
     };
     (MaterialFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
@@ -110,15 +111,17 @@ describe("Controller: createMaterialController", () => {
   });
 
   it("should only accept correct data type", async () => {
-    const response = await apiTest.withAuthentication().post("/material").send({
-      name: 125258284,
-      code: true,
-      purchasePrice: "21591295",
-      retailPrice: true,
-      // ensure the filtering of stray values
-      strayValue1: "stray value 1",
-      handsomeValue: 123456,
-    });
+    const response = await apiTest
+      .withAuthentication()
+      .post("/material")
+      .send(
+        injectStrayValues({
+          name: 125258284,
+          code: true,
+          purchasePrice: "21591295",
+          retailPrice: true,
+        })
+      );
     validationRejection(response, [
       {
         type: "invalidType",

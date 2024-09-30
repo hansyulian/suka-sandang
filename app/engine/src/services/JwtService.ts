@@ -19,16 +19,16 @@ export const JwtService = {
 // Sign a token
 async function signToken(
   user: UserTokenPayload,
-  expiresIn: string | number = appConfig.app.jwtExpiry
+  expiresIn: string | number = appConfig.jwt.expiry
 ) {
   const { id, email } = user;
-  return jwt.sign({ id, email }, appConfig.app.jwtSecret, { expiresIn });
+  return jwt.sign({ id, email }, appConfig.jwt.secret, { expiresIn });
 }
 
 // Verify a token
 async function verifyToken(token: string) {
   try {
-    return jwt.verify(token, appConfig.app.jwtSecret) as UserTokenPayload;
+    return jwt.verify(token, appConfig.jwt.secret) as UserTokenPayload;
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       throw new ExpiredJwtTokenException();

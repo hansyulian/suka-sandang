@@ -1,4 +1,4 @@
-import { Column, DeletedAt, Model } from "sequelize-typescript";
+import { BeforeDestroy, Column, DeletedAt, Model } from "sequelize-typescript";
 import { v4 } from "uuid";
 
 export abstract class BaseModel<
@@ -13,4 +13,9 @@ export abstract class BaseModel<
 
   @DeletedAt
   declare deletedAt: Date | undefined;
+
+  @BeforeDestroy
+  static baseSetStatusDeleted(instance: any) {
+    instance.status = "deleted";
+  }
 }

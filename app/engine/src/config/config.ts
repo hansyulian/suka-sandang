@@ -2,11 +2,11 @@ import { Dialect } from "sequelize";
 const pe = process.env;
 export const appConfig = {
   app: {
-    port: pe.API_PORT ? parseInt(pe.API_PORT) : 3000,
     salt: pe.HASH_SALT ? parseInt(pe.HASH_SALT) : 10,
-    jwtSecret: pe.JWT_SECRET ?? "supersecretjwtkey",
-    jwtExpiry: parseInt(pe.JWT_EXPIRY || `${30 * 24 * 3600}`),
-    maximumRetrieval: parseInt(pe.MAXIMUM_RETRIEVAL || "100"),
+  },
+  jwt: {
+    secret: pe.JWT_SECRET ?? "supersecretjwtkey",
+    expiry: parseInt(pe.JWT_EXPIRY || `${30 * 24 * 3600}`),
   },
   database: {
     username: pe.DB_USERNAME || "root",

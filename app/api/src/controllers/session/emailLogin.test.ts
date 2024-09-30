@@ -20,7 +20,7 @@ describe("Controller: emailLogin", () => {
     expect(status).toStrictEqual(200);
     expect(cookies).toBeDefined();
     const authCookie = cookies.find((cookie) =>
-      cookie.startsWith(appConfig.jwtCookieKey)
+      cookie.startsWith(appConfig.jwt.cookieKey)
     );
     expect(authCookie).toBeDefined();
     expect(authCookie?.includes("mock-session-token")).toStrictEqual(true);

@@ -2,7 +2,6 @@ import { WhereOptions } from "sequelize";
 import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import { Material } from "~/models/Material";
-import { processQueryOptions } from "~/utils";
 import {
   MaterialCreationAttributes,
   MaterialUpdateAttributes,
@@ -20,7 +19,7 @@ export class MaterialFacade extends FacadeBase {
       where: {
         ...query,
       },
-      ...processQueryOptions(options),
+      ...options,
     });
     return {
       count: result.count,
@@ -95,8 +94,6 @@ export class MaterialFacade extends FacadeBase {
 
   async delete(id: string) {
     const record = await this.findById(id);
-    record.status = "deleted";
-    await record.save();
     await record.destroy();
   }
 }

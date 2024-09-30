@@ -10,8 +10,8 @@ export const updateMaterialContract = apiContractSchema({
     id: { type: "string" },
   },
   body: {
-    name: { type: "string" },
-    code: { type: "string" },
+    name: { type: "string", optional: true },
+    code: { type: "string", optional: true },
     purchasePrice: { type: "number", optional: true },
     retailPrice: { type: "number", optional: true },
     color: { type: "string", optional: true },

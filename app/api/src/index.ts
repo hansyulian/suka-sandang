@@ -5,7 +5,7 @@ import { setupDatabase } from "@app/engine";
 import { app } from "~/app";
 import { appConfig } from "./config";
 
-const port = appConfig.port;
+const port = appConfig.app.port;
 async function init() {
   await setupDatabase();
   app.start(port);

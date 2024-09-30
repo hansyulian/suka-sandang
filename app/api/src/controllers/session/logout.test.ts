@@ -19,7 +19,7 @@ describe("Controller: logout", () => {
 
     // Find the JWT cookie
     const authCookie = cookies.find((cookie) =>
-      cookie.startsWith(appConfig.jwtCookieKey)
+      cookie.startsWith(appConfig.jwt.cookieKey)
     );
 
     // Ensure the cookie exists

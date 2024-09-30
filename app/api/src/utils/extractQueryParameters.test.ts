@@ -67,7 +67,7 @@ describe("extractPaginationQuery", () => {
     });
   });
   it("should handle empty with stray values", () => {
-    const query: Partial<QueryParameters> = {};
+    const query: QueryParameters = {};
 
     const result = extractQueryParameters({
       ...query,
@@ -79,6 +79,14 @@ describe("extractPaginationQuery", () => {
       limit: undefined,
       offset: undefined,
       order: undefined,
+    });
+  });
+
+  it("should prevent limit from exceeding defined limit", () => {
+    const query: QueryParameters = { limit: 1000 };
+    const result = extractQueryParameters(query);
+    expect(result).toEqual({
+      limit: 100,
     });
   });
 });

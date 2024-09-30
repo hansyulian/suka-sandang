@@ -1,6 +1,5 @@
-import { Group, Table, UnstyledButton } from "@mantine/core";
+import { Group, Table } from "@mantine/core";
 import { PropsWithChildren } from "react";
-import { Icon } from "~/components/Icon";
 import { IconButton } from "~/components/IconButton";
 import { useSortManager } from "~/hooks/useSortManager";
 

@@ -80,6 +80,9 @@ export default function SupplierListPage() {
             <SortableTableHeader sortManager={sortManager} column="name">
               Name
             </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="identity">
+              Identity
+            </SortableTableHeader>
             <SortableTableHeader sortManager={sortManager} column="email">
               Email
             </SortableTableHeader>
@@ -98,6 +101,7 @@ export default function SupplierListPage() {
         renderRow={(record) => (
           <>
             <Table.Td>{record.name}</Table.Td>
+            <Table.Td>{record.identity}</Table.Td>
             <Table.Td>{record.email}</Table.Td>
             <Table.Td>{record.phone}</Table.Td>
             <Table.Td>{record.address}</Table.Td>

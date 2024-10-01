@@ -14,6 +14,7 @@ export type SupplierForm = {
   address: string;
   email: string;
   phone: string;
+  identity: string;
   remarks: string;
   status: SupplierStatus;
 };

@@ -8,6 +8,7 @@ export function useInvalidateQuery() {
     (queryKey: QueryKeyNames) => {
       return queryClient.invalidateQueries({
         queryKey: [queryKey],
+        type: "all",
       });
     },
     [queryClient]

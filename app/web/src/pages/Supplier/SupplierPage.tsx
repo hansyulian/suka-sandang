@@ -53,6 +53,7 @@ export default function SupplierPage() {
       address: "",
       email: "",
       phone: "",
+      identity: "",
       remarks: "",
       status: "pending",
     },
@@ -113,6 +114,9 @@ export default function SupplierPage() {
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
           <TextInput label="Name" required {...getInputProps("name")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Identity" {...getInputProps("identity")} />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
           <TextInput label="Email" {...getInputProps("email")} />

@@ -24,6 +24,8 @@ export class Supplier extends BaseModel<
 
   @Column
   declare phone?: string;
+  @Column
+  declare identity?: string;
 
   @Column
   declare status: SupplierStatus;

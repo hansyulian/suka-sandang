@@ -15,6 +15,8 @@ import { RouterProvider } from "react-router-dom";
 import "~/config/api";
 import { AuthProvider } from "~/contexts";
 import { useAuth } from "~/hooks/useAuth";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React, { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,7 @@ function App() {
             <InnerApp />
           </ModalsProvider>
           <Notifications />
+          <DevTools />
         </AuthProvider>
       </QueryClientProvider>
     </MantineProvider>
@@ -39,6 +42,34 @@ function InnerApp() {
     return null;
   }
   return <RouterProvider router={router} />;
+}
+
+const ReactQueryDevtoolsProduction = React.lazy(() =>
+  import("@tanstack/react-query-devtools/build/modern/production.js").then(
+    (d) => ({
+      default: d.ReactQueryDevtools,
+    })
+  )
+);
+
+function DevTools() {
+  const [showDevtools, setShowDevtools] = React.useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).toggleDevtools = () => setShowDevtools((old) => !old);
+  }, []);
+
+  return (
+    <>
+      <ReactQueryDevtools initialIsOpen />
+      {showDevtools && (
+        <React.Suspense fallback={null}>
+          <ReactQueryDevtoolsProduction />
+        </React.Suspense>
+      )}
+    </>
+  );
 }
 
 export default App;

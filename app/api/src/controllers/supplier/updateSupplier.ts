@@ -6,7 +6,7 @@ export const updateSupplierController = contractController(
   async ({ params, body, locals }) => {
     const { engine } = locals;
     const { id } = params;
-    const { address, email, name, phone, remarks, status } = body;
+    const { address, identity, email, name, phone, remarks, status } = body;
     const result = await engine.supplier.update(id, {
       address,
       email,
@@ -14,6 +14,7 @@ export const updateSupplierController = contractController(
       phone,
       remarks,
       status,
+      identity,
     });
     return result;
   }

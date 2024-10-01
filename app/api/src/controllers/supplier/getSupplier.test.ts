@@ -16,6 +16,7 @@ describe("Controller: getSupplierController", () => {
       email: "email@example.com",
       phone: "+62123123123",
       remarks: "remarks",
+      identity: "3273",
       createdAt: new Date(),
       status: "active",
       updatedAt: new Date(),
@@ -35,6 +36,7 @@ describe("Controller: getSupplierController", () => {
     expect(body.phone).toStrictEqual("+62123123123");
     expect(body.remarks).toStrictEqual("remarks");
     expect(body.status).toStrictEqual("active");
+    expect(body.identity).toStrictEqual("3273");
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
     expect(body.deletedAt).toBeUndefined();

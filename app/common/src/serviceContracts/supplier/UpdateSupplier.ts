@@ -15,6 +15,7 @@ export const updateSupplierContract = apiContractSchema({
     address: { type: "string", optional: true },
     phone: { type: "string", optional: true },
     remarks: { type: "string", optional: true },
+    identity: { type: "string", optional: true },
     status: {
       type: "enum",
       optional: true,
@@ -29,6 +30,7 @@ export const updateSupplierContract = apiContractSchema({
     address: { type: "string", optional: true },
     phone: { type: "string", optional: true },
     remarks: { type: "string", optional: true },
+    identity: { type: "string", optional: true },
     status: {
       type: "enum",
       optional: true,

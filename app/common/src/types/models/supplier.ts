@@ -13,6 +13,7 @@ export type SupplierAttributes = BaseAttributes & {
   address?: string;
   phone?: string;
   email?: string;
+  identity?: string;
   status: SupplierStatus;
   remarks?: string;
 };

@@ -112,6 +112,7 @@ describe("SupplierFacade", () => {
         address: "123 Supplier St",
         email: "supplier@example.com",
         phone: "123-456-7890",
+        identity: "3273",
       };
 
       jest.clearAllMocks();
@@ -129,6 +130,7 @@ describe("SupplierFacade", () => {
         address: "123 Supplier St",
         email: "supplierexample.com",
         phone: "123-456-7890",
+        identity: "3273",
       };
 
       jest.clearAllMocks();
@@ -154,6 +156,7 @@ describe("SupplierFacade", () => {
         address: "456 Supplier Ave",
         email: "updated@example.com",
         phone: "987-654-3210",
+        identity: "3273",
       };
 
       const result = await engine.supplier.update(id, updateData);
@@ -171,6 +174,7 @@ describe("SupplierFacade", () => {
         address: "456 Supplier Ave",
         email: "updatedexample.com",
         phone: "987-654-3210",
+        identity: "3273",
       };
 
       await expect(engine.supplier.update(id, updateData)).rejects.toThrow(

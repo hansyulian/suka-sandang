@@ -99,6 +99,7 @@ describe("Controller: updateSupplierController", () => {
           address: 123,
           phone: true,
           remarks: true,
+          identity: true,
         })
       );
     validationRejection(response, [
@@ -133,6 +134,13 @@ describe("Controller: updateSupplierController", () => {
       {
         type: "invalidType",
         key: "body.remarks",
+        expected: "string",
+        actual: "boolean",
+        value: true,
+      },
+      {
+        type: "invalidType",
+        key: "body.identity",
         expected: "string",
         actual: "boolean",
         value: true,

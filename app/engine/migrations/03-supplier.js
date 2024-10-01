@@ -35,6 +35,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      identity: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       status: {
         type: Sequelize.ENUM("pending", "active", "blocked", "deleted"),
         allowNull: false,

@@ -17,6 +17,7 @@ export const getSupplierContract = apiContractSchema({
     address: { type: "string", optional: true },
     phone: { type: "string", optional: true },
     remarks: { type: "string", optional: true },
+    identity: { type: "string", optional: true },
     status: {
       type: "enum",
       optional: true,

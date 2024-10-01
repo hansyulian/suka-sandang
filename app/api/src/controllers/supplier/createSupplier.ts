@@ -5,9 +5,10 @@ export const createSupplierController = contractController(
   createSupplierContract,
   async ({ body, locals }) => {
     const { engine } = locals;
-    const { address, email, name, phone, remarks, status } = body;
+    const { address, email, name, identity, phone, remarks, status } = body;
     const result = await engine.supplier.create({
       address,
+      identity,
       email,
       name,
       phone,

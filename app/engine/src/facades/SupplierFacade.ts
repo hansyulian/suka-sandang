@@ -36,7 +36,7 @@ export class SupplierFacade extends FacadeBase {
   }
 
   async create(data: SupplierCreationAttributes) {
-    const { name, remarks, status, address, email, phone } = data;
+    const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
@@ -47,13 +47,14 @@ export class SupplierFacade extends FacadeBase {
       address,
       email,
       phone,
+      identity,
     });
     return Supplier.findByPk(result.id) as unknown as Supplier;
   }
 
   async update(id: string, data: SupplierUpdateAttributes) {
     const record = await this.findById(id);
-    const { name, remarks, status, address, email, phone } = data;
+    const { name, remarks, status, address, email, phone, identity } = data;
     if (status && status !== "deleted") {
       await record.restore({});
     }
@@ -67,6 +68,7 @@ export class SupplierFacade extends FacadeBase {
       address,
       email,
       phone,
+      identity,
     });
     return Supplier.findByPk(result.id, { paranoid: false });
   }

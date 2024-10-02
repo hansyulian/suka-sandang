@@ -1,17 +1,22 @@
 import {
+  createCustomerContract,
   createMaterialContract,
   createSupplierContract,
+  deleteCustomerContract,
   deleteMaterialContract,
   deleteSupplierContract,
   emailLoginContract,
+  getCustomerContract,
   getMaterialContract,
   getServerInfoContract,
   getSupplierContract,
   getUserInfoContract,
+  listCustomersContract,
   listEnumsContract,
   listMaterialsContract,
   listSuppliersContract,
   logoutContract,
+  updateCustomerContract,
   updateMaterialContract,
   updateSupplierContract,
   updateUserInfoContract,
@@ -110,6 +115,41 @@ export const Api = {
         title: "Supplier",
         message: "Deleting supplier",
         successMessage: "Supplier deleted!",
+      })
+    ),
+  },
+
+  customer: {
+    getCustomer: apiClient.registerQueryContract(
+      getCustomerContract,
+      queryKeys.customer
+    ),
+    listCustomer: apiClient.registerQueryContract(
+      listCustomersContract,
+      queryKeys.customer
+    ),
+    createCustomer: apiClient.registerMutationContract(
+      createCustomerContract,
+      apiMutationOptions({
+        title: "Customer",
+        message: "Adding new customer",
+        successMessage: "New customer added!",
+      })
+    ),
+    updateCustomer: apiClient.registerMutationContract(
+      updateCustomerContract,
+      apiMutationOptions({
+        title: "Customer",
+        message: "Updating customer",
+        successMessage: "Customer updated!",
+      })
+    ),
+    deleteCustomer: apiClient.registerMutationContract(
+      deleteCustomerContract,
+      apiMutationOptions({
+        title: "Customer",
+        message: "Deleting customer",
+        successMessage: "Customer deleted!",
       })
     ),
   },

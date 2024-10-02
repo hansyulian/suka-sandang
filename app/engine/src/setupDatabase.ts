@@ -1,7 +1,7 @@
 import { Dialect } from "sequelize";
 import { Sequelize, SequelizeOptions } from "sequelize-typescript";
 import { appConfig } from "~/config";
-import { User, Enum, Material, Supplier } from "~/models";
+import { User, Enum, Material, Supplier, Customer } from "~/models";
 
 type DBConfig = {
   username: string;
@@ -28,7 +28,7 @@ export function setupDatabase(
     dialect: dbConfig.dialect,
     storage: dbConfig.storage,
     logging,
-    models: [User, Enum, Material, Supplier],
+    models: [User, Enum, Material, Supplier, Customer],
     ...sequelizeOptions,
   };
   const sequelize = new Sequelize(sequelizeConfig);

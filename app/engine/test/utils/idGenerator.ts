@@ -1,19 +1,24 @@
-import { pad } from "@hyulian/common";
+import { pad, valueIndex } from "@hyulian/common";
 const width = 2;
 export const idGenerator = {
   user,
   enum: enumValue,
   material,
   supplier,
+  customer,
 };
 
-const entityKeys = ["user", "enum", "material", "supplier"] as const;
+const entityKeys = [
+  "user",
+  "enum",
+  "material",
+  "supplier",
+  "customer",
+] as const;
 type EntityKey = (typeof entityKeys)[number];
-const entityKeyIndex: Record<EntityKey, number> = {} as any;
-entityKeys.forEach((value: EntityKey, index) => {
-  entityKeyIndex[value] = index;
-});
-
+const entityKeyIndex = valueIndex(
+  entityKeys as unknown as string[]
+) as unknown as Record<EntityKey, number>;
 function generator(entityKey: EntityKey, values: number[]) {
   const entityId = entityKeyIndex[entityKey];
   const idValue = values
@@ -40,4 +45,8 @@ function enumValue(id: number) {
 
 function supplier(id: number) {
   return generator("supplier", [id]);
+}
+
+function customer(id: number) {
+  return generator("customer", [id]);
 }

@@ -4,6 +4,7 @@ import {
   SessionFacade,
   SupplierFacade,
   UserFacade,
+  CustomerFacade,
 } from "~/facades";
 
 export type EngineOptions = {};
@@ -15,6 +16,7 @@ export class Engine {
   public material: MaterialFacade;
   public enum: EnumFacade;
   public supplier: SupplierFacade;
+  public customer: CustomerFacade;
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
@@ -23,5 +25,6 @@ export class Engine {
     this.material = new MaterialFacade(this);
     this.enum = new EnumFacade(this);
     this.supplier = new SupplierFacade(this);
+    this.customer = new CustomerFacade(this);
   }
 }

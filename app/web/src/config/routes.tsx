@@ -90,6 +90,24 @@ export const routes = lockRoutes({
     path: "/supplier/:id",
     element: lazy(() => import("~/pages/Supplier/SupplierPage")),
   },
+  customerList: {
+    path: "/customer",
+    element: lazy(() => import("~/pages/Customer/CustomerListPage")),
+    validateQuery: (query) => {
+      return {
+        search: query.search as string,
+        ...extractPaginationQuery(query),
+      };
+    },
+  },
+  customerAdd: {
+    path: "/customer/add",
+    element: lazy(() => import("~/pages/Customer/CustomerPage")),
+  },
+  customerEdit: {
+    path: "/customer/:id",
+    element: lazy(() => import("~/pages/Customer/CustomerPage")),
+  },
 } as const);
 export type Routes = typeof routes;
 export type RouteNames = keyof typeof routes;

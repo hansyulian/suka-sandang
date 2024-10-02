@@ -90,6 +90,12 @@ export function MasterLayout(props: MasterLayoutProps) {
             params={{}}
             label="Suppliers"
           />
+          <NavMenu
+            leftSection={<Icon name="customer" />}
+            target="customerList"
+            params={{}}
+            label="Customers"
+          />
         </NavLink>
       </AppShell.Navbar>
       <AppShell.Main>

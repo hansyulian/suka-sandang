@@ -24,13 +24,6 @@ import { apiMutationOptions } from "~/utils/apiMutationOptions";
 
 const apiClient = new ReactApiContractClient({
   baseUrl: appConfig.apiBaseUrl,
-  queryOptions: {
-    retry: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    retryOnMount: true,
-  },
 });
 export const Api = {
   getServerInfo: apiClient.registerQueryContract(

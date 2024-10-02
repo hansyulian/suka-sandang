@@ -63,7 +63,7 @@ export function routeContract<TApiContractSchema extends ApiContractSchema>(
           };
           for (const record of ar.records) {
             const projected = projectSchema(record, apiContract.model);
-            arrayResponse.records.push(projected);
+            arrayResponse.records.push(projected as any);
           }
 
           return responsePreset.json(arrayResponse);
@@ -79,7 +79,7 @@ export function routeContract<TApiContractSchema extends ApiContractSchema>(
           };
           for (const record of par.records) {
             paginatedArrayResponse.records.push(
-              projectSchema(record, apiContract.model)
+              projectSchema(record, apiContract.model) as any
             );
           }
           return responsePreset.json(paginatedArrayResponse);

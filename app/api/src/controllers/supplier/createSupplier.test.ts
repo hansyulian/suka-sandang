@@ -59,6 +59,7 @@ describe("Controller: createSupplierController", () => {
       email: "email@email.com",
       phone: "+62123123123",
       remarks: "remarks",
+      identity: "3273372332733273",
     };
     const supplier: SupplierAttributes = {
       id,
@@ -83,6 +84,7 @@ describe("Controller: createSupplierController", () => {
     expect(body.address).toStrictEqual("Address");
     expect(body.phone).toStrictEqual("+62123123123");
     expect(body.remarks).toStrictEqual("remarks");
+    expect(body.identity).toStrictEqual("3273372332733273");
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
     expect(body.status).toStrictEqual("pending");
@@ -115,6 +117,7 @@ describe("Controller: createSupplierController", () => {
           address: 123,
           phone: true,
           remarks: true,
+          identity: true,
         })
       );
     validationRejection(response, [
@@ -149,6 +152,13 @@ describe("Controller: createSupplierController", () => {
       {
         type: "invalidType",
         key: "body.remarks",
+        expected: "string",
+        actual: "boolean",
+        value: true,
+      },
+      {
+        type: "invalidType",
+        key: "body.identity",
         expected: "string",
         actual: "boolean",
         value: true,

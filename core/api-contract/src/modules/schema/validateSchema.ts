@@ -34,7 +34,7 @@ export function validateSchema<
   const keys = Object.keys(schema);
   const errors: SchemaValidationExceptionDetail[] = [];
   for (const key of keys) {
-    const initialValue = values[key];
+    const initialValue = (values as any)[key];
     const spec = schema[key];
     const { errors: baseErrors, value: preprocessedValue } =
       validateOptionalSpec(initialValue, joinKey(keyPrefix, key), values, spec);

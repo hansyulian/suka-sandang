@@ -1,7 +1,7 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { queryParameters } from "~/base";
 import { modelBase } from "~/base/modelBase";
-import { materialStatus } from "~/types";
+import { materialFields } from "~/types";
 
 export const listMaterialsContract = apiContractSchema({
   method: "get",
@@ -25,12 +25,7 @@ export const listMaterialsContract = apiContractSchema({
   responseType: "paginatedArray",
   model: {
     ...modelBase,
-    name: { type: "string" },
-    code: { type: "string" },
-    purchasePrice: { type: "number", optional: true },
-    retailPrice: { type: "number", optional: true },
-    status: { type: "enum", values: materialStatus },
-    color: { type: "string", optional: true },
+    ...materialFields,
   },
 } as const);
 

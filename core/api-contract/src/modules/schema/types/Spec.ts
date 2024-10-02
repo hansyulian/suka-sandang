@@ -36,6 +36,7 @@ import {
   StringSpec,
   StringsSpec,
 } from "./String";
+import { UndefinedToOptional } from "@hyulian/common";
 
 export type OptionalValueCheck<
   TSpecification extends OptionalSpec,
@@ -61,12 +62,12 @@ export type ObjectsSpec = BaseSpec<"objects", ObjectSpecOptions> &
   OptionalSpec<Array<Schema>>;
 export type OptionalObjectsSpec = ObjectsSpec & OptionalSpec<[]>;
 
-export type SchemaType<TSchema extends Schema> = {
+export type SchemaType<TSchema extends Schema> = UndefinedToOptional<{
   [Key in keyof TSchema]: OptionalValueCheck<
     TSchema[Key],
     InferSpecType<TSchema[Key]>
   >;
-};
+}>;
 export type StrictSchemaType<TSchema extends Schema> = {
   [Key in keyof TSchema]: InferSpecType<TSchema[Key]>;
 };

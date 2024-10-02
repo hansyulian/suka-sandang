@@ -21,7 +21,7 @@ export function projectSchema<
   const result: any = {};
   const keys = Object.keys(schema);
   for (const key of keys) {
-    const initialValue = values[key];
+    const initialValue = (values as any)[key];
     const spec = schema[key];
     const optionalProcessedValue = handleDefault(initialValue, values, spec);
     if (optionalProcessedValue === undefined) {

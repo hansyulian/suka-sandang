@@ -1,17 +1,26 @@
-export type CompareResult<T> = {
-  both: T[];
-  leftOnly: T[];
-  rightOnly: T[];
+export type CompareArrayResult<Left, Right> = {
+  both: Left[];
+  leftOnly: Left[];
+  rightOnly: Right[];
 };
-export function compareArray<T>(left: T[], right: T[]): CompareResult<T> {
-  const both: T[] = [];
-  const leftOnly: T[] = [];
-  const rightOnly: T[] = [];
-  for (const record of left) {
+export type CompareArrayFunction<Left, Right> = (
+  left: Left,
+  right: Right
+) => boolean;
+export function compareArray<Left, Right>(
+  leftArray: Left[],
+  rightArray: Right[],
+  compareFunction: CompareArrayFunction<Left, Right> = (left, right) =>
+    (left as any) === right
+): CompareArrayResult<Left, Right> {
+  const both: Left[] = [];
+  const leftOnly: Left[] = [];
+  const rightOnly: Right[] = [];
+  for (const left of leftArray) {
     let found = false;
-    for (const opposite of right) {
-      if (record === opposite) {
-        both.push(record);
+    for (const right of rightArray) {
+      if (compareFunction(left, right)) {
+        both.push(left);
         found = true;
         break;
       }
@@ -19,12 +28,12 @@ export function compareArray<T>(left: T[], right: T[]): CompareResult<T> {
     if (found) {
       continue;
     }
-    leftOnly.push(record);
+    leftOnly.push(left);
   }
-  for (const record of right) {
+  for (const right of rightArray) {
     let found = false;
-    for (const opposite of left) {
-      if (record === opposite) {
+    for (const left of leftArray) {
+      if (compareFunction(left, right)) {
         found = true;
         break;
       }
@@ -32,7 +41,7 @@ export function compareArray<T>(left: T[], right: T[]): CompareResult<T> {
     if (found) {
       continue;
     }
-    rightOnly.push(record);
+    rightOnly.push(right);
   }
   return {
     both,

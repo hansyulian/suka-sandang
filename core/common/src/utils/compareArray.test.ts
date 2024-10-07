@@ -1,4 +1,4 @@
-import { compareArray, CompareResult } from "./compareArray";
+import { compareArray, CompareArrayResult } from "./compareArray";
 
 describe("@hyulian/common.utils.compareArray", () => {
   it("should compare two arrays and return the correct result", () => {
@@ -10,7 +10,7 @@ describe("@hyulian/common.utils.compareArray", () => {
     const result = compareArray(leftArray, rightArray);
 
     // Define the expected result
-    const expectedResult: CompareResult<number> = {
+    const expectedResult: CompareArrayResult<number, number> = {
       both: [3, 4],
       leftOnly: [1, 2],
       rightOnly: [5, 6],
@@ -20,5 +20,27 @@ describe("@hyulian/common.utils.compareArray", () => {
     expect(result).toEqual(expectedResult);
   });
 
-  // Add more test cases as needed
+  it("should compare two arrays of different type with compare function", () => {
+    type TestType = { id: string };
+    const leftArray: TestType[] = [
+      { id: "1" },
+      { id: "2" },
+      { id: "3" },
+      { id: "4" },
+    ];
+    const rightArray: number[] = [3, 4, 5, 6];
+    const result = compareArray(
+      leftArray,
+      rightArray,
+      (left, right) => left.id === right.toString()
+    );
+
+    // Define the expected result
+    const expectedResult: CompareArrayResult<TestType, number> = {
+      both: [{ id: "3" }, { id: "4" }],
+      leftOnly: [{ id: "1" }, { id: "2" }],
+      rightOnly: [5, 6],
+    };
+    expect(result).toEqual(expectedResult);
+  });
 });

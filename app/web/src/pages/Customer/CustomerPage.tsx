@@ -20,8 +20,8 @@ import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
-import { CustomerForm } from "~/types/forms";
 import { formValidations } from "~/utils/formValidations";
+import { CustomerForm } from "~/types";
 
 const defaultSpan = {};
 

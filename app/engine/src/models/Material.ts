@@ -32,7 +32,4 @@ export class Material extends BaseModel<
     defaultValue: "active",
   })
   declare status: MaterialStatus;
-
-  @Column
-  declare deletedAt: Date;
 }

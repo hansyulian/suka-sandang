@@ -2,6 +2,7 @@ import { WhereOptions } from "sequelize";
 import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
 import { Supplier } from "~/models/Supplier";
 import {
+  SupplierAttributes,
   SupplierCreationAttributes,
   SupplierUpdateAttributes,
 } from "@app/common";
@@ -12,7 +13,7 @@ import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
 
 export class SupplierFacade extends FacadeBase {
   async list(
-    query: WhereOptions<Supplier>,
+    query: WhereOptions<SupplierAttributes>,
     options: SequelizePaginationOptions
   ): Promise<FindAndCountAllResult<Supplier>> {
     const result = await Supplier.findAndCountAll({

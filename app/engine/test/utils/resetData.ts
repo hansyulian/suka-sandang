@@ -1,5 +1,13 @@
 import { TruncateOptions } from "sequelize";
-import { Customer, Enum, Material, Supplier, User } from "~/models";
+import {
+  Customer,
+  Enum,
+  Material,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  Supplier,
+  User,
+} from "~/models";
 
 export async function resetData() {
   const config: TruncateOptions = {
@@ -11,5 +19,7 @@ export async function resetData() {
     Material.truncate(config),
     Supplier.truncate(config),
     Customer.truncate(config),
+    PurchaseOrderItem.truncate(config),
+    PurchaseOrder.truncate(config),
   ]);
 }

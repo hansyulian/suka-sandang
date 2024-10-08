@@ -10,4 +10,8 @@ export abstract class FacadeBase {
   protected get engine() {
     return this.parent;
   }
+
+  protected async transactionManager() {
+    return this.parent.transactionManager();
+  }
 }

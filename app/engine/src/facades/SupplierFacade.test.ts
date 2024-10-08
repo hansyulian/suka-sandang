@@ -5,7 +5,6 @@ import {
   SupplierCreationAttributes,
   SupplierUpdateAttributes,
 } from "@app/common";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 import { idGenerator } from "~test/utils/idGenerator";
@@ -17,10 +16,6 @@ describe("SupplierFacade", () => {
   const findAndCountAllSpy = jest.spyOn(Supplier, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Supplier, "findByPk");
   const createSpy = jest.spyOn(Supplier, "create");
-
-  beforeAll(async () => {
-    await initializeDatabase();
-  });
 
   describe("list", () => {
     beforeAll(async () => {

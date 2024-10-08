@@ -5,7 +5,6 @@ import {
   MaterialCreationAttributes,
   MaterialUpdateAttributes,
 } from "@app/common";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { idGenerator } from "~test/utils/idGenerator";
@@ -19,9 +18,6 @@ describe("MaterialFacade", () => {
   const findByPkSpy = jest.spyOn(Material, "findByPk");
   const createSpy = jest.spyOn(Material, "create");
   const findOneSpy = jest.spyOn(Material, "findOne");
-  beforeAll(async () => {
-    await initializeDatabase();
-  });
 
   describe("list", () => {
     beforeAll(async () => {

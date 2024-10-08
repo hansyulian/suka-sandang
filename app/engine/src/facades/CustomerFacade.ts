@@ -2,6 +2,7 @@ import { WhereOptions } from "sequelize";
 import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
 import { Customer } from "~/models";
 import {
+  CustomerAttributes,
   CustomerCreationAttributes,
   CustomerUpdateAttributes,
 } from "@app/common";
@@ -12,7 +13,7 @@ import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
 
 export class CustomerFacade extends FacadeBase {
   async list(
-    query: WhereOptions<Customer>,
+    query: WhereOptions<CustomerAttributes>,
     options: SequelizePaginationOptions
   ): Promise<FindAndCountAllResult<Customer>> {
     const result = await Customer.findAndCountAll({

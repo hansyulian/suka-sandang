@@ -1,6 +1,5 @@
 import { Engine } from "~/Engine";
 import { enumFixtures } from "~test/fixtures/enumFixtures";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 import { Enum } from "~/models/Enum";
 
@@ -9,7 +8,6 @@ describe("EnumFacade", () => {
 
   describe("list", () => {
     beforeAll(async () => {
-      initializeDatabase();
       await resetData();
       await enumFixtures();
     });
@@ -24,7 +22,6 @@ describe("EnumFacade", () => {
 
   describe("upsert", () => {
     beforeEach(async () => {
-      initializeDatabase();
       await resetData();
       await enumFixtures();
     });
@@ -60,7 +57,6 @@ describe("EnumFacade", () => {
 
   describe("syncGroup", () => {
     beforeEach(async () => {
-      initializeDatabase();
       await resetData();
       await enumFixtures();
     });

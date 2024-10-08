@@ -3,6 +3,7 @@ import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import { Material } from "~/models/Material";
 import {
+  MaterialAttributes,
   MaterialCreationAttributes,
   MaterialUpdateAttributes,
 } from "@app/common";
@@ -12,7 +13,7 @@ import { FacadeBase } from "~/facades/FacadeBase";
 
 export class MaterialFacade extends FacadeBase {
   async list(
-    query: WhereOptions<Material>,
+    query: WhereOptions<MaterialAttributes>,
     options: SequelizePaginationOptions
   ): Promise<FindAndCountAllResult<Material>> {
     const result = await Material.findAndCountAll({
@@ -36,7 +37,7 @@ export class MaterialFacade extends FacadeBase {
   }
 
   async findByIdOrCode(idOrCode: string) {
-    const where: WhereOptions<Material> = isUuid(idOrCode)
+    const where: WhereOptions<MaterialAttributes> = isUuid(idOrCode)
       ? { id: idOrCode }
       : { code: idOrCode };
     const result = await Material.findOne({

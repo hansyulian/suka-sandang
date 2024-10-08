@@ -7,13 +7,16 @@ import { appConfig } from "./config";
 import { controllers } from "./controllers";
 import cookieParser from "cookie-parser";
 import { initializationMiddleware } from "~/middlewares/initializationMiddleware";
+import { Engine } from "@app/engine";
+
+const engine = new Engine();
 
 export const app = atlas(
   (atlas) => {
     atlas.use(morgan("combined"));
     atlas.use(Express.json());
     atlas.use(cookieParser());
-    atlas.middleware(initializationMiddleware);
+    atlas.middleware(initializationMiddleware(engine));
     atlas.router("/", controllers);
   },
   {

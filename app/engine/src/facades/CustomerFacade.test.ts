@@ -5,7 +5,6 @@ import {
   CustomerCreationAttributes,
   CustomerUpdateAttributes,
 } from "@app/common";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 import { idGenerator } from "~test/utils/idGenerator";
 import { Engine } from "~/Engine";
@@ -17,10 +16,6 @@ describe("CustomerFacade", () => {
   const findAndCountAllSpy = jest.spyOn(Customer, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Customer, "findByPk");
   const createSpy = jest.spyOn(Customer, "create");
-
-  beforeAll(async () => {
-    await initializeDatabase();
-  });
 
   describe("list", () => {
     beforeAll(async () => {

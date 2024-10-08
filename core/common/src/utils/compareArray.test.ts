@@ -11,7 +11,10 @@ describe("@hyulian/common.utils.compareArray", () => {
 
     // Define the expected result
     const expectedResult: CompareArrayResult<number, number> = {
-      both: [3, 4],
+      both: [
+        { left: 3, right: 3 },
+        { left: 4, right: 4 },
+      ],
       leftOnly: [1, 2],
       rightOnly: [5, 6],
     };
@@ -37,7 +40,10 @@ describe("@hyulian/common.utils.compareArray", () => {
 
     // Define the expected result
     const expectedResult: CompareArrayResult<TestType, number> = {
-      both: [{ id: "3" }, { id: "4" }],
+      both: [
+        { left: { id: "3" }, right: 3 },
+        { left: { id: "4" }, right: 4 },
+      ],
       leftOnly: [{ id: "1" }, { id: "2" }],
       rightOnly: [5, 6],
     };

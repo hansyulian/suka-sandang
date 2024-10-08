@@ -16,7 +16,7 @@
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/api-contract-client": "workspace:*",
     "@hyulian/common": "workspace:*",
-    "@hyulian/react-api-contract-client": "workspace:*",
+    "@hyulian/react-api-contract": "workspace:*",
     "@mantine/core": "^7.13.1",
     "@mantine/form": "^7.13.1",
     "@mantine/hooks": "^7.13.1",

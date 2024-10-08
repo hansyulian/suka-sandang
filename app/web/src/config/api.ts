@@ -21,7 +21,7 @@ import {
   updateSupplierContract,
   updateUserInfoContract,
 } from "@app/common";
-import { ReactApiContractClient } from "@hyulian/react-api-contract-client";
+import { ReactApiContractClient } from "@hyulian/react-api-contract";
 
 import { appConfig } from "~/config/app";
 import { queryKeys } from "~/config/queryKeys";

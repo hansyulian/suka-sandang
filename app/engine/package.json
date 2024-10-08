@@ -9,8 +9,7 @@
     "clean": "shx mkdir -p dist && shx rm -rf dist",
     "migrate": "npx sequelize db:migrate",
     "migrate:reset": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
-    "prebuild": "pnpm run clean",
-    "watch": "pnpm build && npx nodemon",
+    "watch": "npx nodemon",
     "test": "npx jest"
   },
   "type": "commonjs",

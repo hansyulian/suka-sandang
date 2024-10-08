@@ -8,10 +8,11 @@
     "web": "pnpm --filter ./app/web dev",
     "migrate": "pnpm --filter ./app/engine migrate",
     "migrate:reset": "pnpm --filter ./app/engine migrate:reset",
-    "build": "pnpm --recursive build",
+    "build": "pnpm --recursive clean && pnpm --recursive build",
     "test": "pnpm --recursive test",
-    "integrity-test": "pnpm build && pnpm test",
-    "clean": "node scripts/clean.js"
+    "integrity-test": "pnpm test",
+    "clean": "node scripts/clean.js",
+    "watch": "node scripts/watch.js"
   },
   "keywords": [],
   "author": "",

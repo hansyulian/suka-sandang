@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReactApiContractClientMutationOptions } from "@hyulian/react-api-contract-client";
+import { ReactApiContractClientMutationOptions } from "@hyulian/react-api-contract";
 import { notifications } from "@mantine/notifications";
 import { Icon } from "~/components/Icon";
 

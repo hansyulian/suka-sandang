@@ -1,4 +1,4 @@
-import { ContractResponseModel } from "@hyulian/react-api-contract-client";
+import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { Center, Group, Stack, Table } from "@mantine/core";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";

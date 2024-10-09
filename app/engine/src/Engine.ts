@@ -22,7 +22,8 @@ export type EngineTransactionWrapperCallback<ReturnType> = (
 ) => PromiseLike<ReturnType>;
 export class Engine {
   public transaction?: Transaction;
-  private sequelize: Sequelize;
+  private _sequelize: Sequelize;
+  public transactionMutex: boolean = false;
   public options: EngineOptions;
 
   public user: UserFacade;
@@ -36,7 +37,7 @@ export class Engine {
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
-    this.sequelize = setupDatabase(options.database);
+    this._sequelize = setupDatabase(options.database);
     this.user = new UserFacade(this);
     this.session = new SessionFacade(this);
     this.material = new MaterialFacade(this);
@@ -45,6 +46,10 @@ export class Engine {
     this.customer = new CustomerFacade(this);
     this.purchaseOrder = new PurchaseOrderFacade(this);
     this.purchaseOrderItem = new PurchaseOrderItemFacade(this);
+  }
+
+  public get sequelize() {
+    return this._sequelize;
   }
 
   public async transactionManager() {

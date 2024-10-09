@@ -1,4 +1,5 @@
 import { TruncateOptions } from "sequelize";
+import { ModelCtor } from "sequelize-typescript";
 import {
   Customer,
   Enum,
@@ -9,17 +10,20 @@ import {
   User,
 } from "~/models";
 
-export async function resetData() {
-  const config: TruncateOptions = {
-    force: true,
-  };
-  await Promise.all([
-    User.truncate(config),
-    Enum.truncate(config),
-    Material.truncate(config),
-    Supplier.truncate(config),
-    Customer.truncate(config),
-    PurchaseOrderItem.truncate(config),
-    PurchaseOrder.truncate(config),
-  ]);
+const models: ModelCtor[] = [
+  Enum,
+  Material,
+  Customer,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  Supplier,
+  User,
+];
+const config: TruncateOptions = {
+  force: true,
+  cascade: true,
+};
+
+export async function resetData(truncateModels: ModelCtor[] = models) {
+  await Promise.all(truncateModels.map((model) => model.truncate(config)));
 }

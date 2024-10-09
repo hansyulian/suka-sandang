@@ -39,7 +39,7 @@ export class PurchaseOrder extends BaseModel<
   declare remarks?: string;
 
   @Column({
-    defaultValue: "pending",
+    defaultValue: "draft",
   })
   declare status: PurchaseOrderStatus;
 

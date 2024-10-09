@@ -267,14 +267,14 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       status: { type: "enum", values: ["active", "inactive"] },
     });
 
-    const values = { status: "pending" };
+    const values = { status: "draft" };
 
     const result = validateSchema(values, schema);
 
     expect(result.errors).toContainEqual({
       type: "invalidValue",
       key: "status",
-      value: "pending",
+      value: "draft",
       expected: ["active", "inactive"],
     });
   });
@@ -354,14 +354,14 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       },
     });
 
-    const values = { statuses: ["active", "pending"] };
+    const values = { statuses: ["active", "draft"] };
 
     const result = validateSchema(values, schema);
 
     expect(result.errors).toContainEqual({
       type: "invalidValue",
       key: "statuses.1",
-      value: "pending",
+      value: "draft",
       expected: ["active", "inactive"],
     });
   });

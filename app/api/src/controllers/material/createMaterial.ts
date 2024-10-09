@@ -11,7 +11,7 @@ export const createMaterialController = contractController(
       name,
       purchasePrice,
       retailPrice,
-      status: status || "pending",
+      status: status || "draft",
       color,
     });
     return result;

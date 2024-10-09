@@ -12,15 +12,20 @@ import {
   PurchaseOrderCreationAttributes,
   PurchaseOrderUpdateAttributes,
 } from "@app/common";
+import { PurchaseOrder, PurchaseOrderItem } from "~/models";
 
 describe("PurchaseOrderFacade", () => {
   const engine = new Engine();
 
+  beforeAll(async () => {
+    await resetData();
+    await materialFixtures();
+    await supplierFixtures();
+  });
+
   describe("list", () => {
     beforeAll(async () => {
-      await resetData();
-      await materialFixtures();
-      await supplierFixtures();
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     it("should return a list of purchase orders", async () => {
@@ -28,16 +33,25 @@ describe("PurchaseOrderFacade", () => {
         {},
         { limit: 10, offset: 0 }
       );
-      expect(result.count).toBeGreaterThan(0);
+      expect(result.count).toStrictEqual(50);
       expect(result.records).toHaveLength(10);
+    });
+    it("should return a list of purchase orders with status filter", async () => {
+      const result = await engine.purchaseOrder.list(
+        { status: "draft" },
+        { limit: 10, offset: 0 }
+      );
+      expect(result.count).toStrictEqual(13);
+      expect(result.records).toHaveLength(10);
+      for (const record of result.records) {
+        expect(record.status).toStrictEqual("draft");
+      }
     });
   });
 
   describe("findById", () => {
     beforeAll(async () => {
-      await resetData();
-      await materialFixtures();
-      await supplierFixtures();
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     it("should return a purchase order by id", async () => {
@@ -57,9 +71,7 @@ describe("PurchaseOrderFacade", () => {
 
   describe("create", () => {
     beforeEach(async () => {
-      await resetData();
-      await materialFixtures();
-      await supplierFixtures();
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     it("should create a new purchase order", async () => {
@@ -68,37 +80,21 @@ describe("PurchaseOrderFacade", () => {
         date: new Date(),
         supplierId: idGenerator.supplier(0),
         remarks: "Test Purchase Order",
-        status: "pending",
-        items: [
-          {
-            materialId: idGenerator.material(0),
-            quantity: 10,
-            unitPrice: 100,
-            remarks: "Test item",
-          },
-        ],
+        status: "draft",
       };
       const result = await engine.purchaseOrder.create(data);
       expect(result).toBeDefined();
       expect(result.code).toBe(data.code);
-      expect(result.total).toBe(1000);
+      expect(result.total).toBe(0);
     });
 
     it("should throw PurchaseOrderDuplicationException for duplicate code", async () => {
       const data: PurchaseOrderCreationAttributes = {
-        code: "PO-100",
+        code: "PO-0",
         date: new Date(),
         supplierId: idGenerator.supplier(0),
         remarks: "Duplicate Test Purchase Order",
-        status: "pending",
-        items: [
-          {
-            materialId: idGenerator.material(0),
-            quantity: 5,
-            unitPrice: 200,
-            remarks: "Test duplicate item",
-          },
-        ],
+        status: "draft",
       };
       await expect(engine.purchaseOrder.create(data)).rejects.toThrow(
         PurchaseOrderDuplicationException
@@ -108,31 +104,28 @@ describe("PurchaseOrderFacade", () => {
 
   describe("update", () => {
     beforeEach(async () => {
-      await resetData();
-      await materialFixtures();
-      await supplierFixtures();
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     it("should update an existing purchase order", async () => {
       const id = idGenerator.purchaseOrder(0);
-      const data: PurchaseOrderUpdateAttributes = {
+      const data = {
         date: new Date(),
         remarks: "Updated remarks",
-        status: "pending",
-        items: [
-          {
-            id: idGenerator.purchaseOrderItem(0, 0),
-            materialId: idGenerator.material(1),
-            quantity: 15,
-            unitPrice: 150,
-            remarks: "Updated item",
-          },
-        ],
-      };
-      const result = await engine.purchaseOrder.update(id, data);
+        status: "draft",
+        code: "updated code",
+        total: 1234,
+        supplierId: idGenerator.supplier(50),
+      }; // add extra to check if other properties get updated or not
+      const result = await engine.purchaseOrder.update(
+        id,
+        data as PurchaseOrderUpdateAttributes
+      );
       expect(result).toBeDefined();
       expect(result.remarks).toBe(data.remarks);
-      expect(result.total).toBe(2250);
+      expect(result.code).toStrictEqual("PO-0");
+      expect(result.supplierId).toStrictEqual(idGenerator.supplier(0));
+      expect(result.total).toStrictEqual(0);
     });
 
     it("should throw PurchaseOrderInvalidStatusException for non-pending status", async () => {
@@ -140,31 +133,46 @@ describe("PurchaseOrderFacade", () => {
       const data: PurchaseOrderUpdateAttributes = {
         remarks: "Trying to update a completed order",
         status: "completed",
-        items: [],
       };
       await expect(engine.purchaseOrder.update(id, data)).rejects.toThrow(
         PurchaseOrderInvalidStatusException
+      );
+    });
+    it("should throw PurchaseOrderNotFound for non-existent order", async () => {
+      const id = idGenerator.purchaseOrder(199);
+      const data: PurchaseOrderUpdateAttributes = {
+        remarks: "Trying to update a completed order",
+        status: "completed",
+      };
+      await expect(engine.purchaseOrder.update(id, data)).rejects.toThrow(
+        PurchaseOrderNotFoundException
       );
     });
   });
 
   describe("delete", () => {
     beforeEach(async () => {
-      await resetData();
-      await materialFixtures();
-      await supplierFixtures();
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     it("should delete a purchase order", async () => {
-      const id = idGenerator.purchaseOrder(2);
+      const id = idGenerator.purchaseOrder(0);
       const result = await engine.purchaseOrder.delete(id);
-      expect(result).toEqual({ success: true });
+      const record = await PurchaseOrder.findByPk(id, { paranoid: false });
+      expect(record).toBeDefined();
+      expect(record?.status).toStrictEqual("deleted");
     });
 
     it("should throw PurchaseOrderInvalidStatusException for non-pending order", async () => {
       const id = idGenerator.purchaseOrder(1);
       await expect(engine.purchaseOrder.delete(id)).rejects.toThrow(
         PurchaseOrderInvalidStatusException
+      );
+    });
+    it("should throw PurchaseOrderNotFound for non-existent order", async () => {
+      const id = idGenerator.purchaseOrder(199);
+      await expect(engine.purchaseOrder.delete(id)).rejects.toThrow(
+        PurchaseOrderNotFoundException
       );
     });
   });

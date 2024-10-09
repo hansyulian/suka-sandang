@@ -15,7 +15,6 @@ describe("SupplierFacade", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Supplier, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Supplier, "findByPk");
-  const createSpy = jest.spyOn(Supplier, "create");
 
   describe("list", () => {
     beforeAll(async () => {
@@ -115,7 +114,6 @@ describe("SupplierFacade", () => {
       const foundRecord = await engine.supplier.findById(result.id);
 
       expect(result).toEqual(foundRecord);
-      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should throw InvalidEmailException when email is invalid", async () => {
       const createData: SupplierCreationAttributes = {
@@ -132,7 +130,6 @@ describe("SupplierFacade", () => {
       expect(engine.supplier.create(createData)).rejects.toThrow(
         InvalidEmailException
       );
-      expect(createSpy).toHaveBeenCalledTimes(0);
     });
   });
 

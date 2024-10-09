@@ -14,3 +14,4 @@ export * from "./mergePaths";
 export * from "./unslash";
 export * from "./cleanUndefined";
 export * from "./valueIndex";
+export * from "./sum";

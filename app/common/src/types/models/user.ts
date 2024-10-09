@@ -1,6 +1,6 @@
 import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
-export type UserStatus = "pending" | "active" | "suspended";
+export type UserStatus = "draft" | "active" | "suspended";
 export type UserAttributes = BaseAttributes & {
   name: string;
   email: string;

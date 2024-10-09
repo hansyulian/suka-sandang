@@ -13,8 +13,7 @@ export async function purchaseOrderFixtures() {
         code: `PO-${i}`,
         date: now,
         supplierId: idGenerator.supplier(i % 5),
-        total: 5000,
-        status: ["pending", "completed", "processing", "cancelled"][
+        status: ["draft", "completed", "processing", "cancelled"][
           i % 4
         ] as PurchaseOrderStatus,
         remarks: `remarks ${i}`,
@@ -28,7 +27,6 @@ export async function purchaseOrderFixtures() {
           purchaseOrderId: idGenerator.purchaseOrder(i),
           quantity: 20,
           unitPrice: 50,
-          subTotal: 1000,
         })
       );
     }

@@ -40,17 +40,18 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM(
-          "pending",
+          "draft",
           "processing",
           "completed",
           "cancelled",
           "deleted"
         ),
         allowNull: false,
-        defaultValue: "pending",
+        defaultValue: "draft",
       },
       total: {
         type: Sequelize.FLOAT,
+        defaultValue: 0,
         allowNull: false,
       },
       remarks: {
@@ -61,5 +62,8 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("PurchaseOrders");
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_PurchaseOrder_status"'
+    );
   },
 };

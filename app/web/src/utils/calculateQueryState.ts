@@ -16,5 +16,5 @@ export function calculateQueryState(
   if (isFetching) {
     return "loading";
   }
-  return "pending";
+  return "draft";
 }

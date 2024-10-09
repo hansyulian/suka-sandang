@@ -58,7 +58,7 @@ export default function MaterialPage() {
       color: "",
       purchasePrice: undefined,
       retailPrice: undefined,
-      status: "pending",
+      status: "draft",
     },
     validate: {
       name: formValidations({ required: true }),

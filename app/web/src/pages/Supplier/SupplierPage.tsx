@@ -55,7 +55,7 @@ export default function SupplierPage() {
       phone: "",
       identity: "",
       remarks: "",
-      status: "pending",
+      status: "draft",
     },
     validate: {
       name: formValidations({ required: true }),

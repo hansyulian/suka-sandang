@@ -1,6 +1,6 @@
 import { Engine } from "~/Engine";
 
-export class TransactionManager {
+export class EngineTransactionManager {
   private engine: Engine;
   private master: boolean;
 

@@ -1,3 +1,4 @@
+import { createNamespace } from "cls-hooked";
 import { Dialect } from "sequelize";
 import { Sequelize, SequelizeOptions } from "sequelize-typescript";
 import { appConfig } from "~/config";
@@ -10,6 +11,10 @@ import {
   PurchaseOrderItem,
 } from "~/models";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
+
+const clsNamespace = createNamespace("transaction-namespace");
+
+Sequelize.useCLS(clsNamespace);
 
 export type DBConfig = {
   username: string;

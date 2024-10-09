@@ -29,11 +29,11 @@ export class SupplierFacade extends FacadeBase {
   }
 
   async findById(id: string) {
-    const result = await Supplier.findByPk(id, { paranoid: false });
-    if (!result) {
+    const record = await Supplier.findByPk(id, { paranoid: false });
+    if (!record) {
       throw new SupplierNotFoundException({ id });
     }
-    return result;
+    return record;
   }
 
   async create(data: SupplierCreationAttributes) {
@@ -41,41 +41,53 @@ export class SupplierFacade extends FacadeBase {
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await Supplier.create({
-      name,
-      remarks,
-      status,
-      address,
-      email,
-      phone,
-      identity,
-    });
+    const result = await this.withTransaction((transaction) =>
+      Supplier.create(
+        {
+          name,
+          remarks,
+          status,
+          address,
+          email,
+          phone,
+          identity,
+        },
+        { transaction }
+      )
+    );
     return Supplier.findByPk(result.id) as unknown as Supplier;
   }
 
   async update(id: string, data: SupplierUpdateAttributes) {
     const record = await this.findById(id);
     const { name, remarks, status, address, email, phone, identity } = data;
-    if (status && status !== "deleted") {
-      await record.restore({});
-    }
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await record.update({
-      name,
-      remarks,
-      status,
-      address,
-      email,
-      phone,
-      identity,
+    const result = await this.withTransaction(async (transaction) => {
+      if (status && status !== "deleted") {
+        await record.restore({});
+      }
+      return record.update(
+        {
+          name,
+          remarks,
+          status,
+          address,
+          email,
+          phone,
+          identity,
+        },
+        { transaction }
+      );
     });
     return Supplier.findByPk(result.id, { paranoid: false });
   }
 
   async delete(id: string) {
     const record = await this.findById(id);
-    await record.destroy();
+    await this.withTransaction((transaction) =>
+      record.destroy({ transaction })
+    );
   }
 }

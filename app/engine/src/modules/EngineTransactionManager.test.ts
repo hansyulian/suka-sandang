@@ -1,5 +1,5 @@
 import { Engine } from "~/Engine";
-import { TransactionManager } from "~/modules/TransactionManager";
+import { EngineTransactionManager } from "~/modules/EngineTransactionManager";
 
 // Mocking the Engine class
 jest.mock("~/Engine", () => {
@@ -12,9 +12,9 @@ jest.mock("~/Engine", () => {
   };
 });
 
-describe("TransactionManager", () => {
+describe("EngineTransactionManager", () => {
   let engineMock: jest.Mocked<Engine>;
-  let transactionManager: TransactionManager;
+  let transactionManager: EngineTransactionManager;
 
   beforeEach(() => {
     // Create a new mock instance for each test
@@ -23,32 +23,32 @@ describe("TransactionManager", () => {
 
   describe("isMaster getter", () => {
     it("should return true when master is true", () => {
-      transactionManager = new TransactionManager(engineMock, true);
+      transactionManager = new EngineTransactionManager(engineMock, true);
       expect(transactionManager.isMaster).toBe(true);
     });
 
     it("should return false when master is false", () => {
-      transactionManager = new TransactionManager(engineMock, false);
+      transactionManager = new EngineTransactionManager(engineMock, false);
       expect(transactionManager.isMaster).toBe(false);
     });
   });
 
   describe("transaction getter", () => {
     it("should return the engine transaction", () => {
-      transactionManager = new TransactionManager(engineMock);
+      transactionManager = new EngineTransactionManager(engineMock);
       expect(transactionManager.transaction).toBe(engineMock.transaction);
     });
   });
 
   describe("commit method", () => {
     it("should commit the transaction when master is true", async () => {
-      transactionManager = new TransactionManager(engineMock, true);
+      transactionManager = new EngineTransactionManager(engineMock, true);
       await transactionManager.commit();
       expect(engineMock.commitTransaction).toHaveBeenCalled();
     });
 
     it("should not commit the transaction when master is false", async () => {
-      transactionManager = new TransactionManager(engineMock, false);
+      transactionManager = new EngineTransactionManager(engineMock, false);
       await transactionManager.commit();
       expect(engineMock.commitTransaction).not.toHaveBeenCalled();
     });
@@ -56,13 +56,13 @@ describe("TransactionManager", () => {
 
   describe("rollback method", () => {
     it("should rollback the transaction when master is true", async () => {
-      transactionManager = new TransactionManager(engineMock, true);
+      transactionManager = new EngineTransactionManager(engineMock, true);
       await transactionManager.rollback();
       expect(engineMock.rollbackTransaction).toHaveBeenCalled();
     });
 
     it("should not rollback the transaction when master is false", async () => {
-      transactionManager = new TransactionManager(engineMock, false);
+      transactionManager = new EngineTransactionManager(engineMock, false);
       await transactionManager.rollback();
       expect(engineMock.rollbackTransaction).not.toHaveBeenCalled();
     });

@@ -29,25 +29,25 @@ export class MaterialFacade extends FacadeBase {
   }
 
   async findById(id: string) {
-    const result = await Material.findByPk(id, { paranoid: false });
-    if (!result) {
+    const record = await Material.findByPk(id, { paranoid: false });
+    if (!record) {
       throw new MaterialNotFoundException({ id });
     }
-    return result;
+    return record;
   }
 
   async findByIdOrCode(idOrCode: string) {
     const where: WhereOptions<MaterialAttributes> = isUuid(idOrCode)
       ? { id: idOrCode }
       : { code: idOrCode };
-    const result = await Material.findOne({
+    const record = await Material.findOne({
       where,
       paranoid: false,
     });
-    if (!result) {
+    if (!record) {
       throw new MaterialNotFoundException({ idOrCode });
     }
-    return result;
+    return record;
   }
 
   async create(data: MaterialCreationAttributes) {
@@ -56,14 +56,19 @@ export class MaterialFacade extends FacadeBase {
     if (recordByCode) {
       throw new MaterialDuplicationException({ code });
     }
-    const result = await Material.create({
-      code,
-      name,
-      purchasePrice,
-      retailPrice,
-      status,
-      color,
-    });
+    const result = await this.withTransaction((transaction) =>
+      Material.create(
+        {
+          code,
+          name,
+          purchasePrice,
+          retailPrice,
+          status,
+          color,
+        },
+        { transaction }
+      )
+    );
     return Material.findByPk(result.id);
   }
 
@@ -79,22 +84,29 @@ export class MaterialFacade extends FacadeBase {
         throw new MaterialDuplicationException({ code });
       }
     }
-    if (status && status !== "deleted") {
-      await record.restore({});
-    }
-    const result = await record.update({
-      code,
-      name,
-      retailPrice,
-      purchasePrice,
-      color,
-      status,
+    const result = await this.withTransaction(async (transaction) => {
+      if (status && status !== "deleted") {
+        await record.restore({ transaction });
+      }
+      return await record.update(
+        {
+          code,
+          name,
+          retailPrice,
+          purchasePrice,
+          color,
+          status,
+        },
+        { transaction }
+      );
     });
     return Material.findByPk(result.id, { paranoid: false });
   }
 
   async delete(id: string) {
     const record = await this.findById(id);
-    await record.destroy();
+    await this.withTransaction((transaction) =>
+      record.destroy({ transaction })
+    );
   }
 }

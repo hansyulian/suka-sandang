@@ -15,7 +15,7 @@ describe("Controller: updateSupplierController", () => {
     const id = "mock-id";
     const payload: SupplierUpdateAttributes = {
       name: "Supplier 1",
-      status: "pending",
+      status: "draft",
       address: "Address",
       email: "email@example.com",
       phone: "+62123123123",
@@ -42,7 +42,7 @@ describe("Controller: updateSupplierController", () => {
     expect(body.address).toStrictEqual("Address");
     expect(body.phone).toStrictEqual("+62123123123");
     expect(body.remarks).toStrictEqual("remarks");
-    expect(body.status).toStrictEqual("pending");
+    expect(body.status).toStrictEqual("draft");
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
     expect(body.deletedAt).toBeUndefined();

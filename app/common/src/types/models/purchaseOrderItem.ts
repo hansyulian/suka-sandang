@@ -16,7 +16,10 @@ export type PurchaseOrderItemFields = SchemaType<
 export type PurchaseOrderItemAttributes = BaseAttributes &
   PurchaseOrderItemFields;
 export type PurchaseOrderItemCreationAttributes = CreateOmit<
-  Optional<PurchaseOrderItemAttributes>
+  Optional<PurchaseOrderItemAttributes>,
+  "subTotal"
 >;
-export type PurchaseOrderItemUpdateAttributes =
-  UpdateOmit<PurchaseOrderItemAttributes>;
+export type PurchaseOrderItemUpdateAttributes = UpdateOmit<
+  PurchaseOrderItemAttributes,
+  "subTotal" | "purchaseOrderId"
+>;

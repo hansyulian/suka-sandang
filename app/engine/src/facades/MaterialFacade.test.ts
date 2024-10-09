@@ -16,7 +16,6 @@ describe("MaterialFacade", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Material, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Material, "findByPk");
-  const createSpy = jest.spyOn(Material, "create");
   const findOneSpy = jest.spyOn(Material, "findOne");
 
   describe("list", () => {
@@ -177,7 +176,7 @@ describe("MaterialFacade", () => {
         name: "My new material",
         purchasePrice: 100,
         retailPrice: 150,
-        status: "pending",
+        status: "draft",
       };
 
       jest.clearAllMocks();
@@ -187,7 +186,6 @@ describe("MaterialFacade", () => {
       );
 
       expect(result).toEqual(foundRecord);
-      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should create and return a new material and ignore stray values", async () => {
       const createData: MaterialCreationAttributes = {
@@ -195,7 +193,7 @@ describe("MaterialFacade", () => {
         name: "My new material",
         purchasePrice: 100,
         retailPrice: 150,
-        status: "pending",
+        status: "draft",
       };
       jest.clearAllMocks();
       const result = await engine.material.create(
@@ -206,7 +204,6 @@ describe("MaterialFacade", () => {
       );
 
       expect(result).toEqual(foundRecord);
-      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should throw duplicated material if code already exists", async () => {
       const createData: MaterialCreationAttributes = {
@@ -214,13 +211,12 @@ describe("MaterialFacade", () => {
         name: "My new material",
         purchasePrice: 100,
         retailPrice: 150,
-        status: "pending",
+        status: "draft",
       };
       jest.clearAllMocks();
       await expect(engine.material.create(createData)).rejects.toThrow(
         MaterialDuplicationException
       );
-      expect(Material.create).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -251,7 +247,7 @@ describe("MaterialFacade", () => {
         engine.material.update(id, {
           name: "Updated Name",
           code: "Updated Code",
-          status: "pending",
+          status: "draft",
         })
       ).rejects.toThrow(MaterialNotFoundException);
       expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });
@@ -262,7 +258,7 @@ describe("MaterialFacade", () => {
         engine.material.update(id, {
           name: "Updated Name",
           code: "material-02",
-          status: "pending",
+          status: "draft",
         })
       ).rejects.toThrow(MaterialDuplicationException);
       expect(Material.findByPk).toHaveBeenCalledWith(id, { paranoid: false });

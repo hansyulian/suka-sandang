@@ -1,17 +1,27 @@
-import { Engine } from "~/Engine";
+import { Engine, EngineTransactionWrapperCallback } from "~/Engine";
 
 export abstract class FacadeBase {
-  private parent: Engine;
+  private _core: Engine;
 
   public constructor(parent: Engine) {
-    this.parent = parent;
+    this._core = parent;
   }
 
   protected get engine() {
-    return this.parent;
+    return this._core;
   }
 
   protected async transactionManager() {
-    return this.parent.transactionManager();
+    return this.engine.transactionManager();
+  }
+
+  protected get transaction() {
+    return this.engine.transaction;
+  }
+
+  public async withTransaction<ReturnType>(
+    callback: EngineTransactionWrapperCallback<ReturnType>
+  ) {
+    return this.engine.withTransaction(callback);
   }
 }

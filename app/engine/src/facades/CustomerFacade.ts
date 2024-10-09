@@ -29,11 +29,11 @@ export class CustomerFacade extends FacadeBase {
   }
 
   async findById(id: string) {
-    const result = await Customer.findByPk(id, { paranoid: false });
-    if (!result) {
+    const record = await Customer.findByPk(id, { paranoid: false });
+    if (!record) {
       throw new CustomerNotFoundException({ id });
     }
-    return result;
+    return record;
   }
 
   async create(data: CustomerCreationAttributes) {
@@ -41,15 +41,20 @@ export class CustomerFacade extends FacadeBase {
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await Customer.create({
-      name,
-      remarks,
-      status,
-      address,
-      email,
-      phone,
-      identity,
-    });
+    const result = await this.withTransaction((transaction) =>
+      Customer.create(
+        {
+          name,
+          remarks,
+          status,
+          address,
+          email,
+          phone,
+          identity,
+        },
+        { transaction }
+      )
+    );
     return Customer.findByPk(result.id) as unknown as Customer;
   }
 
@@ -62,20 +67,27 @@ export class CustomerFacade extends FacadeBase {
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await record.update({
-      name,
-      remarks,
-      status,
-      address,
-      email,
-      phone,
-      identity,
-    });
+    const result = await this.withTransaction((transaction) =>
+      record.update(
+        {
+          name,
+          remarks,
+          status,
+          address,
+          email,
+          phone,
+          identity,
+        },
+        { transaction }
+      )
+    );
     return Customer.findByPk(result.id, { paranoid: false });
   }
 
   async delete(id: string) {
     const record = await this.findById(id);
-    await record.destroy();
+    await this.withTransaction((transaction) =>
+      record.destroy({ transaction })
+    );
   }
 }

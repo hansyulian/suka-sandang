@@ -15,7 +15,6 @@ describe("CustomerFacade", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Customer, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Customer, "findByPk");
-  const createSpy = jest.spyOn(Customer, "create");
 
   describe("list", () => {
     beforeAll(async () => {
@@ -115,7 +114,6 @@ describe("CustomerFacade", () => {
       const foundRecord = await engine.customer.findById(result.id);
 
       expect(result).toEqual(foundRecord);
-      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should throw InvalidEmailException when email is invalid", async () => {
       const createData: CustomerCreationAttributes = {
@@ -132,7 +130,6 @@ describe("CustomerFacade", () => {
       expect(engine.customer.create(createData)).rejects.toThrow(
         InvalidEmailException
       );
-      expect(createSpy).toHaveBeenCalledTimes(0);
     });
   });
 

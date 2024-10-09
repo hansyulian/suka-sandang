@@ -2,7 +2,14 @@ import type {
   PurchaseOrderItemAttributes,
   PurchaseOrderItemCreationAttributes,
 } from "@app/common";
-import { BelongsTo, Column, ForeignKey, Table } from "sequelize-typescript";
+import {
+  BeforeCreate,
+  BeforeUpdate,
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Table,
+} from "sequelize-typescript";
 import { BaseModel } from "~/models/BaseModel";
 import { Material } from "~/models/Material";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
@@ -39,4 +46,10 @@ export class PurchaseOrderItem extends BaseModel<
 
   @BelongsTo(() => Material)
   declare material: Material;
+
+  @BeforeCreate
+  @BeforeUpdate
+  static calculateSubTotal(instance: PurchaseOrderItem) {
+    instance.subTotal = instance.quantity * instance.unitPrice;
+  }
 }

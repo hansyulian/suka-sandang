@@ -1,5 +1,6 @@
 import { Transaction } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
+import { UnexpectedDatabaseTransactionStateException } from "~/exceptions/UnexpectedDatabaseTransactionStateException";
 import {
   EnumFacade,
   MaterialFacade,
@@ -9,12 +10,16 @@ import {
   CustomerFacade,
 } from "~/facades";
 import { PurchaseOrderFacade } from "~/facades/PurchaseOrderFacade";
-import { TransactionManager } from "~/modules";
+import { PurchaseOrderItemFacade } from "~/facades/PurchaseOrderItemFacade";
+import { EngineTransactionManager } from "~/modules";
 import { DBConfig, setupDatabase } from "~/setupDatabase";
 
 export type EngineOptions = {
   database?: DBConfig;
 };
+export type EngineTransactionWrapperCallback<ReturnType> = (
+  transaction: Transaction
+) => PromiseLike<ReturnType>;
 export class Engine {
   public transaction?: Transaction;
   private sequelize: Sequelize;
@@ -27,6 +32,7 @@ export class Engine {
   public supplier: SupplierFacade;
   public customer: CustomerFacade;
   public purchaseOrder: PurchaseOrderFacade;
+  public purchaseOrderItem: PurchaseOrderItemFacade;
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
@@ -38,19 +44,20 @@ export class Engine {
     this.supplier = new SupplierFacade(this);
     this.customer = new CustomerFacade(this);
     this.purchaseOrder = new PurchaseOrderFacade(this);
+    this.purchaseOrderItem = new PurchaseOrderItemFacade(this);
   }
 
   public async transactionManager() {
     if (!this.transaction) {
       this.transaction = await this.sequelize.transaction();
-      return new TransactionManager(this, true);
+      return new EngineTransactionManager(this, true);
     }
-    return new TransactionManager(this);
+    return new EngineTransactionManager(this);
   }
 
   public async commitTransaction() {
     if (!this.transaction) {
-      return;
+      throw new UnexpectedDatabaseTransactionStateException();
     }
     this.transaction.commit();
     this.transaction = undefined;
@@ -58,9 +65,26 @@ export class Engine {
 
   public async rollbackTransaction() {
     if (!this.transaction) {
-      return;
+      throw new UnexpectedDatabaseTransactionStateException();
     }
     this.transaction.rollback();
     this.transaction = undefined;
+  }
+
+  public async withTransaction<ReturnType>(
+    callback: EngineTransactionWrapperCallback<ReturnType>
+  ) {
+    const tm = await this.transactionManager();
+    if (!tm.transaction) {
+      throw new UnexpectedDatabaseTransactionStateException();
+    }
+    try {
+      const result = await callback(tm.transaction);
+      await tm.commit();
+      return result;
+    } catch (err) {
+      await tm.rollback();
+      throw err;
+    }
   }
 }

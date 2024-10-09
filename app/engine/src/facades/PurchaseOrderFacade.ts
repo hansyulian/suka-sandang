@@ -2,9 +2,8 @@ import {
   PurchaseOrderAttributes,
   PurchaseOrderCreationAttributes,
   PurchaseOrderUpdateAttributes,
-  simpleSuccessResponse,
 } from "@app/common";
-import { compareArray } from "@hyulian/common";
+import { sum } from "@hyulian/common";
 import { WhereOptions } from "sequelize";
 import { PurchaseOrderDuplicationException } from "~/exceptions/PurchaseOrderDuplicationException";
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
@@ -32,14 +31,15 @@ export class PurchaseOrderFacade extends FacadeBase {
   }
 
   async findById(id: string) {
-    const result = await PurchaseOrder.findByPk(id, {
+    const record = await PurchaseOrder.findByPk(id, {
       paranoid: false,
       include: [PurchaseOrderItem],
+      transaction: this.transaction,
     });
-    if (!result) {
+    if (!record) {
       throw new PurchaseOrderNotFoundException({ id });
     }
-    return result;
+    return record;
   }
 
   async findByIdOrCode(idOrCode: string) {
@@ -57,7 +57,7 @@ export class PurchaseOrderFacade extends FacadeBase {
   }
 
   async create(data: PurchaseOrderCreationAttributes) {
-    const { code, date, supplierId, remarks, status, items } = data;
+    const { code, date, supplierId, remarks, status } = data;
     const recordByCode = await PurchaseOrder.findOne({
       where: { code },
       paranoid: true,
@@ -65,132 +65,64 @@ export class PurchaseOrderFacade extends FacadeBase {
     if (recordByCode) {
       throw new PurchaseOrderDuplicationException({ code });
     }
-    const tm = await this.transactionManager();
-    try {
-      let total: number = 0;
-      for (const item of items) {
-        total += item.quantity * item.unitPrice;
-      }
-      const purchaseOrder = await PurchaseOrder.create(
+    const record = await this.withTransaction((transaction) =>
+      PurchaseOrder.create(
         {
           code,
           date,
           supplierId,
-          total,
           status,
           remarks,
         },
         {
-          transaction: tm.transaction,
+          transaction,
         }
-      );
-      const promises = [];
-      for (const item of items) {
-        const { materialId, quantity, unitPrice, remarks } = item;
-        promises.push(
-          PurchaseOrderItem.create(
-            {
-              materialId,
-              quantity,
-              unitPrice,
-              remarks,
-              purchaseOrderId: purchaseOrder.id,
-              subTotal: quantity * unitPrice,
-            },
-            {
-              transaction: tm.transaction,
-            }
-          )
-        );
-      }
-      await Promise.all(promises);
-      await tm.commit();
-      return this.findById(purchaseOrder.id);
-    } catch (err) {
-      await tm.rollback();
-      throw err;
-    }
+      )
+    );
+    return this.findById(record.id);
   }
 
   async update(id: string, data: PurchaseOrderUpdateAttributes) {
-    const { date, remarks, status, items } = data;
+    const { date, remarks, status } = data;
     const record = await this.findById(id);
-    if (record.status !== "pending") {
-      throw new PurchaseOrderInvalidStatusException("pending", record.status);
+    if (record.status !== "draft") {
+      throw new PurchaseOrderInvalidStatusException("draft", record.status);
     }
-    const tm = await this.transactionManager();
-    try {
-      let total: number = 0;
-      for (const item of items) {
-        total += item.quantity * item.unitPrice;
-      }
-      const purchaseOrder = await record.update(
+    await this.withTransaction((transaction) =>
+      record.update(
         {
           date,
-          total,
           status,
           remarks,
         },
         {
-          transaction: tm.transaction,
+          transaction,
         }
-      );
-      const compareResult = compareArray(
-        record.purchaseOrderItems,
-        items,
-        (left, right) => left.id === right.id
-      );
-      const promises = [];
-      for (const leftOnly of compareResult.leftOnly) {
-        promises.push(leftOnly.destroy());
-      }
-      for (const rightOnly of compareResult.rightOnly) {
-        const { materialId, quantity, remarks, unitPrice } = rightOnly;
-        promises.push(
-          PurchaseOrderItem.create({
-            purchaseOrderId: record.id,
-            materialId,
-            quantity,
-            remarks,
-            unitPrice,
-            subTotal: quantity * unitPrice,
-          })
-        );
-      }
-      for (const itemUpdate of compareResult.both) {
-        const { materialId, quantity, unitPrice, remarks } = itemUpdate.right;
-        promises.push(
-          itemUpdate.left.update({
-            materialId,
-            quantity,
-            unitPrice,
-            remarks,
-            subTotal: quantity * unitPrice,
-          })
-        );
-      }
-      await Promise.all(promises);
-      await tm.commit();
-      return this.findById(purchaseOrder.id);
-    } catch (err) {
-      await tm.rollback();
-      throw err;
-    }
+      )
+    );
+    return this.findById(id);
   }
 
   async delete(id: string) {
     const record = await this.findById(id);
-    if (record.status !== "pending") {
-      throw new PurchaseOrderInvalidStatusException("pending", record.status);
+    if (record.status !== "draft") {
+      throw new PurchaseOrderInvalidStatusException("draft", record.status);
     }
-    const tm = await this.transactionManager();
-    try {
-      await record.destroy({ transaction: tm.transaction });
-      await tm.commit();
-      return simpleSuccessResponse;
-    } catch (err) {
-      await tm.rollback();
-      throw err;
-    }
+    await this.withTransaction((transaction) =>
+      record.destroy({ transaction })
+    );
+  }
+
+  async recalculateTotal(id: string) {
+    const record = await this.findById(id);
+    const total = sum(record.purchaseOrderItems, (item) => item.subTotal);
+    await this.withTransaction((transaction) =>
+      record.update(
+        {
+          total,
+        },
+        { transaction }
+      )
+    );
   }
 }

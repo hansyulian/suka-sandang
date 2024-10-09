@@ -3,7 +3,7 @@ import { Optional } from "@hyulian/common";
 import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
 export const supplierStatus = [
-  "pending",
+  "draft",
   "active",
   "blocked",
   "deleted",

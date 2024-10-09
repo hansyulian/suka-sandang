@@ -1,5 +1,4 @@
-import { Transaction } from "sequelize";
-import { Engine, EngineTransactionWrapperCallback } from "~/Engine";
+import { Engine } from "~/Engine";
 
 export abstract class FacadeBase {
   private _core: Engine;
@@ -12,20 +11,8 @@ export abstract class FacadeBase {
     return this._core;
   }
 
-  protected async transactionManager() {
-    return this.engine.transactionManager();
-  }
-
   public get sequelize() {
-    return this.engine.sequelize;
-  }
-
-  public get transaction() {
-    return this.engine.transaction;
-  }
-
-  public set transaction(value: Transaction | undefined) {
-    this.engine.transaction = value;
+    return this._core.sequelize;
   }
 
   public get transactionMutex() {
@@ -34,11 +21,5 @@ export abstract class FacadeBase {
 
   public set transactionMutex(value: boolean) {
     this.engine.transactionMutex = value;
-  }
-
-  public async withTransaction<ReturnType>(
-    callback: EngineTransactionWrapperCallback<ReturnType>
-  ) {
-    return this.engine.withTransaction(callback);
   }
 }

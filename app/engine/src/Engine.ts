@@ -1,6 +1,5 @@
 import { Transaction } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
-import { UnexpectedDatabaseTransactionStateException } from "~/exceptions/UnexpectedDatabaseTransactionStateException";
 import {
   EnumFacade,
   MaterialFacade,
@@ -11,7 +10,6 @@ import {
 } from "~/facades";
 import { PurchaseOrderFacade } from "~/facades/PurchaseOrderFacade";
 import { PurchaseOrderItemFacade } from "~/facades/PurchaseOrderItemFacade";
-import { EngineTransactionManager } from "~/modules";
 import { DBConfig, setupDatabase } from "~/setupDatabase";
 
 export type EngineOptions = {
@@ -21,7 +19,6 @@ export type EngineTransactionWrapperCallback<ReturnType> = (
   transaction: Transaction
 ) => PromiseLike<ReturnType>;
 export class Engine {
-  public transaction?: Transaction;
   private _sequelize: Sequelize;
   public transactionMutex: boolean = false;
   public options: EngineOptions;
@@ -50,46 +47,5 @@ export class Engine {
 
   public get sequelize() {
     return this._sequelize;
-  }
-
-  public async transactionManager() {
-    if (!this.transaction) {
-      this.transaction = await this.sequelize.transaction();
-      return new EngineTransactionManager(this, true);
-    }
-    return new EngineTransactionManager(this);
-  }
-
-  public async commitTransaction() {
-    if (!this.transaction) {
-      throw new UnexpectedDatabaseTransactionStateException();
-    }
-    this.transaction.commit();
-    this.transaction = undefined;
-  }
-
-  public async rollbackTransaction() {
-    if (!this.transaction) {
-      throw new UnexpectedDatabaseTransactionStateException();
-    }
-    this.transaction.rollback();
-    this.transaction = undefined;
-  }
-
-  public async withTransaction<ReturnType>(
-    callback: EngineTransactionWrapperCallback<ReturnType>
-  ) {
-    const tm = await this.transactionManager();
-    if (!tm.transaction) {
-      throw new UnexpectedDatabaseTransactionStateException();
-    }
-    try {
-      const result = await callback(tm.transaction);
-      await tm.commit();
-      return result;
-    } catch (err) {
-      await tm.rollback();
-      throw err;
-    }
   }
 }

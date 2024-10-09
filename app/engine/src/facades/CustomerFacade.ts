@@ -1,7 +1,10 @@
-import { WhereOptions } from "sequelize";
-import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
+import type { WhereOptions } from "sequelize";
+import type {
+  FindAndCountAllResult,
+  SequelizePaginationOptions,
+} from "~/types";
 import { Customer } from "~/models";
-import {
+import type {
   CustomerAttributes,
   CustomerCreationAttributes,
   CustomerUpdateAttributes,
@@ -10,8 +13,10 @@ import { FacadeBase } from "~/facades/FacadeBase";
 import { CustomerNotFoundException } from "~/exceptions/CustomerNotFoundException";
 import { isEmail } from "@hyulian/common";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
 export class CustomerFacade extends FacadeBase {
+  @WithTransaction
   async list(
     query: WhereOptions<CustomerAttributes>,
     options: SequelizePaginationOptions
@@ -28,36 +33,36 @@ export class CustomerFacade extends FacadeBase {
     };
   }
 
+  @WithTransaction
   async findById(id: string) {
-    const record = await Customer.findByPk(id, { paranoid: false });
+    const record = await Customer.findByPk(id, {
+      paranoid: false,
+    });
     if (!record) {
       throw new CustomerNotFoundException({ id });
     }
     return record;
   }
 
+  @WithTransaction
   async create(data: CustomerCreationAttributes) {
     const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await this.withTransaction((transaction) =>
-      Customer.create(
-        {
-          name,
-          remarks,
-          status,
-          address,
-          email,
-          phone,
-          identity,
-        },
-        { transaction }
-      )
-    );
+    const result = await Customer.create({
+      name,
+      remarks,
+      status,
+      address,
+      email,
+      phone,
+      identity,
+    });
     return Customer.findByPk(result.id) as unknown as Customer;
   }
 
+  @WithTransaction
   async update(id: string, data: CustomerUpdateAttributes) {
     const record = await this.findById(id);
     const { name, remarks, status, address, email, phone, identity } = data;
@@ -67,27 +72,21 @@ export class CustomerFacade extends FacadeBase {
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await this.withTransaction((transaction) =>
-      record.update(
-        {
-          name,
-          remarks,
-          status,
-          address,
-          email,
-          phone,
-          identity,
-        },
-        { transaction }
-      )
-    );
+    const result = await record.update({
+      name,
+      remarks,
+      status,
+      address,
+      email,
+      phone,
+      identity,
+    });
     return Customer.findByPk(result.id, { paranoid: false });
   }
 
+  @WithTransaction
   async delete(id: string) {
     const record = await this.findById(id);
-    await this.withTransaction((transaction) =>
-      record.destroy({ transaction })
-    );
+    await record.destroy();
   }
 }

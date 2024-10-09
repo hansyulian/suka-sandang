@@ -1,10 +1,12 @@
 import { FindAllResult } from "~/types";
 import { FacadeBase } from "~/facades/FacadeBase";
 import { Enum } from "~/models/Enum";
-import { EnumAttributes, OmitBase } from "@app/common";
-import { filterDuplicates, indexArray, valueIndex } from "@hyulian/common";
+import type { EnumCreationAttributes } from "@app/common";
+import { filterDuplicates, indexArray } from "@hyulian/common";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
 export class EnumFacade extends FacadeBase {
+  @WithTransaction
   async list(): Promise<FindAllResult<Enum>> {
     const result = await Enum.findAll();
     return {
@@ -12,7 +14,8 @@ export class EnumFacade extends FacadeBase {
     };
   }
 
-  async upsert(record: OmitBase<EnumAttributes>) {
+  @WithTransaction
+  async upsert(record: EnumCreationAttributes) {
     const foundRecord = await Enum.findOne({
       where: {
         value: record.value,
@@ -28,6 +31,7 @@ export class EnumFacade extends FacadeBase {
     return result;
   }
 
+  @WithTransaction
   async syncGroup(group: string, values: string[]) {
     const records = await Enum.findAll({
       where: {

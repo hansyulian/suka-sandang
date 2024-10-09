@@ -1,8 +1,11 @@
-import { WhereOptions } from "sequelize";
-import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
+import type { WhereOptions } from "sequelize";
+import type {
+  FindAndCountAllResult,
+  SequelizePaginationOptions,
+} from "~/types";
 import { MaterialNotFoundException } from "~/exceptions/MaterialNotFoundException";
 import { Material } from "~/models/Material";
-import {
+import type {
   MaterialAttributes,
   MaterialCreationAttributes,
   MaterialUpdateAttributes,
@@ -10,8 +13,10 @@ import {
 import { isUuid } from "~/utils/isUuid";
 import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
 import { FacadeBase } from "~/facades/FacadeBase";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
 export class MaterialFacade extends FacadeBase {
+  @WithTransaction
   async list(
     query: WhereOptions<MaterialAttributes>,
     options: SequelizePaginationOptions
@@ -28,6 +33,7 @@ export class MaterialFacade extends FacadeBase {
     };
   }
 
+  @WithTransaction
   async findById(id: string) {
     const record = await Material.findByPk(id, { paranoid: false });
     if (!record) {
@@ -36,6 +42,7 @@ export class MaterialFacade extends FacadeBase {
     return record;
   }
 
+  @WithTransaction
   async findByIdOrCode(idOrCode: string) {
     const where: WhereOptions<MaterialAttributes> = isUuid(idOrCode)
       ? { id: idOrCode }
@@ -50,28 +57,25 @@ export class MaterialFacade extends FacadeBase {
     return record;
   }
 
+  @WithTransaction
   async create(data: MaterialCreationAttributes) {
     const { code, name, purchasePrice, retailPrice, status, color } = data;
     const recordByCode = await Material.findOne({ where: { code } });
     if (recordByCode) {
       throw new MaterialDuplicationException({ code });
     }
-    const result = await this.withTransaction((transaction) =>
-      Material.create(
-        {
-          code,
-          name,
-          purchasePrice,
-          retailPrice,
-          status,
-          color,
-        },
-        { transaction }
-      )
-    );
+    const result = await Material.create({
+      code,
+      name,
+      purchasePrice,
+      retailPrice,
+      status,
+      color,
+    });
     return Material.findByPk(result.id);
   }
 
+  @WithTransaction
   async update(id: string, data: MaterialUpdateAttributes) {
     const record = await this.findById(id);
     const { code, name, purchasePrice, retailPrice, status, color } = data;
@@ -84,29 +88,24 @@ export class MaterialFacade extends FacadeBase {
         throw new MaterialDuplicationException({ code });
       }
     }
-    const result = await this.withTransaction(async (transaction) => {
-      if (status && status !== "deleted") {
-        await record.restore({ transaction });
-      }
-      return await record.update(
-        {
-          code,
-          name,
-          retailPrice,
-          purchasePrice,
-          color,
-          status,
-        },
-        { transaction }
-      );
+
+    if (status && status !== "deleted") {
+      await record.restore({});
+    }
+    const result = await record.update({
+      code,
+      name,
+      retailPrice,
+      purchasePrice,
+      color,
+      status,
     });
     return Material.findByPk(result.id, { paranoid: false });
   }
 
+  @WithTransaction
   async delete(id: string) {
     const record = await this.findById(id);
-    await this.withTransaction((transaction) =>
-      record.destroy({ transaction })
-    );
+    await record.destroy();
   }
 }

@@ -1,7 +1,10 @@
-import { WhereOptions } from "sequelize";
-import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
+import type { WhereOptions } from "sequelize";
+import type {
+  FindAndCountAllResult,
+  SequelizePaginationOptions,
+} from "~/types";
 import { Supplier } from "~/models/Supplier";
-import {
+import type {
   SupplierAttributes,
   SupplierCreationAttributes,
   SupplierUpdateAttributes,
@@ -10,8 +13,10 @@ import { FacadeBase } from "~/facades/FacadeBase";
 import { SupplierNotFoundException } from "~/exceptions/SupplierNotFoundException";
 import { isEmail } from "@hyulian/common";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
 export class SupplierFacade extends FacadeBase {
+  @WithTransaction
   async list(
     query: WhereOptions<SupplierAttributes>,
     options: SequelizePaginationOptions
@@ -28,6 +33,7 @@ export class SupplierFacade extends FacadeBase {
     };
   }
 
+  @WithTransaction
   async findById(id: string) {
     const record = await Supplier.findByPk(id, { paranoid: false });
     if (!record) {
@@ -36,58 +42,50 @@ export class SupplierFacade extends FacadeBase {
     return record;
   }
 
+  @WithTransaction
   async create(data: SupplierCreationAttributes) {
     const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await this.withTransaction((transaction) =>
-      Supplier.create(
-        {
-          name,
-          remarks,
-          status,
-          address,
-          email,
-          phone,
-          identity,
-        },
-        { transaction }
-      )
-    );
+    const result = await Supplier.create({
+      name,
+      remarks,
+      status,
+      address,
+      email,
+      phone,
+      identity,
+    });
     return Supplier.findByPk(result.id) as unknown as Supplier;
   }
 
+  @WithTransaction
   async update(id: string, data: SupplierUpdateAttributes) {
     const record = await this.findById(id);
     const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await this.withTransaction(async (transaction) => {
-      if (status && status !== "deleted") {
-        await record.restore({});
-      }
-      return record.update(
-        {
-          name,
-          remarks,
-          status,
-          address,
-          email,
-          phone,
-          identity,
-        },
-        { transaction }
-      );
+
+    if (status && status !== "deleted") {
+      await record.restore({});
+    }
+    const result = await record.update({
+      name,
+      remarks,
+      status,
+      address,
+      email,
+      phone,
+      identity,
     });
     return Supplier.findByPk(result.id, { paranoid: false });
   }
 
+  @WithTransaction
   async delete(id: string) {
     const record = await this.findById(id);
-    await this.withTransaction((transaction) =>
-      record.destroy({ transaction })
-    );
+    await record.destroy();
   }
 }

@@ -3,8 +3,7 @@ import {
   DateStringConvert,
   SchemaType,
 } from "@hyulian/api-contract";
-import { Optional } from "@hyulian/common";
-import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
+import { BaseAttributes } from "~/types/models/base";
 
 export const purchaseOrderStatus = [
   "draft",
@@ -13,11 +12,32 @@ export const purchaseOrderStatus = [
   "cancelled",
   "deleted",
 ] as const;
-export const purchaseOrderFields = apiContractModelSchema({
+export const purchaseOrderCreateFields = apiContractModelSchema({
+  id: { type: "string", optional: true },
   date: { type: "dateString" },
-  code: { type: "string" },
   supplierId: { type: "string" },
   remarks: { type: "string", optional: true },
+  code: { type: "string" },
+  status: {
+    type: "enum",
+    optional: true,
+    values: purchaseOrderStatus,
+  },
+});
+export const purchaseOrderUpdateFields = apiContractModelSchema({
+  date: { type: "dateString", optional: true },
+  remarks: { type: "string", optional: true },
+  status: {
+    type: "enum",
+    optional: true,
+    values: purchaseOrderStatus,
+  },
+});
+export const purchaseOrderFields = apiContractModelSchema({
+  date: { type: "dateString" },
+  supplierId: { type: "string" },
+  remarks: { type: "string", optional: true },
+  code: { type: "string" },
   total: { type: "number" },
   status: {
     type: "enum",
@@ -29,11 +49,9 @@ export type PurchaseOrderFields = SchemaType<typeof purchaseOrderFields>;
 export type PurchaseOrderStatus = (typeof purchaseOrderStatus)[number];
 export type PurchaseOrderAttributes = BaseAttributes &
   DateStringConvert<PurchaseOrderFields>;
-export type PurchaseOrderCreationAttributes = CreateOmit<
-  Optional<PurchaseOrderAttributes, "status">,
-  "total"
+export type PurchaseOrderCreationAttributes = SchemaType<
+  typeof purchaseOrderCreateFields
 >;
-export type PurchaseOrderUpdateAttributes = UpdateOmit<
-  PurchaseOrderAttributes,
-  "code" | "total" | "supplierId"
+export type PurchaseOrderUpdateAttributes = SchemaType<
+  typeof purchaseOrderUpdateFields
 >;

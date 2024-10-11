@@ -13,9 +13,15 @@ import {
   PurchaseOrderUpdateAttributes,
 } from "@app/common";
 import { PurchaseOrder, PurchaseOrderItem } from "~/models";
+import { MaterialNotFoundException } from "~/exceptions";
+import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
+import { PurchaseOrderItemSyncAttributes } from "~/facades/PurchaseOrderFacade";
 
 describe("PurchaseOrderFacade", () => {
   const engine = new Engine();
+  const draftPurchaseOrderId = idGenerator.purchaseOrder(0);
+  const completedPurchaseOrderId = idGenerator.purchaseOrder(1);
+  const draftMaterial = idGenerator.material(10);
 
   beforeAll(async () => {
     await resetData();
@@ -55,10 +61,9 @@ describe("PurchaseOrderFacade", () => {
       await purchaseOrderFixtures();
     });
     it("should return a purchase order by id", async () => {
-      const id = idGenerator.purchaseOrder(0);
-      const result = await engine.purchaseOrder.findById(id);
+      const result = await engine.purchaseOrder.findById(draftPurchaseOrderId);
       expect(result).toBeDefined();
-      expect(result.id).toStrictEqual(id);
+      expect(result.id).toStrictEqual(draftPurchaseOrderId);
     });
 
     it("should throw PurchaseOrderNotFoundException for non-existent id", async () => {
@@ -117,10 +122,7 @@ describe("PurchaseOrderFacade", () => {
         total: 1234,
         supplierId: idGenerator.supplier(50),
       }; // add extra to check if other properties get updated or not
-      const result = await engine.purchaseOrder.update(
-        id,
-        data as PurchaseOrderUpdateAttributes
-      );
+      const result = await engine.purchaseOrder.update(id, data as any);
       expect(result).toBeDefined();
       expect(result.remarks).toBe(data.remarks);
       expect(result.code).toStrictEqual("PO-0");
@@ -156,24 +158,183 @@ describe("PurchaseOrderFacade", () => {
       await purchaseOrderFixtures();
     });
     it("should delete a purchase order", async () => {
-      const id = idGenerator.purchaseOrder(0);
-      const result = await engine.purchaseOrder.delete(id);
-      const record = await PurchaseOrder.findByPk(id, { paranoid: false });
+      const result = await engine.purchaseOrder.delete(draftPurchaseOrderId);
+      const record = await PurchaseOrder.findByPk(draftPurchaseOrderId, {
+        paranoid: false,
+      });
       expect(record).toBeDefined();
       expect(record?.status).toStrictEqual("deleted");
     });
 
     it("should throw PurchaseOrderInvalidStatusException for non-pending order", async () => {
-      const id = idGenerator.purchaseOrder(1);
-      await expect(engine.purchaseOrder.delete(id)).rejects.toThrow(
-        PurchaseOrderInvalidStatusException
-      );
+      await expect(
+        engine.purchaseOrder.delete(idGenerator.purchaseOrder(1))
+      ).rejects.toThrow(PurchaseOrderInvalidStatusException);
     });
     it("should throw PurchaseOrderNotFound for non-existent order", async () => {
       const id = idGenerator.purchaseOrder(199);
       await expect(engine.purchaseOrder.delete(id)).rejects.toThrow(
         PurchaseOrderNotFoundException
       );
+    });
+  });
+
+  describe("sync", () => {
+    beforeEach(async () => {
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
+      await purchaseOrderFixtures();
+    });
+    it("should sync purchase order items correctly by adding new items", async () => {
+      const newItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: idGenerator.material(1),
+          quantity: 10,
+          unitPrice: 100,
+          remarks: "New Item 1",
+        },
+        {
+          materialId: idGenerator.material(2),
+          quantity: 5,
+          unitPrice: 200,
+          remarks: "New Item 2",
+        },
+      ];
+
+      await engine.purchaseOrder.sync(draftPurchaseOrderId, newItems);
+
+      const updatedOrder = await PurchaseOrder.findByPk(draftPurchaseOrderId, {
+        include: [PurchaseOrderItem],
+      });
+      expect(updatedOrder?.total).toBe(2000);
+      expect(updatedOrder?.purchaseOrderItems).toHaveLength(2);
+
+      const itemIds =
+        updatedOrder?.purchaseOrderItems.map((item) => item.materialId) || [];
+      expect(itemIds[0]).toStrictEqual(idGenerator.material(1));
+      expect(itemIds[1]).toStrictEqual(idGenerator.material(2));
+    });
+
+    it("should update existing purchase order items correctly", async () => {
+      const existingItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          id: idGenerator.purchaseOrderItem(0, 0),
+          materialId: idGenerator.material(5),
+          quantity: 20,
+          unitPrice: 150,
+          remarks: "Updated Item",
+        },
+      ];
+
+      await engine.purchaseOrder.sync(draftPurchaseOrderId, existingItems);
+
+      const updatedOrder = await PurchaseOrder.findByPk(draftPurchaseOrderId, {
+        include: [PurchaseOrderItem],
+      });
+      expect(updatedOrder?.total).toBe(3000);
+      expect(updatedOrder?.purchaseOrderItems).toHaveLength(1);
+      expect(updatedOrder?.purchaseOrderItems[0].materialId).toStrictEqual(
+        idGenerator.material(5)
+      );
+      expect(updatedOrder?.purchaseOrderItems[0].remarks).toStrictEqual(
+        "Updated Item"
+      );
+      expect(updatedOrder?.purchaseOrderItems[0].quantity).toStrictEqual(20);
+      expect(updatedOrder?.purchaseOrderItems[0].unitPrice).toStrictEqual(150);
+    });
+
+    it("should delete items that are not in the new record set", async () => {
+      const newItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: idGenerator.material(2),
+          quantity: 15,
+          unitPrice: 100,
+          remarks: "Replacement Item",
+        },
+      ];
+
+      const beforeUpdate = await PurchaseOrder.findByPk(draftPurchaseOrderId, {
+        include: [PurchaseOrderItem],
+      });
+      expect(beforeUpdate?.purchaseOrderItems.length).toStrictEqual(5);
+      await engine.purchaseOrder.sync(draftPurchaseOrderId, newItems);
+
+      const updatedOrder = await PurchaseOrder.findByPk(draftPurchaseOrderId, {
+        include: [PurchaseOrderItem],
+      });
+      expect(updatedOrder?.purchaseOrderItems.length).toStrictEqual(1);
+      expect(updatedOrder?.purchaseOrderItems[0].materialId).toStrictEqual(
+        idGenerator.material(2)
+      );
+      expect(updatedOrder?.total).toBe(1500);
+    });
+
+    it("should throw PurchaseOrderInvalidStatusException for non-draft status", async () => {
+      const newItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: idGenerator.material(1),
+          quantity: 5,
+          unitPrice: 200,
+          remarks: "Test invalid status",
+        },
+      ];
+
+      await expect(
+        engine.purchaseOrder.sync(completedPurchaseOrderId, newItems)
+      ).rejects.toThrow(PurchaseOrderInvalidStatusException);
+    });
+
+    it("should prevent adding if the material doesn't exists", async () => {
+      const invalidItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: idGenerator.material(999),
+          quantity: 10,
+          unitPrice: 100,
+          remarks: "Invalid Item",
+        },
+      ];
+
+      await expect(
+        engine.purchaseOrder.sync(draftPurchaseOrderId, invalidItems)
+      ).rejects.toThrow(MaterialNotFoundException);
+
+      const unchangedOrder = await PurchaseOrder.findByPk(
+        draftPurchaseOrderId,
+        {
+          include: [PurchaseOrderItem],
+        }
+      );
+      expect(unchangedOrder?.purchaseOrderItems).toHaveLength(5);
+    });
+
+    it("should handle cases where material status isn't active", async () => {
+      const newItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: draftMaterial,
+          quantity: 5,
+          unitPrice: 200,
+          remarks: "Test inactive material",
+        },
+      ];
+
+      await expect(
+        engine.purchaseOrder.sync(draftPurchaseOrderId, newItems)
+      ).rejects.toThrow(MaterialInvalidStatusException);
+    });
+
+    it("should handle cases where purchase order does not exist", async () => {
+      const nonExistentId = idGenerator.purchaseOrder(999);
+      const newItems: PurchaseOrderItemSyncAttributes[] = [
+        {
+          materialId: idGenerator.material(1),
+          quantity: 5,
+          unitPrice: 200,
+          remarks: "Test non-existent purchase order",
+        },
+      ];
+
+      await expect(
+        engine.purchaseOrder.sync(nonExistentId, newItems)
+      ).rejects.toThrow(PurchaseOrderNotFoundException);
     });
   });
 });

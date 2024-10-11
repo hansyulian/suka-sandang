@@ -3,13 +3,10 @@ import { idGenerator } from "~test/utils/idGenerator";
 import { resetData } from "~test/utils/resetData";
 import { purchaseOrderFixtures } from "~test/fixtures/purchaseOrderFixtures";
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
-import { PurchaseOrderItemSyncAttributes } from "~/facades/PurchaseOrderItemFacade";
 import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
-import { MaterialNotFoundException } from "~/exceptions";
 import { PurchaseOrder, PurchaseOrderItem } from "~/models";
-import { PurchaseOrderNotFoundException } from "~/exceptions/PurchaseOrderNotFoundException";
 import {
   PurchaseOrderItemCreationAttributes,
   PurchaseOrderItemUpdateAttributes,
@@ -50,163 +47,6 @@ describe("PurchaseOrderItemFacade", () => {
       result.records.forEach((record) => {
         expect(record.purchaseOrderId).toStrictEqual(id);
       });
-    });
-  });
-
-  describe("sync", () => {
-    beforeEach(async () => {
-      await resetData([PurchaseOrderItem, PurchaseOrder]);
-      await purchaseOrderFixtures();
-    });
-    it("should sync purchase order items correctly by adding new items", async () => {
-      const newItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: idGenerator.material(1),
-          quantity: 10,
-          unitPrice: 100,
-          remarks: "New Item 1",
-        },
-        {
-          materialId: idGenerator.material(2),
-          quantity: 5,
-          unitPrice: 200,
-          remarks: "New Item 2",
-        },
-      ];
-
-      await engine.purchaseOrderItem.sync(draftPurchaseOrderId, newItems);
-
-      const updatedOrder = await engine.purchaseOrder.findById(
-        draftPurchaseOrderId
-      );
-      expect(updatedOrder.total).toBe(2000);
-      expect(updatedOrder.purchaseOrderItems).toHaveLength(2);
-
-      const itemIds = updatedOrder.purchaseOrderItems.map(
-        (item) => item.materialId
-      );
-      expect(itemIds[0]).toStrictEqual(idGenerator.material(1));
-      expect(itemIds[1]).toStrictEqual(idGenerator.material(2));
-    });
-
-    it("should update existing purchase order items correctly", async () => {
-      const existingItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          id: idGenerator.purchaseOrderItem(0, 0),
-          materialId: idGenerator.material(5),
-          quantity: 20,
-          unitPrice: 150,
-          remarks: "Updated Item",
-        },
-      ];
-
-      await engine.purchaseOrderItem.sync(draftPurchaseOrderId, existingItems);
-
-      const updatedOrder = await engine.purchaseOrder.findById(
-        draftPurchaseOrderId
-      );
-      expect(updatedOrder.total).toBe(3000);
-      expect(updatedOrder.purchaseOrderItems).toHaveLength(1);
-      expect(updatedOrder.purchaseOrderItems[0].materialId).toStrictEqual(
-        idGenerator.material(5)
-      );
-      expect(updatedOrder.purchaseOrderItems[0].remarks).toStrictEqual(
-        "Updated Item"
-      );
-      expect(updatedOrder.purchaseOrderItems[0].quantity).toStrictEqual(20);
-      expect(updatedOrder.purchaseOrderItems[0].unitPrice).toStrictEqual(150);
-    });
-
-    it("should delete items that are not in the new record set", async () => {
-      const newItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: idGenerator.material(2),
-          quantity: 15,
-          unitPrice: 100,
-          remarks: "Replacement Item",
-        },
-      ];
-
-      const beforeUpdate = await engine.purchaseOrder.findById(
-        draftPurchaseOrderId
-      );
-      expect(beforeUpdate.purchaseOrderItems.length).toStrictEqual(5);
-      await engine.purchaseOrderItem.sync(draftPurchaseOrderId, newItems);
-
-      const updatedOrder = await engine.purchaseOrder.findById(
-        draftPurchaseOrderId
-      );
-      expect(updatedOrder.purchaseOrderItems.length).toStrictEqual(1);
-      expect(updatedOrder.purchaseOrderItems[0].materialId).toStrictEqual(
-        idGenerator.material(2)
-      );
-      expect(updatedOrder.total).toBe(1500);
-    });
-
-    it("should throw PurchaseOrderInvalidStatusException for non-draft status", async () => {
-      const newItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: idGenerator.material(1),
-          quantity: 5,
-          unitPrice: 200,
-          remarks: "Test invalid status",
-        },
-      ];
-
-      await expect(
-        engine.purchaseOrderItem.sync(completedPurchaseOrderId, newItems)
-      ).rejects.toThrow(PurchaseOrderInvalidStatusException);
-    });
-
-    it("should prevent adding if the material doesn't exists", async () => {
-      const invalidItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: idGenerator.material(999),
-          quantity: 10,
-          unitPrice: 100,
-          remarks: "Invalid Item",
-        },
-      ];
-
-      await expect(
-        engine.purchaseOrderItem.sync(draftPurchaseOrderId, invalidItems)
-      ).rejects.toThrow(MaterialNotFoundException);
-
-      const unchangedOrder = await engine.purchaseOrder.findById(
-        draftPurchaseOrderId
-      );
-      expect(unchangedOrder.purchaseOrderItems).toHaveLength(5);
-    });
-
-    it("should handle cases where material status isn't active", async () => {
-      const newItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: draftMaterial,
-          quantity: 5,
-          unitPrice: 200,
-          remarks: "Test inactive material",
-        },
-      ];
-
-      await expect(
-        engine.purchaseOrderItem.sync(draftPurchaseOrderId, newItems)
-      ).rejects.toThrow(MaterialInvalidStatusException);
-    });
-
-    it("should handle cases where purchase order does not exist", async () => {
-      const nonExistentId = idGenerator.purchaseOrder(999);
-      const newItems: PurchaseOrderItemSyncAttributes[] = [
-        {
-          materialId: idGenerator.material(1),
-          quantity: 5,
-          unitPrice: 200,
-          remarks: "Test non-existent purchase order",
-        },
-      ];
-
-      await expect(
-        engine.purchaseOrderItem.sync(nonExistentId, newItems)
-      ).rejects.toThrow(PurchaseOrderNotFoundException);
     });
   });
 

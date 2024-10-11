@@ -5,3 +5,7 @@ export * from "./InvalidJwtTokenException";
 export * from "./MaterialNotFoundException";
 export * from "./SupplierNotFoundException";
 export * from "./InvalidEmailException";
+export * from "./PurchaseOrderDuplicationException";
+export * from "./PurchaseOrderInvalidStatusException";
+export * from "./PurchaseOrderItemNotFoundException";
+export * from "./PurchaseOrderNotFoundException";

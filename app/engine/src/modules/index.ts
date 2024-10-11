@@ -1,1 +1,1 @@
-export * from "./EngineTransactionManager";
+export * from "./WithTransactionDecorator";

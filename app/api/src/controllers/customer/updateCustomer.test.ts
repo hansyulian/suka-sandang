@@ -91,7 +91,7 @@ describe("Controller: updateCustomerController", () => {
   it("should only accept correct data type", async () => {
     const response = await apiTest
       .withAuthentication()
-      .post("/customer")
+      .put("/customer/id")
       .send(
         injectStrayValues({
           name: 125258284,

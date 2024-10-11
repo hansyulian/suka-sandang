@@ -91,7 +91,7 @@ describe("Controller: updateSupplierController", () => {
   it("should only accept correct data type", async () => {
     const response = await apiTest
       .withAuthentication()
-      .post("/supplier")
+      .put("/supplier/id")
       .send(
         injectStrayValues({
           name: 125258284,

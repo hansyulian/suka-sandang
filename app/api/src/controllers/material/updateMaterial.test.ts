@@ -92,7 +92,7 @@ describe("Controller: updateMaterialController", () => {
   it("should only accept correct data type", async () => {
     const response = await apiTest
       .withAuthentication()
-      .post("/material")
+      .put("/material/id")
       .send(
         injectStrayValues({
           name: 125258284,

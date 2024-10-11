@@ -4,11 +4,13 @@ import { controllers } from "~/controllers";
 import supertest, { Response } from "supertest";
 import { mockAuthenticated } from "~test/utils/mockAuthenticated";
 import { initializationMiddleware } from "~/middlewares/initializationMiddleware";
+import { Engine } from "@app/engine";
 
+const engine = new Engine();
 const app = atlas(
   (atlas) => {
     atlas.use(Express.json());
-    atlas.middleware(initializationMiddleware);
+    atlas.middleware(initializationMiddleware(engine));
     atlas.router("/", controllers);
   },
   {

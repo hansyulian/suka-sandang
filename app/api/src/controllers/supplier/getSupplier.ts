@@ -7,9 +7,7 @@ export const getSupplierController = contractController(
     const { engine } = locals;
     const { id } = params;
     const record = await engine.supplier.findById(id);
-    if (record) {
-      return record;
-    }
+
     return record;
   }
 );

@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 
 import { Brand } from "./Brand";
 
-export type DateString = Brand<string, "DateString">;
+// export type DateString = Brand<string, "DateString">;
+export type DateString = Date | string | Brand<string, "DateString">;
 export type DateStringConvert<
   Object,
   ResultType = Date | string | DateString

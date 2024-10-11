@@ -7,7 +7,7 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       name: { type: "string", minLength: 3, maxLength: 10 },
     });
 
-    const values = { name: "John" };
+    const values = { name: "John", extra: "Doe" };
 
     const result = validateSchema(values, schema);
 
@@ -133,7 +133,9 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       },
     });
 
-    const values = { items: [{ name: "item1" }, { name: "item2" }] };
+    const values = {
+      items: [{ name: "item1" }, { name: "item2", extra: "should be removed" }],
+    };
 
     const result = validateSchema(values, schema);
 

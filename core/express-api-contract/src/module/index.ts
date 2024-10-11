@@ -7,5 +7,5 @@ export * from "./contractController";
 export * from "./atlas";
 export * from "./createRouter";
 export * from "./createExpressParamsMap";
-export * from "./createExpressParamsMap";
+export * from "./contractValidatorCompareFunction";
 export * from "./types";

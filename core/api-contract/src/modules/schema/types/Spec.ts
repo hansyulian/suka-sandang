@@ -37,6 +37,12 @@ import {
   StringsSpec,
 } from "./String";
 import { UndefinedToOptional } from "@hyulian/common";
+import {
+  DateSpec,
+  DatesSpec,
+  OptionalDateSpec,
+  OptionalDatesSpec,
+} from "~/modules/schema/types/Date";
 
 export type OptionalValueCheck<
   TSpecification extends OptionalSpec,
@@ -81,6 +87,7 @@ export type Specs =
   | OptionalEnumSpec
   | OptionalObjectSpec
   | OptionalAnySpec
+  | OptionalDateSpec
   // array values
   | OptionalNumbersSpec
   | OptionalStringsSpec
@@ -88,7 +95,8 @@ export type Specs =
   | OptionalDateStringsSpec
   | OptionalEnumsSpec
   | OptionalObjectsSpec
-  | OptionalAnysSpec; // array of object
+  | OptionalAnysSpec
+  | OptionalDatesSpec; // array of object
 
 /**
  * Utility type to infer the type from the specification value.
@@ -100,6 +108,9 @@ export type InferSpecType<TSpecs extends Specs> =
     : // number type checking
     TSpecs extends NumberSpec
     ? number
+    : // date type checking
+    TSpecs extends DateSpec
+    ? Date
     : // boolean type checking
     TSpecs extends BooleanSpec
     ? boolean
@@ -121,6 +132,9 @@ export type InferSpecType<TSpecs extends Specs> =
     : // number type checking
     TSpecs extends NumbersSpec
     ? number[]
+    : // date type checking
+    TSpecs extends DatesSpec
+    ? Date[]
     : // boolean type checking
     TSpecs extends BooleansSpec
     ? boolean[]

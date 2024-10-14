@@ -9,7 +9,7 @@ import { EnumSpecOptions } from "./types/Enum";
 import { NumberSpecOptions } from "./types/Number";
 import { ObjectSpecOptions, Schema, SchemaType, Specs } from "./types/Spec";
 import { StringSpecOptions } from "./types/String";
-import { AnySpecOptions } from "~/modules/schema/types/Any";
+import { AnySpecOptions } from "./types/Any";
 
 type ValidationReturn<T = any> = {
   errors: SchemaValidationExceptionDetail[];
@@ -99,6 +99,8 @@ function validateValue(value: any, key: string, spec: Specs) {
       return validateObject(value, key, spec);
     case "enum":
       return validateEnum(value, key, spec);
+    case "date":
+      return validateDate(value, key, spec);
     case "any":
       return validateAny(value, key, spec);
     // array
@@ -114,6 +116,8 @@ function validateValue(value: any, key: string, spec: Specs) {
       return genericValidateArray(validateObject, value, key, spec);
     case "enums":
       return genericValidateArray(validateEnum, value, key, spec);
+    case "dates":
+      return genericValidateArray(validateDate, value, key, spec);
     case "anys":
       return genericValidateArray(validateAny, value, key, spec);
   }
@@ -230,6 +234,37 @@ function validateString(
   };
 }
 
+function validateDate(value: any, key: string, spec: DateStringSpecOptions) {
+  const errors: SchemaValidationExceptionDetail[] = [];
+
+  if (!dayjs(value).isValid()) {
+    errors.push({
+      type: "invalidType",
+      key,
+      value,
+      actual: typeof value,
+      expected: "date",
+    });
+  }
+  if (spec.min && dayjs(value).isBefore(spec.min)) {
+    errors.push({
+      type: "invalidValue",
+      key,
+      value,
+    });
+  }
+  if (spec.max && dayjs(value).isAfter(spec.max)) {
+    errors.push({
+      type: "invalidValue",
+      key,
+      value,
+    });
+  }
+  return {
+    errors,
+    value: new Date(value),
+  };
+}
 function validateDateString(
   value: any,
   key: string,

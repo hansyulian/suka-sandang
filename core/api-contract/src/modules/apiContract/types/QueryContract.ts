@@ -1,19 +1,19 @@
-import { SchemaType } from '../../schema';
-import { ApiContractMethod } from './Base';
-import { ApiContractModelSchema } from './Model';
-import { ApiContractParamsSchema, ApiContractPathFn } from './Params';
-import { ApiContractQuerySchema } from './Query';
+import { SchemaType } from "../../schema";
+import { ApiContractMethod } from "./Base";
+import { ApiContractModelSchema } from "./Model";
+import { ApiContractParamsSchema } from "./Params";
+import { ApiContractQuerySchema } from "./Query";
 import {
   ApiContractResponseType,
   InferResponseType,
   ResponseBase,
-} from './Response';
+} from "./Response";
 
 export type QueryContract<
   TResponse extends ResponseBase<any>,
   TParams extends {},
   TQuery extends {},
-  TModel = TResponse extends ResponseBase<infer M> ? M : 'unableToInferModel',
+  TModel = TResponse extends ResponseBase<infer M> ? M : "unableToInferModel"
 > = {
   model: TModel;
   params: TParams;
@@ -26,7 +26,7 @@ export type QueryContractSchema<
   TModel extends ApiContractModelSchema = any,
   TParams extends ApiContractParamsSchema = any,
   TQuery extends ApiContractQuerySchema = any,
-  TResponseType extends ApiContractResponseType = any,
+  TResponseType extends ApiContractResponseType = any
 > = {
   responseType: TResponseType;
   model: TModel;
@@ -37,27 +37,27 @@ export type QueryContractSchema<
 };
 
 export type InferQueryContract<
-  TQueryContractSchema extends QueryContractSchema,
+  TQueryContractSchema extends QueryContractSchema
 > = QueryContract<
   InferResponseType<
-    TQueryContractSchema['responseType'],
-    SchemaType<TQueryContractSchema['model']>
+    TQueryContractSchema["responseType"],
+    SchemaType<TQueryContractSchema["model"]>
   >,
-  SchemaType<TQueryContractSchema['params']>,
-  SchemaType<TQueryContractSchema['query']>
+  SchemaType<TQueryContractSchema["params"]>,
+  SchemaType<TQueryContractSchema["query"]>
 >;
 
 export type QueryContractModel<
-  TQueryContractSchema extends QueryContractSchema,
-> = InferQueryContract<TQueryContractSchema>['model'];
+  TQueryContractSchema extends QueryContractSchema
+> = InferQueryContract<TQueryContractSchema>["model"];
 export type QueryContractResponse<
-  TQueryContractSchema extends QueryContractSchema,
-> = InferQueryContract<TQueryContractSchema>['response'];
+  TQueryContractSchema extends QueryContractSchema
+> = InferQueryContract<TQueryContractSchema>["response"];
 
 export type QueryContractParams<
-  TQueryContractSchema extends QueryContractSchema,
-> = InferQueryContract<TQueryContractSchema>['params'];
+  TQueryContractSchema extends QueryContractSchema
+> = InferQueryContract<TQueryContractSchema>["params"];
 
 export type QueryContractQuery<
-  TQueryContractSchema extends QueryContractSchema,
-> = InferQueryContract<TQueryContractSchema>['query'];
+  TQueryContractSchema extends QueryContractSchema
+> = InferQueryContract<TQueryContractSchema>["query"];

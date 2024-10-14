@@ -60,7 +60,7 @@ export class ReactApiContractClient extends ApiContractClient {
       body: Body,
       config: any = {}
     ): Promise<Response> => {
-      return this.request<Response>({
+      return this.contractRequest(contract, {
         path: contract.path,
         params,
         body,
@@ -107,7 +107,7 @@ export class ReactApiContractClient extends ApiContractClient {
       query: Query,
       config: any = {}
     ): Promise<Response> => {
-      return this.request<Response>({
+      return this.contractRequest(contract, {
         path: contract.path,
         params: params,
         query,

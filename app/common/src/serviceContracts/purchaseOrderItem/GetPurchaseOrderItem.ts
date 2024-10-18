@@ -4,9 +4,9 @@ import { purchaseOrderItemFields } from "~/types";
 
 export const getPurchaseOrderItemContract = apiContractSchema({
   method: "get",
-  path: "/purchase-order-item/{idOrCode}",
+  path: "/purchase-order-item/{id}",
   params: {
-    idOrCode: { type: "string" },
+    id: { type: "string" },
   },
   query: {},
   responseType: "object",

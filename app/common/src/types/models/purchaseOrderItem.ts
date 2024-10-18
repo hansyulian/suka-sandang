@@ -19,9 +19,9 @@ export const purchaseOrderItemCreateFields = apiContractModelSchema({
   remarks: { type: "string", optional: true },
 });
 export const purchaseOrderItemUpdateFields = apiContractModelSchema({
-  materialId: { type: "string" },
-  quantity: { type: "number" },
-  unitPrice: { type: "number" },
+  materialId: { type: "string", optional: true },
+  quantity: { type: "number", optional: true },
+  unitPrice: { type: "number", optional: true },
   remarks: { type: "string", optional: true },
 });
 export const purchaseOrderItemSyncFields = apiContractModelSchema({

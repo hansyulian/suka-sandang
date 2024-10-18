@@ -8,15 +8,7 @@ export const listPurchaseOrderItemsContract = apiContractSchema({
   path: "/purchase-order-item",
   params: {},
   query: {
-    name: {
-      type: "string",
-      optional: true,
-    },
-    code: {
-      type: "string",
-      optional: true,
-    },
-    search: {
+    purchaseOrderId: {
       type: "string",
       optional: true,
     },

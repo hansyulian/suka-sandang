@@ -8,6 +8,7 @@ import { enumController } from "~/controllers/enum";
 import { supplierController } from "~/controllers/supplier";
 import { customerController } from "~/controllers/customer";
 import { PurchaseOrderController } from "~/controllers/purchaseOrder";
+import { PurchaseOrderItemController } from "~/controllers/purchaseOrderItem";
 
 export const controllers = createRouter((atlas) => {
   atlas.controller(getServerInfoController);
@@ -17,4 +18,5 @@ export const controllers = createRouter((atlas) => {
   atlas.router("supplier", supplierController);
   atlas.router("customer", customerController);
   atlas.router("purchase-order", PurchaseOrderController);
+  atlas.router("purchase-order-item", PurchaseOrderItemController);
 });

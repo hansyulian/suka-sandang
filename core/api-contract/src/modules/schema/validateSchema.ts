@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 
-import { SchemaValidationExceptionDetail } from "../../exceptions";
-import { DateString, dateStringUtil } from "../custom";
+import { SchemaValidationExceptionDetail } from "~/exceptions/SchemaValidationException";
 import { OptionalSpec } from "./types/Base";
 import { BooleanSpecOptions } from "./types/Boolean";
 import { DateStringSpecOptions } from "./types/DateString";
@@ -10,6 +9,7 @@ import { NumberSpecOptions } from "./types/Number";
 import { ObjectSpecOptions, Schema, SchemaType, Specs } from "./types/Spec";
 import { StringSpecOptions } from "./types/String";
 import { AnySpecOptions } from "./types/Any";
+import { dateStringUtil, DateString } from "~/modules/custom";
 
 type ValidationReturn<T = any> = {
   errors: SchemaValidationExceptionDetail[];
@@ -230,7 +230,7 @@ function validateString(
   }
   return {
     errors,
-    value: value as string,
+    value: `${value}`,
   };
 }
 

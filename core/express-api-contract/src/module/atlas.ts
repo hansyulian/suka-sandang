@@ -12,6 +12,7 @@ import {
   AtlasRouterInitOptions,
 } from "./types";
 import { NextFunction, Request, Response } from "express";
+import { contractCompareFunction } from "~/utils/contractCompareFunction";
 
 export function atlas(
   initFn: AtlasRouterInitFn,
@@ -96,22 +97,13 @@ function applyContracts(
   context: AtlasInstanceContext,
   options: AtlasRouterInitOptions
 ) {
-  const longestPath = context.contracts.reduce(
-    (prev, current) =>
-      prev < current.contractPath.length ? current.contractPath.length : prev,
-    0
-  );
-  const contracts = [...context.contracts].sort((a, b) => {
-    return a.contractPath > b.contractPath ? 1 : -1;
-  });
+  const contracts = [...context.contracts].sort(contractCompareFunction);
   for (const record of contracts) {
     const { contract, controller, contractPath } = record;
     if (options.debug) {
       console.log(
-        contract.method.toUpperCase(),
-        pad(contractPath, longestPath, {
-          align: "left",
-        }),
+        pad(contract.method.toUpperCase(), 7, { align: "left", char: " " }),
+        contractPath,
         controller.name
       );
     }

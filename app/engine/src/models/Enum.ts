@@ -11,4 +11,7 @@ export class Enum extends BaseModel<EnumAttributes, EnumCreationAttributes> {
 
   @Column
   declare group: string;
+
+  @Column
+  declare label: string;
 }

@@ -21,6 +21,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      label: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       group: {
         type: Sequelize.STRING,
         allowNull: false,

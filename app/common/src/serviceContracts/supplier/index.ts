@@ -9,6 +9,7 @@ export * from "./DeleteSupplier";
 export * from "./GetSupplier";
 export * from "./ListSuppliers";
 export * from "./UpdateSupplier";
+export * from "./GetSupplierOptions";
 
 export namespace SupplierContracts {
   export type CreateSupplier = CreateSupplierContract;

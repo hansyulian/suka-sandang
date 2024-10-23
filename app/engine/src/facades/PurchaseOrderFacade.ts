@@ -14,7 +14,7 @@ import { PurchaseOrderDuplicationException } from "~/exceptions/PurchaseOrderDup
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
 import { PurchaseOrderNotFoundException } from "~/exceptions/PurchaseOrderNotFoundException";
 import { FacadeBase } from "~/facades/FacadeBase";
-import { Material, PurchaseOrder, PurchaseOrderItem } from "~/models";
+import { Material, PurchaseOrder, PurchaseOrderItem, Supplier } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
 import { isUuid } from "~/utils/isUuid";
@@ -30,6 +30,11 @@ export class PurchaseOrderFacade extends FacadeBase {
         ...query,
       },
       ...options,
+      include: [
+        {
+          model: Supplier,
+        },
+      ],
     });
     return {
       count: result.count,
@@ -41,6 +46,14 @@ export class PurchaseOrderFacade extends FacadeBase {
   async findById(id: string) {
     const record = await PurchaseOrder.findByPk(id, {
       paranoid: false,
+      include: [
+        {
+          model: Supplier,
+        },
+        {
+          model: PurchaseOrderItem,
+        },
+      ],
     });
     if (!record) {
       throw new PurchaseOrderNotFoundException({ id });
@@ -56,6 +69,14 @@ export class PurchaseOrderFacade extends FacadeBase {
     const result = await PurchaseOrder.findOne({
       where,
       paranoid: false,
+      include: [
+        {
+          model: Supplier,
+        },
+        {
+          model: PurchaseOrderItem,
+        },
+      ],
     });
     if (!result) {
       throw new PurchaseOrderNotFoundException({ idOrCode });

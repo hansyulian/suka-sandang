@@ -1,7 +1,7 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { queryParameters } from "~/base";
 import { modelBase } from "~/base/modelBase";
-import { purchaseOrderFields } from "~/types";
+import { purchaseOrderFields, supplierFields } from "~/types";
 
 export const listPurchaseOrdersContract = apiContractSchema({
   method: "get",
@@ -26,6 +26,13 @@ export const listPurchaseOrdersContract = apiContractSchema({
   model: {
     ...modelBase,
     ...purchaseOrderFields,
+    supplier: {
+      type: "object",
+      spec: {
+        ...modelBase,
+        ...supplierFields,
+      },
+    },
   },
 } as const);
 

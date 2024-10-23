@@ -10,12 +10,12 @@ import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 import {
   PurchaseOrderCreationAttributes,
+  PurchaseOrderItemSyncAttributes,
   PurchaseOrderUpdateAttributes,
 } from "@app/common";
 import { PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { MaterialNotFoundException } from "~/exceptions";
 import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
-import { PurchaseOrderItemSyncAttributes } from "~/facades/PurchaseOrderFacade";
 
 describe("PurchaseOrderFacade", () => {
   const engine = new Engine();
@@ -41,6 +41,8 @@ describe("PurchaseOrderFacade", () => {
       );
       expect(result.count).toStrictEqual(50);
       expect(result.records).toHaveLength(10);
+      expect(result.records[0].supplier).toBeDefined();
+      expect(result.records[0].purchaseOrderItems).toBeUndefined();
     });
     it("should return a list of purchase orders with status filter", async () => {
       const result = await engine.purchaseOrder.list(
@@ -51,6 +53,8 @@ describe("PurchaseOrderFacade", () => {
       expect(result.records).toHaveLength(10);
       for (const record of result.records) {
         expect(record.status).toStrictEqual("draft");
+        expect(record.supplier).toBeDefined();
+        expect(record.purchaseOrderItems).toBeUndefined();
       }
     });
   });
@@ -64,6 +68,37 @@ describe("PurchaseOrderFacade", () => {
       const result = await engine.purchaseOrder.findById(draftPurchaseOrderId);
       expect(result).toBeDefined();
       expect(result.id).toStrictEqual(draftPurchaseOrderId);
+      expect(result.supplier).toBeDefined();
+      expect(result.purchaseOrderItems).toHaveLength(5);
+    });
+
+    it("should throw PurchaseOrderNotFoundException for non-existent id", async () => {
+      const nonExistentId = idGenerator.purchaseOrder(999);
+      await expect(
+        engine.purchaseOrder.findById(nonExistentId)
+      ).rejects.toThrow(PurchaseOrderNotFoundException);
+    });
+  });
+  describe("findByIdOrCode", () => {
+    beforeAll(async () => {
+      await resetData([PurchaseOrderItem, PurchaseOrder]);
+      await purchaseOrderFixtures();
+    });
+    it("should return a purchase order by id", async () => {
+      const result = await engine.purchaseOrder.findByIdOrCode(
+        draftPurchaseOrderId
+      );
+      expect(result).toBeDefined();
+      expect(result.id).toStrictEqual(draftPurchaseOrderId);
+      expect(result.supplier).toBeDefined();
+      expect(result.purchaseOrderItems).toHaveLength(5);
+    });
+    it("should return a purchase order by code", async () => {
+      const result = await engine.purchaseOrder.findByIdOrCode("PO-0");
+      expect(result).toBeDefined();
+      expect(result.id).toStrictEqual(draftPurchaseOrderId);
+      expect(result.supplier).toBeDefined();
+      expect(result.purchaseOrderItems).toHaveLength(5);
     });
 
     it("should throw PurchaseOrderNotFoundException for non-existent id", async () => {

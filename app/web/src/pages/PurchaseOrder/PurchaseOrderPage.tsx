@@ -1,13 +1,11 @@
-import { materialStatus } from "@app/common";
 import {
   Badge,
   Button,
-  ColorPicker,
   Grid,
   Group,
-  NumberInput,
   Select,
   Stack,
+  Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -21,23 +19,31 @@ import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
-import { MaterialForm } from "~/types/forms";
 import { formValidations } from "~/utils/formValidations";
+import { OptionData, PurchaseOrderForm } from "~/types";
+import { purchaseOrderStatus } from "@app/common";
+import { useSupplierSelectOptions } from "~/hooks/useSupplierSelectOptions";
+import { formatDateCode } from "~/utils/formatDateCode";
 import { calculateCode } from "~/utils/calculateCode";
+import { SelectE } from "~/components/SelectE";
 
 const defaultSpan = {};
 
-export default function MaterialPage() {
-  const { idOrCode } = useParams("materialEdit");
+export default function PurchaseOrderPage() {
+  const { idOrCode } = useParams("purchaseOrderEdit");
+  const supplierOptions = useSupplierSelectOptions();
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
+  const [selectedSupplier, setSelectedSupplier] = useState<OptionData | null>(
+    null
+  );
   const { mutateAsync: create, isPending: isCreatePending } =
-    Api.material.createMaterial.useRequest();
+    Api.purchaseOrder.createPurchaseOrder.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.material.getMaterial.useRequest(
+  } = Api.purchaseOrder.getPurchaseOrder.useRequest(
     { idOrCode },
     {},
     {
@@ -46,35 +52,46 @@ export default function MaterialPage() {
   );
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
-    Api.material.updateMaterial.useRequest({ id: data?.id ?? "" });
-
+    Api.purchaseOrder.updatePurchaseOrder.useRequest({ id: data?.id ?? "" });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
-  const { setValues, getInputProps, validate, values } = useForm<MaterialForm>({
-    initialValues: {
-      name: "",
-      code: "",
-      color: "",
-      purchasePrice: undefined,
-      retailPrice: undefined,
-      status: "draft",
-    },
-    validate: {
-      name: formValidations({ required: true }),
-      code: formValidations({ required: true }),
-    },
-  });
+  const { setValues, getInputProps, validate, values } =
+    useForm<PurchaseOrderForm>({
+      initialValues: {
+        code: `po-${formatDateCode()}`,
+        date: new Date(),
+        status: "draft",
+        supplierId: "",
+        remarks: "",
+      },
+      validate: {
+        code: formValidations({ required: true }),
+        date: formValidations({ required: true }),
+        supplierId: formValidations({ required: true }),
+      },
+    });
+
+  useEffect(() => {
+    if (!autoCode) {
+      return;
+    }
+    if (selectedSupplier) {
+      setValues({
+        code: `po-${calculateCode(selectedSupplier.label)}-${formatDateCode()}`,
+      });
+    }
+  }, [autoCode, selectedSupplier, setValues]);
 
   const handleCreate = async () => {
-    await create(values);
-    await invalidateQuery("material");
-    navigate("materialList", {});
+    const result = await create(values);
+    await invalidateQuery("purchaseOrder");
+    navigate("purchaseOrderEdit", { idOrCode: result.id });
   };
 
   const handleUpdate = async () => {
     await update(values);
-    await invalidateQuery("material");
+    await invalidateQuery("purchaseOrder");
   };
 
   const save = () => {
@@ -95,23 +112,10 @@ export default function MaterialPage() {
       setValues({
         ...data,
       });
-      setAutoCode(false);
     }
   }, [data, setValues]);
-
-  useEffect(() => {
-    if (!autoCode) {
-      return;
-    }
-    if (values.name) {
-      setValues({
-        code: calculateCode(values.name),
-      });
-    }
-  }, [autoCode, setValues, values.name]);
-
   const onCancel = () => {
-    navigate("materialList", {});
+    navigate("purchaseOrderList", {});
   };
 
   if (isLoading) {
@@ -124,51 +128,46 @@ export default function MaterialPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? `Material: ${data?.name}` : "New Material"}</Title>
+        <Title>
+          {isEditMode ? `Purchase Order: ${data?.code}` : "New Purchase Order"}
+        </Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
-          <TextInput label="Name" required {...getInputProps("name")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
           <TextInput
             label="Code"
+            disabled={isEditMode}
             required
             {...getInputProps("code")}
-            onChange={(e) => {
+            onChange={(event) => {
               setAutoCode(false);
-              return getInputProps("code").onChange(e);
+              return getInputProps("code").onChange(event);
             }}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
-            label="Purchase Price"
-            hideControls
-            {...getInputProps("purchasePrice")}
+          <SelectE
+            disabled={isEditMode}
+            label="Supplier"
+            data={supplierOptions}
+            required
+            searchable
+            onSelectOption={setSelectedSupplier}
+            {...getInputProps("supplierId")}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
-            label="Retail Price"
-            hideControls
-            {...getInputProps("retailPrice")}
-          />
+          <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
         </Grid.Col>
         <Grid.Col>
           <Select
             required
             label="Status"
-            data={materialStatus}
+            data={purchaseOrderStatus}
+            disabled={!isEditMode}
             {...getInputProps("status")}
           />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <Stack>
-            <TextInput label="Color" {...getInputProps("color")} />
-            <ColorPicker format="hex" fullWidth {...getInputProps("color")} />
-          </Stack>
         </Grid.Col>
       </Grid>
       <Grid>

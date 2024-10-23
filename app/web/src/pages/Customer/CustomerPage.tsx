@@ -59,14 +59,13 @@ export default function CustomerPage() {
     },
     validate: {
       name: formValidations({ required: true }),
-      email: formValidations({ required: true }),
     },
   });
 
   const handleCreate = async () => {
-    const result = await create(values);
+    await create(values);
     await invalidateQuery("customer");
-    navigate("customerEdit", { id: result.id });
+    navigate("customerList", {});
   };
 
   const handleUpdate = async () => {
@@ -108,7 +107,7 @@ export default function CustomerPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? data?.name : "New Customer"}</Title>
+        <Title>{isEditMode ? `Customer: ${data?.name}` : "New Customer"}</Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">

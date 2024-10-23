@@ -12,7 +12,10 @@ export const queryKeys = lockQueryKeys({
   material: "material",
   enum: "enum",
   supplier: "supplier",
+  supplierOptions: "supplierOptions",
   customer: "customer",
+  purchaseOrder: "purchaseOrder",
+  purchaseOrderItem: "purchaseOrderItem",
 } as const);
 
 export type QueryKeys = typeof queryKeys;

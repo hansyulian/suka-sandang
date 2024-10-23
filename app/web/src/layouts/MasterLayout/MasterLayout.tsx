@@ -29,7 +29,7 @@ export function MasterLayout(props: MasterLayoutProps) {
 
   const handleLogout = async () => {
     await logout({});
-    await invalidateQuery("material");
+    await invalidateQuery("userInfo");
   };
 
   useEffect(() => {
@@ -77,6 +77,14 @@ export function MasterLayout(props: MasterLayoutProps) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar>
+        <NavLink label="Transaction" leftSection={<Icon name="transaction" />}>
+          <NavMenu
+            leftSection={<Icon name="purchaseOrder" />}
+            target="purchaseOrderList"
+            params={{}}
+            label="Purchase Order"
+          />
+        </NavLink>
         <NavLink label="Master Data" leftSection={<Icon name="masterData" />}>
           <NavMenu
             leftSection={<Icon name="material" />}

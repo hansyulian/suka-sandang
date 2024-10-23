@@ -64,9 +64,9 @@ export default function SupplierPage() {
   });
 
   const handleCreate = async () => {
-    const result = await create(values);
+    await create(values);
     await invalidateQuery("supplier");
-    navigate("supplierEdit", { id: result.id });
+    navigate("supplierList", {});
   };
 
   const handleUpdate = async () => {
@@ -108,7 +108,7 @@ export default function SupplierPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? data?.name : "New Supplier"}</Title>
+        <Title>{isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}</Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">

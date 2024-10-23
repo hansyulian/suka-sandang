@@ -1,11 +1,10 @@
 import { PurchaseOrderStatus } from "@app/common";
-import { dateStringUtil } from "@hyulian/api-contract";
 import { PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
 
 export async function purchaseOrderFixtures() {
   const promises = [];
-  const now = dateStringUtil.toDateString(new Date());
+  const now = new Date();
   for (let i = 0; i < 50; i += 1) {
     promises.push(
       PurchaseOrder.create({

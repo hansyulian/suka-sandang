@@ -14,7 +14,7 @@ export const purchaseOrderStatus = [
 ] as const;
 export const purchaseOrderCreateFields = apiContractModelSchema({
   id: { type: "string", optional: true },
-  date: { type: "dateString" },
+  date: { type: "date" },
   supplierId: { type: "string" },
   remarks: { type: "string", optional: true },
   code: { type: "string" },
@@ -25,7 +25,7 @@ export const purchaseOrderCreateFields = apiContractModelSchema({
   },
 });
 export const purchaseOrderUpdateFields = apiContractModelSchema({
-  date: { type: "dateString", optional: true },
+  date: { type: "date", optional: true },
   remarks: { type: "string", optional: true },
   status: {
     type: "enum",
@@ -34,7 +34,7 @@ export const purchaseOrderUpdateFields = apiContractModelSchema({
   },
 });
 export const purchaseOrderFields = apiContractModelSchema({
-  date: { type: "dateString" },
+  date: { type: "date" },
   supplierId: { type: "string" },
   remarks: { type: "string", optional: true },
   code: { type: "string" },

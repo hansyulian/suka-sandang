@@ -1,6 +1,5 @@
 import { apiContractModelSchema, SchemaType } from "@hyulian/api-contract";
-import { Optional } from "@hyulian/common";
-import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
+import { BaseAttributes } from "~/types/models/base";
 
 export const purchaseOrderItemFields = apiContractModelSchema({
   purchaseOrderId: { type: "string" },

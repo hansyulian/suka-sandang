@@ -9,7 +9,7 @@ import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
 
-export const purchaseorderitemApi = {
+export const purchaseOrderItemApi = {
   getPurchaseOrderItem: apiClient.registerQueryContract(
     getPurchaseOrderItemContract,
     queryKeys.purchaseOrderItem

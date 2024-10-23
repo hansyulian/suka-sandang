@@ -1,5 +1,6 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { Center, Group, Stack, Table } from "@mantine/core";
+import { AppLink } from "~/components/AppLink";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -16,6 +17,7 @@ import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { formatDate } from "~/utils/formatDate";
 
 export default function PurchaseOrderListPage() {
   const query = useSearchQuery("purchaseOrderList");
@@ -87,8 +89,17 @@ export default function PurchaseOrderListPage() {
             <SortableTableHeader sortManager={sortManager} column="code">
               Code
             </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="supplier">
+              Supplier
+            </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="supplier">
+              Date
+            </SortableTableHeader>
             <SortableTableHeader sortManager={sortManager} column="status">
               Status
+            </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="supplier">
+              Total
             </SortableTableHeader>
             <Table.Th></Table.Th>
           </>
@@ -96,7 +107,17 @@ export default function PurchaseOrderListPage() {
         renderRow={(record) => (
           <>
             <Table.Td>{record.code}</Table.Td>
+            <Table.Td>
+              <AppLink
+                target="supplierEdit"
+                params={{ id: record.supplier.id }}
+              >
+                {record.supplier.name}
+              </AppLink>
+            </Table.Td>
+            <Table.Td>{formatDate(record.date)}</Table.Td>
             <Table.Td>{record.status}</Table.Td>
+            <Table.Td align="right">{record.total}</Table.Td>
             <Table.Td>
               <Group>
                 <AppLinkIcon

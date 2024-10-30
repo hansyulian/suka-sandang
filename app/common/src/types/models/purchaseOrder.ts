@@ -41,7 +41,6 @@ export const purchaseOrderFields = apiContractModelSchema({
   total: { type: "number" },
   status: {
     type: "enum",
-    optional: true,
     values: purchaseOrderStatus,
   },
 });

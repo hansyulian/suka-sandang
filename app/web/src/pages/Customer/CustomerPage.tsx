@@ -1,10 +1,8 @@
-import { customerStatus } from "@app/common";
 import {
   Badge,
   Button,
   Grid,
   Group,
-  Select,
   Stack,
   Textarea,
   TextInput,
@@ -22,12 +20,16 @@ import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { formValidations } from "~/utils/formValidations";
 import { CustomerForm } from "~/types";
+import { getStatusColor } from "~/utils/getStatusColor";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
+import { useCustomerStatusOptions } from "~/hooks/useCustomerStatusOptions";
 
 const defaultSpan = {};
 
 export default function CustomerPage() {
   const { id } = useParams("customerEdit");
   const isEditMode = id !== undefined;
+  const customerStatusOptions = useCustomerStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
     Api.customer.createCustomer.useRequest();
   const {
@@ -130,10 +132,10 @@ export default function CustomerPage() {
           <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
         </Grid.Col>
         <Grid.Col>
-          <Select
-            required
+          <SegmentedControlInput
             label="Status"
-            data={customerStatus}
+            data={customerStatusOptions}
+            color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />
         </Grid.Col>

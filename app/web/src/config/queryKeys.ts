@@ -10,6 +10,7 @@ export const queryKeys = lockQueryKeys({
   serverInfo: "serverInfo",
   userInfo: "userInfo",
   material: "material",
+  materialOptions: "materialOptions",
   enum: "enum",
   supplier: "supplier",
   supplierOptions: "supplierOptions",

@@ -8,6 +8,7 @@ import { LinkButton } from "~/components/LinkButton";
 import { PageHeader } from "~/components/PageHeader";
 import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
+import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
 import { Api } from "~/config/api";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
@@ -117,7 +118,9 @@ export default function PurchaseOrderListPage() {
               </AppLink>
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
-            <Table.Td ta="center">{record.status}</Table.Td>
+            <Table.Td>
+              <StatusBadge status={record.status} />
+            </Table.Td>
             <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>
             <Table.Td>
               <Group>

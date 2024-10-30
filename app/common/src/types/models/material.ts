@@ -11,7 +11,6 @@ export const materialFields = apiContractModelSchema({
   color: { type: "string", optional: true },
   status: {
     type: "enum",
-    optional: true,
     values: materialStatus,
   },
 });

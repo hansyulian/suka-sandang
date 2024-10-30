@@ -1,4 +1,3 @@
-import { materialStatus } from "@app/common";
 import {
   Badge,
   Button,
@@ -6,7 +5,6 @@ import {
   Grid,
   Group,
   NumberInput,
-  Select,
   Stack,
   TextInput,
   Title,
@@ -24,6 +22,9 @@ import { usePersistable } from "~/hooks/usePersistable";
 import { MaterialForm } from "~/types/forms";
 import { formValidations } from "~/utils/formValidations";
 import { calculateCode } from "~/utils/calculateCode";
+import { useMaterialStatusOptions } from "~/hooks/useMaterialStatusOptions";
+import { getStatusColor } from "~/utils/getStatusColor";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 
 const defaultSpan = {};
 
@@ -31,6 +32,7 @@ export default function MaterialPage() {
   const { idOrCode } = useParams("materialEdit");
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
+  const materialStatusOptions = useMaterialStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
     Api.material.createMaterial.useRequest();
   const {
@@ -157,10 +159,10 @@ export default function MaterialPage() {
           />
         </Grid.Col>
         <Grid.Col>
-          <Select
-            required
+          <SegmentedControlInput
             label="Status"
-            data={materialStatus}
+            data={materialStatusOptions}
+            color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />
         </Grid.Col>

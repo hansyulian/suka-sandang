@@ -17,7 +17,6 @@ export const supplierFields = apiContractModelSchema({
   identity: { type: "string", optional: true },
   status: {
     type: "enum",
-    optional: true,
     values: supplierStatus,
   },
 });

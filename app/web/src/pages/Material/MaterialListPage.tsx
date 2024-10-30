@@ -7,6 +7,7 @@ import { LinkButton } from "~/components/LinkButton";
 import { PageHeader } from "~/components/PageHeader";
 import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
+import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
 import { Api } from "~/config/api";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
@@ -85,9 +86,6 @@ export default function MaterialListPage() {
               Code
             </SortableTableHeader>
             <Table.Th>Color</Table.Th>
-            <SortableTableHeader sortManager={sortManager} column="status">
-              Status
-            </SortableTableHeader>
             <SortableTableHeader
               sortManager={sortManager}
               column="purchasePrice"
@@ -96,6 +94,9 @@ export default function MaterialListPage() {
             </SortableTableHeader>
             <SortableTableHeader sortManager={sortManager} column="retailPrice">
               Retail
+            </SortableTableHeader>
+            <SortableTableHeader sortManager={sortManager} column="status">
+              Status
             </SortableTableHeader>
             <Table.Th w="100"></Table.Th>
           </>
@@ -107,9 +108,11 @@ export default function MaterialListPage() {
             <Table.Td>
               {record.color && <Box bg={record.color} h={20} w="100%" />}
             </Table.Td>
-            <Table.Td ta="center">{record.status}</Table.Td>
             <Table.Td>{formatCurrency(record.purchasePrice)}</Table.Td>
             <Table.Td>{formatCurrency(record.retailPrice)}</Table.Td>
+            <Table.Td ta="center">
+              <StatusBadge status={record.status} />
+            </Table.Td>
             <Table.Td>
               <Group>
                 <AppLinkIcon

@@ -45,6 +45,6 @@ export const materialApi = {
   ),
   getMaterialOptions: apiClient.registerQueryContract(
     getMaterialOptionsContract,
-    queryKeys.material
+    queryKeys.materialOptions
   ),
 };

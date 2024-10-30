@@ -1,6 +1,5 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { Center, Group, Stack, Table } from "@mantine/core";
-import { AppLink } from "~/components/AppLink";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -110,12 +109,15 @@ export default function PurchaseOrderListPage() {
           <>
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
-              <AppLink
-                target="supplierEdit"
-                params={{ id: record.supplier.id }}
-              >
+              <Group gap="xs">
                 {record.supplier.name}
-              </AppLink>
+                <AppLinkIcon
+                  target="supplierEdit"
+                  params={{ id: record.supplier.id }}
+                  name="openLink"
+                  variant="transparent"
+                />
+              </Group>
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
             <Table.Td>

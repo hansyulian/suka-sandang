@@ -3,7 +3,7 @@ import { appConfig } from "~/config";
 
 export function extractQueryParameters(query: Partial<QueryParameters>) {
   const { offset, orderBy, orderDirection } = query;
-  const order: [[string, string]] | undefined = !orderBy
+  const order: any | undefined = !orderBy
     ? undefined
     : [[orderBy, orderDirection || "asc"]];
   let limit = query.limit;

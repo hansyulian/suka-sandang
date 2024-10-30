@@ -1,4 +1,4 @@
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, ActionIconProps } from "@mantine/core";
 import { NavLink, NavLinkProps } from "react-router-dom";
 import { Icon, IconNames } from "~/components/Icon";
 import { RouteNames, InferParams, InferQuery } from "~/config/routes";
@@ -9,16 +9,17 @@ export type AppLinkIconProps<RouteName extends RouteNames> = {
   params: InferParams<RouteName>;
   query?: InferQuery<RouteName>;
   name: IconNames;
+  variant?: ActionIconProps["variant"];
 } & Omit<NavLinkProps, "to">;
 
 export function AppLinkIcon<RouteName extends RouteNames>(
   props: AppLinkIconProps<RouteName>
 ) {
-  const { name, target, params, query } = props;
+  const { name, variant, target, params, query } = props;
   const { path } = useRoute(target);
 
   return (
-    <ActionIcon component={NavLink} to={path(params, query)}>
+    <ActionIcon component={NavLink} variant={variant} to={path(params, query)}>
       <Icon name={name} width="70%" />
     </ActionIcon>
   );

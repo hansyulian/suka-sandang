@@ -1,4 +1,7 @@
-import { syncPurchaseOrderItemsContract } from "@app/common";
+import {
+  simpleSuccessResponse,
+  syncPurchaseOrderItemsContract,
+} from "@app/common";
 import { contractController } from "@hyulian/express-api-contract";
 
 export const syncPurchaseOrderItemsController = contractController(
@@ -16,7 +19,7 @@ export const syncPurchaseOrderItemsController = contractController(
         remarks,
       };
     });
-    const result = await engine.purchaseOrder.sync(id, data);
-    return result;
+    await engine.purchaseOrder.sync(id, data);
+    return simpleSuccessResponse;
   }
 );

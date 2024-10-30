@@ -27,6 +27,7 @@ export const getPurchaseOrderContract = apiContractSchema({
     purchaseOrderItems: {
       type: "objects",
       spec: { ...modelBase, ...purchaseOrderItemFields },
+      defaultValue: [],
     },
   },
 } as const);

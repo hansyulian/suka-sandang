@@ -1,9 +1,7 @@
 import type {
   PurchaseOrderAttributes,
   PurchaseOrderCreationAttributes,
-  PurchaseOrderItemCreationAttributes,
   PurchaseOrderItemSyncAttributes,
-  PurchaseOrderItemUpdateAttributes,
   PurchaseOrderUpdateAttributes,
 } from "@app/common";
 import { compareArray, filterDuplicates, sum } from "@hyulian/common";

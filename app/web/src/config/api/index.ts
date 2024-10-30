@@ -4,7 +4,7 @@ import { customerApi } from "~/config/api/customerApi";
 import { enumApi } from "~/config/api/enumApi";
 import { materialApi } from "~/config/api/materialApi";
 import { purchaseOrderApi } from "~/config/api/purchaseOrderApi";
-import { purchaseorderitemApi } from "~/config/api/purchaseOrderItemApi";
+import { purchaseOrderItemApi } from "~/config/api/purchaseOrderItemApi";
 import { sessionApi } from "~/config/api/sessionApi";
 import { supplierApi } from "~/config/api/supplierApi";
 
@@ -23,7 +23,7 @@ export const Api = {
   customer: customerApi,
 
   purchaseOrder: purchaseOrderApi,
-  purchaseOrderItem: purchaseorderitemApi,
+  purchaseOrderItem: purchaseOrderItemApi,
 };
 if (appConfig.exposeApiClient) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

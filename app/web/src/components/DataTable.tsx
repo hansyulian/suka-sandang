@@ -15,7 +15,7 @@ export function DataTable<T extends object>(props: DataTableProps<T>) {
 
   return (
     <Table.ScrollContainer minWidth="100%">
-      <Table>
+      <Table striped>
         <Table.Thead>
           <Table.Tr>{headers}</Table.Tr>
         </Table.Thead>

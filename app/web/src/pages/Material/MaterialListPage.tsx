@@ -16,6 +16,7 @@ import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { formatCurrency } from "~/utils/formatCurrency";
 
 export default function MaterialListPage() {
   const query = useSearchQuery("materialList");
@@ -96,7 +97,7 @@ export default function MaterialListPage() {
             <SortableTableHeader sortManager={sortManager} column="retailPrice">
               Retail
             </SortableTableHeader>
-            <Table.Th></Table.Th>
+            <Table.Th w="100"></Table.Th>
           </>
         }
         renderRow={(record) => (
@@ -104,11 +105,11 @@ export default function MaterialListPage() {
             <Table.Td>{record.name}</Table.Td>
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
-              {record.color && <Box bg={record.color} h={20} w={20} />}
+              {record.color && <Box bg={record.color} h={20} w="100%" />}
             </Table.Td>
-            <Table.Td>{record.status}</Table.Td>
-            <Table.Td>{record.purchasePrice}</Table.Td>
-            <Table.Td>{record.retailPrice}</Table.Td>
+            <Table.Td ta="center">{record.status}</Table.Td>
+            <Table.Td>{formatCurrency(record.purchasePrice)}</Table.Td>
+            <Table.Td>{formatCurrency(record.retailPrice)}</Table.Td>
             <Table.Td>
               <Group>
                 <AppLinkIcon

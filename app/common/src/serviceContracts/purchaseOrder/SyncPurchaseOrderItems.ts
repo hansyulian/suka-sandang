@@ -1,11 +1,11 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
+import { simpleStatusResponse } from "~/base";
 import { modelBase } from "~/base/modelBase";
 import { purchaseOrderFields, purchaseOrderItemSyncFields } from "~/types";
 
 export const syncPurchaseOrderItemsContract = apiContractSchema({
   method: "post",
   path: "/purchase-order/{id}/sync-items",
-  responseType: "object",
   params: {
     id: { type: "string" },
   },
@@ -18,10 +18,7 @@ export const syncPurchaseOrderItemsContract = apiContractSchema({
     },
   },
   bodyType: "object",
-  model: {
-    ...modelBase,
-    ...purchaseOrderFields,
-  },
+  ...simpleStatusResponse,
 } as const);
 
 export type SyncPurchaseOrderItemContract = InferApiContract<

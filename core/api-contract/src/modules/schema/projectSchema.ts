@@ -8,7 +8,6 @@ import { NumberSpecOptions } from "./types/Number";
 import { ObjectSpecOptions, Schema, SchemaType, Specs } from "./types/Spec";
 import { StringSpecOptions } from "./types/String";
 import { DateSpecOptions } from "~/modules/schema/types";
-import dayjs from "dayjs";
 
 type ProjectorFunction<TSpecs extends Specs, TReturnType> = (
   value: any,

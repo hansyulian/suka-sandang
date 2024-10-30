@@ -17,6 +17,7 @@ import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { formatCurrency } from "~/utils/formatCurrency";
 import { formatDate } from "~/utils/formatDate";
 
 export default function PurchaseOrderListPage() {
@@ -92,13 +93,13 @@ export default function PurchaseOrderListPage() {
             <SortableTableHeader sortManager={sortManager} column="supplier">
               Supplier
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="supplier">
+            <SortableTableHeader sortManager={sortManager} column="date">
               Date
             </SortableTableHeader>
             <SortableTableHeader sortManager={sortManager} column="status">
               Status
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="supplier">
+            <SortableTableHeader sortManager={sortManager} column="total">
               Total
             </SortableTableHeader>
             <Table.Th></Table.Th>
@@ -115,9 +116,9 @@ export default function PurchaseOrderListPage() {
                 {record.supplier.name}
               </AppLink>
             </Table.Td>
-            <Table.Td>{formatDate(record.date)}</Table.Td>
-            <Table.Td>{record.status}</Table.Td>
-            <Table.Td align="right">{record.total}</Table.Td>
+            <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
+            <Table.Td ta="center">{record.status}</Table.Td>
+            <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>
             <Table.Td>
               <Group>
                 <AppLinkIcon

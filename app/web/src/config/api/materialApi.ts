@@ -4,6 +4,7 @@ import {
   createMaterialContract,
   updateMaterialContract,
   deleteMaterialContract,
+  getMaterialOptionsContract,
 } from "@app/common";
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
@@ -41,5 +42,9 @@ export const materialApi = {
       message: "Deleting material",
       successMessage: "Material deleted!",
     })
+  ),
+  getMaterialOptions: apiClient.registerQueryContract(
+    getMaterialOptionsContract,
+    queryKeys.material
   ),
 };

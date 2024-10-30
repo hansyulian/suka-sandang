@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 
 import "./App.css";
 
@@ -7,6 +8,7 @@ import { router } from "~/config/router";
 import { theme } from "~/config/theme";
 
 import { MantineProvider } from "@mantine/core";
+import { DatesProvider } from "@mantine/dates";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
@@ -34,15 +36,17 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <MantineProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ModalsProvider>
-            <InnerApp />
-          </ModalsProvider>
-          <Notifications />
-          <DevTools />
-        </AuthProvider>
-      </QueryClientProvider>
+      <DatesProvider settings={{ consistentWeeks: true }}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ModalsProvider>
+              <InnerApp />
+            </ModalsProvider>
+            <Notifications />
+            <DevTools />
+          </AuthProvider>
+        </QueryClientProvider>
+      </DatesProvider>
     </MantineProvider>
   );
 }

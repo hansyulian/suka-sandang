@@ -43,9 +43,9 @@ export class PurchaseOrder extends BaseModel<
   })
   declare status: PurchaseOrderStatus;
 
-  @BelongsTo(() => Supplier)
+  @BelongsTo(() => Supplier, "supplierId")
   declare supplier: Supplier;
 
-  @HasMany(() => PurchaseOrderItem)
+  @HasMany(() => PurchaseOrderItem, "purchaseOrderId")
   declare purchaseOrderItems: PurchaseOrderItem[];
 }

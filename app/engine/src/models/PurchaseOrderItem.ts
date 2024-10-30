@@ -41,7 +41,7 @@ export class PurchaseOrderItem extends BaseModel<
   @Column
   declare remarks?: string;
 
-  @BelongsTo(() => PurchaseOrder)
+  @BelongsTo(() => PurchaseOrder, "purchaseOrderId")
   declare purchaseOrder: PurchaseOrder;
 
   @BelongsTo(() => Material)

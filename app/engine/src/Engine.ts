@@ -1,3 +1,5 @@
+import { Transaction } from "sequelize";
+import { Sequelize } from "sequelize-typescript";
 import {
   EnumFacade,
   MaterialFacade,
@@ -6,10 +8,20 @@ import {
   UserFacade,
   CustomerFacade,
 } from "~/facades";
+import { PurchaseOrderFacade } from "~/facades/PurchaseOrderFacade";
+import { PurchaseOrderItemFacade } from "~/facades/PurchaseOrderItemFacade";
+import { DBConfig, setupDatabase } from "~/setupDatabase";
 
-export type EngineOptions = {};
+export type EngineOptions = {
+  database?: DBConfig;
+};
+export type EngineTransactionWrapperCallback<ReturnType> = (
+  transaction: Transaction
+) => PromiseLike<ReturnType>;
 export class Engine {
-  public options: EngineOptions = {};
+  private _sequelize: Sequelize;
+  public transactionMutex: boolean = false;
+  public options: EngineOptions;
 
   public user: UserFacade;
   public session: SessionFacade;
@@ -17,14 +29,23 @@ export class Engine {
   public enum: EnumFacade;
   public supplier: SupplierFacade;
   public customer: CustomerFacade;
+  public purchaseOrder: PurchaseOrderFacade;
+  public purchaseOrderItem: PurchaseOrderItemFacade;
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
+    this._sequelize = setupDatabase(options.database);
     this.user = new UserFacade(this);
     this.session = new SessionFacade(this);
     this.material = new MaterialFacade(this);
     this.enum = new EnumFacade(this);
     this.supplier = new SupplierFacade(this);
     this.customer = new CustomerFacade(this);
+    this.purchaseOrder = new PurchaseOrderFacade(this);
+    this.purchaseOrderItem = new PurchaseOrderItemFacade(this);
+  }
+
+  public get sequelize() {
+    return this._sequelize;
   }
 }

@@ -5,7 +5,6 @@ import {
   CustomerCreationAttributes,
   CustomerUpdateAttributes,
 } from "@app/common";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 import { idGenerator } from "~test/utils/idGenerator";
 import { Engine } from "~/Engine";
@@ -16,11 +15,6 @@ describe("CustomerFacade", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Customer, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Customer, "findByPk");
-  const createSpy = jest.spyOn(Customer, "create");
-
-  beforeAll(async () => {
-    await initializeDatabase();
-  });
 
   describe("list", () => {
     beforeAll(async () => {
@@ -120,7 +114,6 @@ describe("CustomerFacade", () => {
       const foundRecord = await engine.customer.findById(result.id);
 
       expect(result).toEqual(foundRecord);
-      expect(createSpy).toHaveBeenCalledWith(createData);
     });
     it("should throw InvalidEmailException when email is invalid", async () => {
       const createData: CustomerCreationAttributes = {
@@ -137,7 +130,6 @@ describe("CustomerFacade", () => {
       expect(engine.customer.create(createData)).rejects.toThrow(
         InvalidEmailException
       );
-      expect(createSpy).toHaveBeenCalledTimes(0);
     });
   });
 

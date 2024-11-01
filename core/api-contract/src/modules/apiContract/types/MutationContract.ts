@@ -7,7 +7,7 @@ import {
   InferBodyType,
 } from "./Body";
 import { ApiContractModelSchema } from "./Model";
-import { ApiContractParamsSchema, ApiContractPathFn } from "./Params";
+import { ApiContractParamsSchema } from "./Params";
 import {
   ApiContractResponseType,
   InferResponseType,
@@ -18,7 +18,7 @@ export type MutationContract<
   TResponse extends ResponseBase<any>,
   TParams extends {},
   TBody extends BodyBase<{}>,
-  TModel = TResponse extends ResponseBase<infer M> ? M : "unableToInferModel",
+  TModel = TResponse extends ResponseBase<infer M> ? M : "unableToInferModel"
 > = {
   model: TModel;
   params: TParams;
@@ -32,7 +32,7 @@ export type MutationContractSchema<
   TParams extends ApiContractParamsSchema = any,
   TBody extends ApiContractBodySchema = any,
   TResponseType extends ApiContractResponseType = any,
-  TBodyType extends ApiContractBodyType = any,
+  TBodyType extends ApiContractBodyType = any
 > = {
   responseType: TResponseType;
   bodyType: TBodyType;
@@ -44,7 +44,7 @@ export type MutationContractSchema<
 };
 
 export type InferMutationContract<
-  TMutationContractSchema extends MutationContractSchema,
+  TMutationContractSchema extends MutationContractSchema
 > = MutationContract<
   InferResponseType<
     TMutationContractSchema["responseType"],
@@ -58,16 +58,16 @@ export type InferMutationContract<
 >;
 
 export type MutationContractModel<
-  TMutationContractSchema extends MutationContractSchema,
+  TMutationContractSchema extends MutationContractSchema
 > = InferMutationContract<TMutationContractSchema>["model"];
 export type MutationContractResponse<
-  TMutationContractSchema extends MutationContractSchema,
+  TMutationContractSchema extends MutationContractSchema
 > = InferMutationContract<TMutationContractSchema>["response"];
 
 export type MutationContractParams<
-  TMutationContractSchema extends MutationContractSchema,
+  TMutationContractSchema extends MutationContractSchema
 > = InferMutationContract<TMutationContractSchema>["params"];
 
 export type MutationContractBody<
-  TMutationContractSchema extends MutationContractSchema,
+  TMutationContractSchema extends MutationContractSchema
 > = InferMutationContract<TMutationContractSchema>["body"];

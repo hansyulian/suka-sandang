@@ -54,7 +54,7 @@ describe("Controller: createSupplierController", () => {
     const id = "mock-id";
     const payload: SupplierCreationAttributes = {
       name: "Supplier 1",
-      status: "pending",
+      status: "draft",
       address: "Address",
       email: "email@email.com",
       phone: "+62123123123",
@@ -65,7 +65,7 @@ describe("Controller: createSupplierController", () => {
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
-      status: "pending",
+      status: "draft",
       ...payload,
     };
     (SupplierFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
@@ -87,7 +87,7 @@ describe("Controller: createSupplierController", () => {
     expect(body.identity).toStrictEqual("3273372332733273");
     expect(body.createdAt).toBeDefined();
     expect(body.updatedAt).toBeDefined();
-    expect(body.status).toStrictEqual("pending");
+    expect(body.status).toStrictEqual("draft");
     expect(body.deletedAt).toBeUndefined();
     checkStrayValues(body);
   });

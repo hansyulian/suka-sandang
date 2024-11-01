@@ -5,16 +5,17 @@ export type BaseAttributes = {
   deletedAt?: Date;
 };
 
-export type CreateOmit<T, K extends keyof T = never> = Omit<
+export type CreateOmit<
   T,
-  keyof BaseAttributes | K
-> &
-  Partial<Pick<BaseAttributes, "id">>;
+  K extends keyof Omit<T, keyof BaseAttributes> = never
+> = Omit<T, keyof BaseAttributes | K> & {
+  id?: string;
+};
 
 // UpdateOmit reuses CreateOmit and additionally omits "id"
-export type UpdateOmit<T, K extends keyof T = never> = Omit<
-  Partial<T>,
-  keyof BaseAttributes | K
->;
+export type UpdateOmit<
+  T,
+  K extends keyof Omit<T, keyof BaseAttributes> = never
+> = Omit<Partial<T>, keyof BaseAttributes | K>;
 
 export type OmitBase<T> = Omit<T, keyof BaseAttributes>;

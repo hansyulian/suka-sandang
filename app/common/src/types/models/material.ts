@@ -2,12 +2,7 @@ import { apiContractModelSchema, SchemaType } from "@hyulian/api-contract";
 import { Optional } from "@hyulian/common";
 import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
-export const materialStatus = [
-  "pending",
-  "active",
-  "inactive",
-  "deleted",
-] as const;
+export const materialStatus = ["draft", "active", "deleted"] as const;
 export const materialFields = apiContractModelSchema({
   name: { type: "string" },
   code: { type: "string" },
@@ -16,7 +11,6 @@ export const materialFields = apiContractModelSchema({
   color: { type: "string", optional: true },
   status: {
     type: "enum",
-    optional: true,
     values: materialStatus,
   },
 });

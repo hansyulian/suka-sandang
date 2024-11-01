@@ -1,3 +1,4 @@
+import { MaterialStatus } from "@app/common";
 import { pad } from "@hyulian/common";
 import { Material } from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
@@ -10,7 +11,7 @@ export async function materialFixtures() {
         id: idGenerator.material(i),
         code: `material-${pad(i, 2, { char: "0" })}`,
         name: `Material ${pad(i, 2, { char: "0" })}`,
-        status: "active",
+        status: i % 10 === 0 ? "draft" : "active",
       })
     );
   }

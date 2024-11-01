@@ -10,6 +10,7 @@ export const listEnumsContract = apiContractSchema({
   model: {
     value: { type: "string" },
     group: { type: "string" },
+    label: { type: "string" },
   },
 } as const);
 

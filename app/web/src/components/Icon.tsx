@@ -14,12 +14,15 @@ import {
   IconEdit,
   IconTrash,
   IconCheck,
-  IconCross,
   IconSearch,
   IconArrowsSort,
   IconCurrencyDollar,
   IconTruck,
   IconUsers,
+  IconNotebook,
+  IconShoppingCart,
+  IconLink,
+  IconExternalLink,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -37,12 +40,16 @@ const iconMap = {
   edit: IconEdit,
   delete: IconTrash,
   notificationSuccess: IconCheck,
-  notificationError: IconCross,
+  notificationError: IconX,
   search: IconSearch,
   sortable: IconArrowsSort,
   price: IconCurrencyDollar,
   supplier: IconTruck,
   customer: IconUsers,
+  transaction: IconNotebook,
+  purchaseOrder: IconShoppingCart,
+  link: IconLink,
+  openLink: IconExternalLink,
 };
 
 export type IconNames = keyof typeof iconMap;

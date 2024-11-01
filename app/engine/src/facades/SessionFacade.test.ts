@@ -6,13 +6,11 @@ import {
 import { JwtService } from "~/services";
 import { userFixtures } from "~test/fixtures/userFixtures";
 import { idGenerator } from "~test/utils/idGenerator";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { resetData } from "~test/utils/resetData";
 
 describe("SessionFacade", () => {
   const engine = new Engine();
   beforeAll(async () => {
-    initializeDatabase();
     await resetData();
     await userFixtures();
   });

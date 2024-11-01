@@ -5,12 +5,14 @@ import {
   Group,
   Menu,
   NavLink,
+  ThemeIcon,
+  ThemeIconProps,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { PropsWithChildren, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { Icon } from "~/components/Icon";
+import { Icon, IconNames } from "~/components/Icon";
 import { LoadingSuspense } from "~/components/LoadingSuspense";
 import { Api } from "~/config/api";
 import { useAuth } from "~/hooks/useAuth";
@@ -29,7 +31,7 @@ export function MasterLayout(props: MasterLayoutProps) {
 
   const handleLogout = async () => {
     await logout({});
-    await invalidateQuery("material");
+    await invalidateQuery("userInfo");
   };
 
   useEffect(() => {
@@ -77,21 +79,37 @@ export function MasterLayout(props: MasterLayoutProps) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar>
-        <NavLink label="Master Data" leftSection={<Icon name="masterData" />}>
+        <NavLink
+          label="Transaction"
+          leftSection={<NavIcon name="transaction" variant="gradient" />}
+          defaultOpened
+        >
           <NavMenu
-            leftSection={<Icon name="material" />}
+            leftSection={<NavIcon name="purchaseOrder" />}
+            target="purchaseOrderList"
+            params={{}}
+            label="Purchase Order"
+          />
+        </NavLink>
+        <NavLink
+          label="Master Data"
+          leftSection={<NavIcon name="masterData" variant="gradient" />}
+          defaultOpened
+        >
+          <NavMenu
+            leftSection={<NavIcon name="material" />}
             target="materialList"
             params={{}}
             label="Materials"
           />
           <NavMenu
-            leftSection={<Icon name="supplier" />}
+            leftSection={<NavIcon name="supplier" />}
             target="supplierList"
             params={{}}
             label="Suppliers"
           />
           <NavMenu
-            leftSection={<Icon name="customer" />}
+            leftSection={<NavIcon name="customer" />}
             target="customerList"
             params={{}}
             label="Customers"
@@ -102,5 +120,18 @@ export function MasterLayout(props: MasterLayoutProps) {
         <LoadingSuspense>{props.children || <Outlet />}</LoadingSuspense>
       </AppShell.Main>
     </AppShell>
+  );
+}
+
+type NavIconProps = {
+  name: IconNames;
+  variant?: ThemeIconProps["variant"];
+};
+
+function NavIcon(props: NavIconProps) {
+  return (
+    <ThemeIcon variant={props.variant || "white"}>
+      <Icon name={props.name} />
+    </ThemeIcon>
   );
 }

@@ -1,13 +1,25 @@
 import { Engine } from "~/Engine";
 
 export abstract class FacadeBase {
-  private parent: Engine;
+  private _core: Engine;
 
   public constructor(parent: Engine) {
-    this.parent = parent;
+    this._core = parent;
   }
 
   protected get engine() {
-    return this.parent;
+    return this._core;
+  }
+
+  public get sequelize() {
+    return this._core.sequelize;
+  }
+
+  public get transactionMutex() {
+    return this.engine.transactionMutex;
+  }
+
+  public set transactionMutex(value: boolean) {
+    this.engine.transactionMutex = value;
   }
 }

@@ -7,6 +7,7 @@ describe("formValidations", () => {
     expect(validate(null)).toBe("Required");
     expect(validate("")).toBe("Required");
     expect(validate([])).toBe("Required");
+    expect(validate(0)).toBe("Required");
   });
 
   it("should return undefined when value is provided and required is true", () => {

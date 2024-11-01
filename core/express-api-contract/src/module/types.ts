@@ -55,6 +55,9 @@ export type AtlasMiddlewareWrapperFn<
   TQuery extends {} | undefined = any,
   TBody extends {} | undefined = any
 > = (context: RequestContext<TParams, TQuery, TBody>) => Promise<void> | void;
+export type AtlasParameterizedMiddlewareWrapperFn<T extends any[]> = (
+  ...args: T
+) => AtlasMiddlewareWrapperFn;
 export type AtlasRegisterContractFn = <
   TApiContractSchema extends ApiContractSchema
 >(

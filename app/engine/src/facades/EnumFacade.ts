@@ -1,10 +1,16 @@
 import { FindAllResult } from "~/types";
 import { FacadeBase } from "~/facades/FacadeBase";
 import { Enum } from "~/models/Enum";
-import { EnumAttributes, OmitBase } from "@app/common";
-import { filterDuplicates, indexArray, valueIndex } from "@hyulian/common";
+import type { EnumCreationAttributes } from "@app/common";
+import { filterDuplicates, indexArray } from "@hyulian/common";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
+export type GroupSyncPayload = {
+  label: string;
+  value: string;
+};
 export class EnumFacade extends FacadeBase {
+  @WithTransaction
   async list(): Promise<FindAllResult<Enum>> {
     const result = await Enum.findAll();
     return {
@@ -12,7 +18,8 @@ export class EnumFacade extends FacadeBase {
     };
   }
 
-  async upsert(record: OmitBase<EnumAttributes>) {
+  @WithTransaction
+  async upsert(record: EnumCreationAttributes) {
     const foundRecord = await Enum.findOne({
       where: {
         value: record.value,
@@ -20,6 +27,9 @@ export class EnumFacade extends FacadeBase {
       },
     });
     if (foundRecord) {
+      await foundRecord.update({
+        label: record.label,
+      });
       return foundRecord;
     }
     const result = await Enum.create({
@@ -28,23 +38,24 @@ export class EnumFacade extends FacadeBase {
     return result;
   }
 
-  async syncGroup(group: string, values: string[]) {
+  @WithTransaction
+  async syncGroup(group: string, enums: GroupSyncPayload[]) {
     const records = await Enum.findAll({
       where: {
         group,
       },
     });
-    const cleanedValues = filterDuplicates(values); // guaranteed no duplciate values
+    const cleanedEnums = filterDuplicates(enums, (a, b) => a.value === b.value); // guaranteed no duplciate values
     const recordsIndex: Record<string, Enum | undefined> = indexArray(
       records,
       "value"
     ); // undefined = not deleted, with value = to be deleted
     const valuesToBeCreated = [];
-    for (const value of cleanedValues) {
-      if (recordsIndex[value]) {
-        recordsIndex[value] = undefined;
-      } else if (!recordsIndex[value]) {
-        valuesToBeCreated.push(value);
+    for (const enumPayload of cleanedEnums) {
+      if (recordsIndex[enumPayload.value]) {
+        recordsIndex[enumPayload.value] = undefined;
+      } else if (!recordsIndex[enumPayload.value]) {
+        valuesToBeCreated.push(enumPayload);
       }
     }
     const promises = [];
@@ -56,11 +67,12 @@ export class EnumFacade extends FacadeBase {
       }
     }
     // creates new
-    for (const value of valuesToBeCreated) {
+    for (const enumPayload of valuesToBeCreated) {
       promises.push(
         Enum.create({
           group,
-          value,
+          value: enumPayload.value,
+          label: enumPayload.label,
         })
       );
     }

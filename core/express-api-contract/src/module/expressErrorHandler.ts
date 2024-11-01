@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { Exception, GenericException } from "@hyulian/common";
 import { UnauthorizedException } from "~/exceptions";
+import { SchemaValidationException } from "@hyulian/api-contract";
 
 export type CustomErrorType = Error | Exception;
 export type OnError = (error: Exception) => Promise<void> | void;
@@ -24,7 +25,11 @@ export function expressErrorHandler(config: ExpressErrorHandlerConfig) {
     next: NextFunction
   ) => {
     const exception: Exception =
-      err instanceof Exception ? err : convertGenericErrorToException(err);
+      err instanceof Exception
+        ? err
+        : err instanceof SchemaValidationException
+        ? err
+        : convertGenericErrorToException(err);
     config.onError?.(exception);
     const processedStack = exception.stack?.split("\n") ?? [];
     const exceptionJson = {

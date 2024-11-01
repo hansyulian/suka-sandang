@@ -2,7 +2,14 @@ import dayjs from "dayjs";
 
 import { Brand } from "./Brand";
 
-export type DateString = Brand<string, "DateString">;
+// export type DateString = Brand<string, "DateString">;
+export type DateString = Date | string | Brand<string, "DateString">;
+export type DateStringConvert<
+  Object,
+  ResultType = Date | string | DateString
+> = {
+  [K in keyof Object]: Object[K] extends DateString ? ResultType : Object[K];
+};
 
 export const dateStringUtil = {
   isValid,

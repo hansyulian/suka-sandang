@@ -1,5 +1,10 @@
+export type CompareArrayResultBoth<Left, Right> = {
+  left: Left;
+  right: Right;
+};
+
 export type CompareArrayResult<Left, Right> = {
-  both: Left[];
+  both: CompareArrayResultBoth<Left, Right>[];
   leftOnly: Left[];
   rightOnly: Right[];
 };
@@ -13,14 +18,17 @@ export function compareArray<Left, Right>(
   compareFunction: CompareArrayFunction<Left, Right> = (left, right) =>
     (left as any) === right
 ): CompareArrayResult<Left, Right> {
-  const both: Left[] = [];
+  const both: CompareArrayResultBoth<Left, Right>[] = [];
   const leftOnly: Left[] = [];
   const rightOnly: Right[] = [];
   for (const left of leftArray) {
     let found = false;
     for (const right of rightArray) {
       if (compareFunction(left, right)) {
-        both.push(left);
+        both.push({
+          left,
+          right,
+        });
         found = true;
         break;
       }

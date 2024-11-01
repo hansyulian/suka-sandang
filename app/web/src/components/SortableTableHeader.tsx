@@ -1,4 +1,4 @@
-import { Group, Table } from "@mantine/core";
+import { Group, Table, TableTheadProps } from "@mantine/core";
 import { PropsWithChildren } from "react";
 import { IconButton } from "~/components/IconButton";
 import { useSortManager } from "~/hooks/useSortManager";
@@ -23,7 +23,7 @@ export function SortableTableHeader(props: SortableTableHeaderProps) {
 
   return (
     <Table.Th>
-      <Group gap="xs">
+      <Group gap="xs" justify="center">
         {children}
         {orderBy === column ? (
           <IconButton

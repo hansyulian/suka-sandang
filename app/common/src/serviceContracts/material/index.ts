@@ -9,6 +9,7 @@ export * from "./DeleteMaterial";
 export * from "./GetMaterial";
 export * from "./ListMaterials";
 export * from "./UpdateMaterial";
+export * from "./GetMaterialOptions";
 
 export namespace MaterialContracts {
   export type CreateMaterial = CreateMaterialContract;

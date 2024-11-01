@@ -40,9 +40,9 @@ module.exports = {
         allowNull: true,
       },
       status: {
-        type: Sequelize.ENUM("pending", "active", "blocked", "deleted"),
+        type: Sequelize.ENUM("draft", "active", "blocked", "deleted"),
         allowNull: false,
-        defaultValue: "pending",
+        defaultValue: "draft",
       },
       remarks: {
         type: Sequelize.STRING,
@@ -52,5 +52,8 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Suppliers");
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Suppliers_status"'
+    );
   },
 };

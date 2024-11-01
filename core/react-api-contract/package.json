@@ -1,0 +1,46 @@
+{
+  "name": "@hyulian/react-api-contract",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "tsc --build --watch",
+    "build": "tsc --build tsconfig.build.json",
+    "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
+    "clean": "shx mkdir -p dist && shx rm -rf dist",
+    "watch": "npx nodemon",
+    "test": "echo 'unimplemented'"
+  },
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/src/index.js",
+    "require": "./dist/cjs/src/index.js",
+    "types": "./dist/types/src/index.d.ts"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hyulian/api-contract": "workspace:*",
+    "@hyulian/api-contract-client": "workspace:*",
+    "@hyulian/common": "workspace:*",
+    "@tanstack/react-query": "^5.52.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "rimraf": "^6.0.1",
+    "shx": "^0.3.4",
+    "ts-jest": "^29.2.5",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.5.4"
+  }
+}

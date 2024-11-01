@@ -3,7 +3,7 @@ import { Optional } from "@hyulian/common";
 import { BaseAttributes, CreateOmit, UpdateOmit } from "~/types/models/base";
 
 export const supplierStatus = [
-  "pending",
+  "draft",
   "active",
   "blocked",
   "deleted",
@@ -17,7 +17,6 @@ export const supplierFields = apiContractModelSchema({
   identity: { type: "string", optional: true },
   status: {
     type: "enum",
-    optional: true,
     values: supplierStatus,
   },
 });

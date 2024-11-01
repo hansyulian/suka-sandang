@@ -9,8 +9,7 @@
     "clean": "shx mkdir -p dist && shx rm -rf dist",
     "migrate": "npx sequelize db:migrate",
     "migrate:reset": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
-    "prebuild": "pnpm run clean",
-    "watch": "pnpm build && npx nodemon",
+    "watch": "npx nodemon",
     "test": "npx jest"
   },
   "type": "commonjs",
@@ -33,6 +32,7 @@
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/common": "workspace:*",
     "bcrypt": "^5.1.1",
+    "cls-hooked": "^4.2.2",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cls-hooked": "^4.3.8",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/sequelize": "^4.28.20",

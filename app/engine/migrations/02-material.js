@@ -41,13 +41,16 @@ module.exports = {
         allowNull: true,
       },
       status: {
-        type: Sequelize.ENUM("pending", "active", "inactive", "deleted"),
+        type: Sequelize.ENUM("draft", "active", "deleted"),
         allowNull: false,
-        defaultValue: "active",
+        defaultValue: "draft",
       },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Materials");
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Material_status"'
+    );
   },
 };

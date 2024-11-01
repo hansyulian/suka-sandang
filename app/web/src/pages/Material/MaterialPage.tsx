@@ -1,4 +1,3 @@
-import { materialStatus } from "@app/common";
 import {
   Badge,
   Button,
@@ -6,7 +5,6 @@ import {
   Grid,
   Group,
   NumberInput,
-  Select,
   Stack,
   TextInput,
   Title,
@@ -22,15 +20,19 @@ import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { MaterialForm } from "~/types/forms";
-import { calculateSlug } from "~/utils/calculateSlug";
 import { formValidations } from "~/utils/formValidations";
+import { calculateCode } from "~/utils/calculateCode";
+import { useMaterialStatusOptions } from "~/hooks/useMaterialStatusOptions";
+import { getStatusColor } from "~/utils/getStatusColor";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 
 const defaultSpan = {};
 
 export default function MaterialPage() {
   const { idOrCode } = useParams("materialEdit");
   const isEditMode = idOrCode !== undefined;
-  const [autoSlug, setAutoSlug] = useState(true);
+  const [autoCode, setAutoCode] = useState(!isEditMode);
+  const materialStatusOptions = useMaterialStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
     Api.material.createMaterial.useRequest();
   const {
@@ -58,7 +60,7 @@ export default function MaterialPage() {
       color: "",
       purchasePrice: undefined,
       retailPrice: undefined,
-      status: "pending",
+      status: "draft",
     },
     validate: {
       name: formValidations({ required: true }),
@@ -67,9 +69,9 @@ export default function MaterialPage() {
   });
 
   const handleCreate = async () => {
-    const result = await create(values);
+    await create(values);
     await invalidateQuery("material");
-    navigate("materialEdit", { idOrCode: result.code });
+    navigate("materialList", {});
   };
 
   const handleUpdate = async () => {
@@ -95,25 +97,21 @@ export default function MaterialPage() {
       setValues({
         ...data,
       });
-      setAutoSlug(false);
+      setAutoCode(false);
     }
   }, [data, setValues]);
 
   useEffect(() => {
-    if (!autoSlug) {
+    if (!autoCode) {
       return;
     }
     if (values.name) {
       setValues({
-        code: calculateSlug(values.name),
+        code: calculateCode(values.name),
       });
     }
-  }, [autoSlug, setValues, values.name]);
+  }, [autoCode, setValues, values.name]);
 
-  const onSlugChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setAutoSlug(false);
-    return getInputProps("code").onChange(e);
-  };
   const onCancel = () => {
     navigate("materialList", {});
   };
@@ -128,7 +126,7 @@ export default function MaterialPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? data?.name : "New Material"}</Title>
+        <Title>{isEditMode ? `Material: ${data?.name}` : "New Material"}</Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">
@@ -140,7 +138,10 @@ export default function MaterialPage() {
             label="Code"
             required
             {...getInputProps("code")}
-            onChange={onSlugChange}
+            onChange={(e) => {
+              setAutoCode(false);
+              return getInputProps("code").onChange(e);
+            }}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
@@ -158,10 +159,10 @@ export default function MaterialPage() {
           />
         </Grid.Col>
         <Grid.Col>
-          <Select
-            required
+          <SegmentedControlInput
             label="Status"
-            data={materialStatus}
+            data={materialStatusOptions}
+            color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />
         </Grid.Col>

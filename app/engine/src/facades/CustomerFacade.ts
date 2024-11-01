@@ -1,7 +1,11 @@
-import { WhereOptions } from "sequelize";
-import { FindAndCountAllResult, SequelizePaginationOptions } from "~/types";
+import type { WhereOptions } from "sequelize";
+import type {
+  FindAndCountAllResult,
+  SequelizePaginationOptions,
+} from "~/types";
 import { Customer } from "~/models";
-import {
+import type {
+  CustomerAttributes,
   CustomerCreationAttributes,
   CustomerUpdateAttributes,
 } from "@app/common";
@@ -9,10 +13,12 @@ import { FacadeBase } from "~/facades/FacadeBase";
 import { CustomerNotFoundException } from "~/exceptions/CustomerNotFoundException";
 import { isEmail } from "@hyulian/common";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
+import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
 export class CustomerFacade extends FacadeBase {
+  @WithTransaction
   async list(
-    query: WhereOptions<Customer>,
+    query: WhereOptions<CustomerAttributes>,
     options: SequelizePaginationOptions
   ): Promise<FindAndCountAllResult<Customer>> {
     const result = await Customer.findAndCountAll({
@@ -27,14 +33,18 @@ export class CustomerFacade extends FacadeBase {
     };
   }
 
+  @WithTransaction
   async findById(id: string) {
-    const result = await Customer.findByPk(id, { paranoid: false });
-    if (!result) {
+    const record = await Customer.findByPk(id, {
+      paranoid: false,
+    });
+    if (!record) {
       throw new CustomerNotFoundException({ id });
     }
-    return result;
+    return record;
   }
 
+  @WithTransaction
   async create(data: CustomerCreationAttributes) {
     const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
@@ -52,6 +62,7 @@ export class CustomerFacade extends FacadeBase {
     return Customer.findByPk(result.id) as unknown as Customer;
   }
 
+  @WithTransaction
   async update(id: string, data: CustomerUpdateAttributes) {
     const record = await this.findById(id);
     const { name, remarks, status, address, email, phone, identity } = data;
@@ -73,6 +84,7 @@ export class CustomerFacade extends FacadeBase {
     return Customer.findByPk(result.id, { paranoid: false });
   }
 
+  @WithTransaction
   async delete(id: string) {
     const record = await this.findById(id);
     await record.destroy();

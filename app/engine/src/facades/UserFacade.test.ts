@@ -1,21 +1,16 @@
 import { UserUpdateAttributes } from "@app/common";
 import { Engine } from "~/Engine";
 import { UserNotFoundException } from "~/exceptions";
-import { UserFacade } from "~/facades/UserFacade";
 import { User } from "~/models";
 import { userFixtures } from "~test/fixtures/userFixtures";
 import { checkStrayValues } from "~test/utils/checkStrayValues";
 import { idGenerator } from "~test/utils/idGenerator";
-import { initializeDatabase } from "~test/utils/initializeDatabase";
 import { injectStrayValues } from "~test/utils/injectStrayValues";
 import { resetData } from "~test/utils/resetData";
 
 describe("UserFacade", () => {
   const engine = new Engine();
   let findByPkSpy = jest.spyOn(User, "findByPk");
-  beforeAll(async () => {
-    initializeDatabase();
-  });
   beforeEach(async () => {
     await resetData();
     await userFixtures();

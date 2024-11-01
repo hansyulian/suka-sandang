@@ -1,10 +1,8 @@
-import { supplierStatus } from "@app/common";
 import {
   Badge,
   Button,
   Grid,
   Group,
-  Select,
   Stack,
   Textarea,
   TextInput,
@@ -15,18 +13,22 @@ import { useEffect } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import { Api } from "~/config/api";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
+import { useSupplierStatusOptions } from "~/hooks/useSupplierStatusOptions";
 import { SupplierForm } from "~/types/forms";
 import { formValidations } from "~/utils/formValidations";
+import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
 
 export default function SupplierPage() {
   const { id } = useParams("supplierEdit");
+  const supplierStatusOptions = useSupplierStatusOptions();
   const isEditMode = id !== undefined;
   const { mutateAsync: create, isPending: isCreatePending } =
     Api.supplier.createSupplier.useRequest();
@@ -55,7 +57,7 @@ export default function SupplierPage() {
       phone: "",
       identity: "",
       remarks: "",
-      status: "pending",
+      status: "draft",
     },
     validate: {
       name: formValidations({ required: true }),
@@ -64,9 +66,9 @@ export default function SupplierPage() {
   });
 
   const handleCreate = async () => {
-    const result = await create(values);
+    await create(values);
     await invalidateQuery("supplier");
-    navigate("supplierEdit", { id: result.id });
+    navigate("supplierList", {});
   };
 
   const handleUpdate = async () => {
@@ -108,7 +110,7 @@ export default function SupplierPage() {
   return (
     <Stack>
       <Group>
-        <Title>{isEditMode ? data?.name : "New Supplier"}</Title>
+        <Title>{isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}</Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
       <Grid mb="lg">
@@ -131,10 +133,10 @@ export default function SupplierPage() {
           <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
         </Grid.Col>
         <Grid.Col>
-          <Select
-            required
+          <SegmentedControlInput
             label="Status"
-            data={supplierStatus}
+            data={supplierStatusOptions}
+            color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />
         </Grid.Col>

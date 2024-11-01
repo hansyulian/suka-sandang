@@ -7,6 +7,7 @@ import { EnumSpecOptions } from "./types/Enum";
 import { NumberSpecOptions } from "./types/Number";
 import { ObjectSpecOptions, Schema, SchemaType, Specs } from "./types/Spec";
 import { StringSpecOptions } from "./types/String";
+import { DateSpecOptions } from "~/modules/schema/types";
 
 type ProjectorFunction<TSpecs extends Specs, TReturnType> = (
   value: any,
@@ -48,6 +49,8 @@ function projectValue(value: any, spec: Specs) {
       return projectEnum(value, spec);
     case "any":
       return projectAny(value, spec);
+    case "date":
+      return projectDate(value, spec);
     // array
     case "booleans":
       return genericProjectArray(projectBoolean, value, spec);
@@ -63,6 +66,8 @@ function projectValue(value: any, spec: Specs) {
       return genericProjectArray(projectEnum, value, spec);
     case "anys":
       return genericProjectArray(projectAny, value, spec);
+    case "dates":
+      return genericProjectArray(projectDate, value, spec);
   }
 }
 
@@ -112,6 +117,9 @@ function projectAny(value: any, spec: AnySpecOptions) {
 }
 function projectDateString(value: any, spec: DateStringSpecOptions) {
   return dateStringUtil.toDateString(value);
+}
+function projectDate(value: any, spec: DateSpecOptions) {
+  return new Date(value);
 }
 
 function projectObject(value: any, spec: ObjectSpecOptions) {

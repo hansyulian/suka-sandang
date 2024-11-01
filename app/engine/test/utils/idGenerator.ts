@@ -6,6 +6,8 @@ export const idGenerator = {
   material,
   supplier,
   customer,
+  purchaseOrder,
+  purchaseOrderItem,
 };
 
 const entityKeys = [
@@ -14,6 +16,8 @@ const entityKeys = [
   "material",
   "supplier",
   "customer",
+  "purchaseOrder",
+  "purchaseOrderItem",
 ] as const;
 type EntityKey = (typeof entityKeys)[number];
 const entityKeyIndex = valueIndex(
@@ -49,4 +53,12 @@ function supplier(id: number) {
 
 function customer(id: number) {
   return generator("customer", [id]);
+}
+
+function purchaseOrder(id: number) {
+  return generator("purchaseOrder", [id]);
+}
+
+function purchaseOrderItem(id: number, purchaseOrderId: number) {
+  return generator("purchaseOrderItem", [purchaseOrderId, id]);
 }

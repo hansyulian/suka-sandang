@@ -7,9 +7,6 @@ export const getMaterialController = contractController(
     const { engine } = locals;
     const { idOrCode } = params;
     const record = await engine.material.findByIdOrCode(idOrCode);
-    if (record) {
-      return record;
-    }
     return record;
   }
 );

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { objectSchema } from "./objectSchema";
 import { validateSchema } from "./validateSchema";
 
@@ -7,7 +8,7 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       name: { type: "string", minLength: 3, maxLength: 10 },
     });
 
-    const values = { name: "John" };
+    const values = { name: "John", extra: "Doe" };
 
     const result = validateSchema(values, schema);
 
@@ -86,6 +87,69 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
     expect(result).toEqual({ errors: [], value: { status: "active" } });
   });
 
+  it("should validate a schema with a date field", () => {
+    const now = new Date();
+    const schema = objectSchema({
+      date: { type: "date" },
+    });
+
+    const values = { date: now };
+
+    const result = validateSchema(values as any, schema);
+    expect(result.value.date instanceof Date).toStrictEqual(true);
+    const msDifference = Math.abs(result.value.date.getTime() - now.getTime());
+    expect(msDifference).toBeLessThan(1000); // less than 1 seconds difference
+  });
+  it("should validate a schema with a date field value of string", () => {
+    const now = new Date();
+    const schema = objectSchema({
+      date: { type: "date" },
+    });
+
+    const values = { date: now.toString() };
+
+    const result = validateSchema(values as any, schema);
+    expect(result.value.date instanceof Date).toStrictEqual(true);
+    const msDifference = Math.abs(result.value.date.getTime() - now.getTime());
+    expect(msDifference).toBeLessThan(1000); // less than 1 seconds difference
+  });
+  it("should validate a schema with a date field value of number", () => {
+    const now = new Date();
+    const schema = objectSchema({
+      date: { type: "date" },
+    });
+
+    const values = { date: now.getTime() };
+
+    const result = validateSchema(values as any, schema);
+
+    expect(result.errors.length).toStrictEqual(0);
+    expect(result.value.date instanceof Date).toStrictEqual(true);
+    const msDifference = Math.abs(result.value.date.getTime() - now.getTime());
+    expect(msDifference).toBeLessThan(1000); // less than 1 seconds difference
+  });
+  it("should validate a schema with a date field with minimum date", () => {
+    const now = new Date();
+    const min = dayjs(now).add(1, "day").toDate();
+    const schema = objectSchema({
+      date: { type: "date", min },
+    });
+
+    const values = { date: now.getTime() };
+
+    const result = validateSchema(values as any, schema);
+
+    expect(result.errors.length).toStrictEqual(1);
+    expect(result.errors).toContainEqual({
+      key: "date",
+      type: "invalidValue",
+      value: min.getTime(),
+    });
+    expect(result.value.date instanceof Date).toStrictEqual(true);
+    const msDifference = Math.abs(result.value.date.getTime() - now.getTime());
+    expect(msDifference).toBeLessThan(1000); // less than 1 seconds difference
+  });
+
   it("should validate a schema with an object field", () => {
     const schema = objectSchema({
       address: {
@@ -133,7 +197,9 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       },
     });
 
-    const values = { items: [{ name: "item1" }, { name: "item2" }] };
+    const values = {
+      items: [{ name: "item1" }, { name: "item2", extra: "should be removed" }],
+    };
 
     const result = validateSchema(values, schema);
 
@@ -267,14 +333,14 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       status: { type: "enum", values: ["active", "inactive"] },
     });
 
-    const values = { status: "pending" };
+    const values = { status: "draft" };
 
     const result = validateSchema(values, schema);
 
     expect(result.errors).toContainEqual({
       type: "invalidValue",
       key: "status",
-      value: "pending",
+      value: "draft",
       expected: ["active", "inactive"],
     });
   });
@@ -354,14 +420,14 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
       },
     });
 
-    const values = { statuses: ["active", "pending"] };
+    const values = { statuses: ["active", "draft"] };
 
     const result = validateSchema(values, schema);
 
     expect(result.errors).toContainEqual({
       type: "invalidValue",
       key: "statuses.1",
-      value: "pending",
+      value: "draft",
       expected: ["active", "inactive"],
     });
   });

@@ -18,6 +18,9 @@ export function formValidations(settings: FormValidations) {
     ) {
       return "Required";
     }
+    if (required && typeof value === "number" && value === 0) {
+      return "Required";
+    }
     if (email && value && !isEmail(value)) {
       return "Invalid Email";
     }

@@ -14,7 +14,7 @@ import { PropsWithChildren, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Icon, IconNames } from "~/components/Icon";
 import { LoadingSuspense } from "~/components/LoadingSuspense";
-import { Api } from "~/config/api";
+import { logoutApi } from "~/config/api/sessionApi";
 import { useAuth } from "~/hooks/useAuth";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
@@ -25,7 +25,7 @@ export type MasterLayoutProps = PropsWithChildren;
 export function MasterLayout(props: MasterLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const { authenticatedUser, isLoading } = useAuth();
-  const { mutateAsync: logout } = Api.session.logout.useRequest();
+  const { mutateAsync: logout } = logoutApi.useRequest();
   const invalidateQuery = useInvalidateQuery();
   const navigate = useNavigate();
 

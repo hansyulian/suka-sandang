@@ -14,7 +14,11 @@ import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
-import { Api } from "~/config/api";
+import {
+  createSupplierApi,
+  getSupplierApi,
+  updateSupplierApi,
+} from "~/config/api/supplierApi";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
@@ -31,12 +35,12 @@ export default function SupplierPage() {
   const supplierStatusOptions = useSupplierStatusOptions();
   const isEditMode = id !== undefined;
   const { mutateAsync: create, isPending: isCreatePending } =
-    Api.supplier.createSupplier.useRequest();
+    createSupplierApi.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.supplier.getSupplier.useRequest(
+  } = getSupplierApi.useRequest(
     { id },
     {},
     {
@@ -45,7 +49,7 @@ export default function SupplierPage() {
   );
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
-    Api.supplier.updateSupplier.useRequest({ id: data?.id ?? "" });
+    updateSupplierApi.useRequest({ id: data?.id ?? "" });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;

@@ -9,7 +9,7 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
-import { Api } from "~/config/api";
+import { deleteMaterialApi, listMaterialApi } from "~/config/api/materialApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
@@ -32,7 +32,7 @@ export default function MaterialListPage() {
     onChange: updateSearchQuery,
   });
 
-  const { data } = Api.material.listMaterial.useRequest({}, query);
+  const { data } = listMaterialApi.useRequest({}, query);
   const updateSearch = () => {
     updateSearchQuery({
       search: searchText,
@@ -44,7 +44,7 @@ export default function MaterialListPage() {
     });
   };
   const promptDelete = (
-    record: ContractResponseModel<typeof Api.material.listMaterial>
+    record: ContractResponseModel<typeof listMaterialApi>
   ) => {
     confirmationDialog({
       title: "Confirm Deletion?",
@@ -52,7 +52,7 @@ export default function MaterialListPage() {
       highlight: [record.name],
       variant: "danger",
       onConfirm: async () => {
-        await Api.material.deleteMaterial.request({ id: record.id }, {});
+        await deleteMaterialApi.request({ id: record.id }, {});
         await invalidateQuery("material");
       },
     });

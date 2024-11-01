@@ -9,7 +9,10 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
-import { Api } from "~/config/api";
+import {
+  deletePurchaseOrderApi,
+  listPurchaseOrderApi,
+} from "~/config/api/purchaseOrderApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
@@ -37,7 +40,7 @@ export default function PurchaseOrderListPage() {
     onChange: updateSearchQuery,
   });
 
-  const { data } = Api.purchaseOrder.listPurchaseOrder.useRequest({}, query);
+  const { data } = listPurchaseOrderApi.useRequest({}, query);
   const updateSearch = () => {
     updateSearchQuery({
       search: searchText,
@@ -49,7 +52,7 @@ export default function PurchaseOrderListPage() {
     });
   };
   const promptDelete = (
-    record: ContractResponseModel<typeof Api.purchaseOrder.listPurchaseOrder>
+    record: ContractResponseModel<typeof listPurchaseOrderApi>
   ) => {
     confirmationDialog({
       title: "Confirm Deletion?",
@@ -57,10 +60,7 @@ export default function PurchaseOrderListPage() {
       highlight: [record.code],
       variant: "danger",
       onConfirm: async () => {
-        await Api.purchaseOrder.deletePurchaseOrder.request(
-          { id: record.id },
-          {}
-        );
+        await deletePurchaseOrderApi.request({ id: record.id }, {});
         await invalidateQuery("purchaseOrder");
       },
     });

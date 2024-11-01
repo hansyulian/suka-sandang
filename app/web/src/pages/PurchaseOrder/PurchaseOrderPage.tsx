@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
-import { Api } from "~/config/api";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
@@ -29,6 +28,12 @@ import { PurchaseOrderItemTable } from "~/pages/PurchaseOrder/PurchaseOrderPage/
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import { usePurchaseOrderStatusOptions } from "~/hooks/usePurchaseOrderStatusOptions";
 import { getStatusColor } from "~/utils/getStatusColor";
+import {
+  createPurchaseOrderApi,
+  getPurchaseOrderApi,
+  syncPurchaseOrderItemsApi,
+  updatePurchaseOrderApi,
+} from "~/config/api/purchaseOrderApi";
 
 const defaultSpan = {};
 
@@ -46,13 +51,12 @@ export default function PurchaseOrderPage() {
     UseFormReturnType<PurchaseOrderItemForm>[]
   >([]);
 
-  const { mutateAsync: create } =
-    Api.purchaseOrder.createPurchaseOrder.useRequest();
+  const { mutateAsync: create } = createPurchaseOrderApi.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.purchaseOrder.getPurchaseOrder.useRequest(
+  } = getPurchaseOrderApi.useRequest(
     { idOrCode },
     {},
     {
@@ -60,13 +64,13 @@ export default function PurchaseOrderPage() {
     }
   );
   const data = usePersistable(d);
-  const { mutateAsync: update } =
-    Api.purchaseOrder.updatePurchaseOrder.useRequest({ id: data?.id ?? "" });
-  const { mutateAsync: syncItems } =
-    Api.purchaseOrder.syncPurchaseOrderItems.useRequest(
-      { id: data?.id ?? "" },
-      { onSuccess: () => {} }
-    );
+  const { mutateAsync: update } = updatePurchaseOrderApi.useRequest({
+    id: data?.id ?? "",
+  });
+  const { mutateAsync: syncItems } = syncPurchaseOrderItemsApi.useRequest(
+    { id: data?.id ?? "" },
+    { onSuccess: () => {} }
+  );
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
@@ -117,7 +121,7 @@ export default function PurchaseOrderPage() {
   const handleCreate = async () => {
     setIsActing(true);
     const result = await create(values);
-    await Api.purchaseOrder.syncPurchaseOrderItems.request(
+    await syncPurchaseOrderItemsApi.request(
       { id: result.id },
       { items: getItems() }
     );

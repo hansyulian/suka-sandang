@@ -13,7 +13,6 @@ import { useEffect } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
-import { Api } from "~/config/api";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
@@ -23,6 +22,11 @@ import { CustomerForm } from "~/types";
 import { getStatusColor } from "~/utils/getStatusColor";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import { useCustomerStatusOptions } from "~/hooks/useCustomerStatusOptions";
+import {
+  createCustomerApi,
+  getCustomerApi,
+  updateCustomerApi,
+} from "~/config/api/customerApi";
 
 const defaultSpan = {};
 
@@ -31,12 +35,12 @@ export default function CustomerPage() {
   const isEditMode = id !== undefined;
   const customerStatusOptions = useCustomerStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
-    Api.customer.createCustomer.useRequest();
+    createCustomerApi.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.customer.getCustomer.useRequest(
+  } = getCustomerApi.useRequest(
     { id },
     {},
     {
@@ -45,7 +49,7 @@ export default function CustomerPage() {
   );
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
-    Api.customer.updateCustomer.useRequest({ id: data?.id ?? "" });
+    updateCustomerApi.useRequest({ id: data?.id ?? "" });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;

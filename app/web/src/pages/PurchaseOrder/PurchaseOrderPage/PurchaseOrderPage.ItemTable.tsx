@@ -1,36 +1,25 @@
-import { PurchaseOrderItemAttributes } from "@app/common";
 import { Button, Table, Text } from "@mantine/core";
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { UseFormReturnType } from "@mantine/form";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Icon } from "~/components/Icon";
-import {
-  PurchaseOrderItemTableRow,
-  PurchaseOrderItemTableRowHandler,
-} from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTableRow";
+import { PurchaseOrderItemTableRow } from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTableRow";
 import { PurchaseOrderItemForm } from "~/types";
+import { formatCurrency } from "~/utils/formatCurrency";
 
 export type PurchaseOrderItemTableProps = {
-  initialData: PurchaseOrderItemAttributes[];
+  initialData: PurchaseOrderItemForm[];
   disabled?: boolean;
+  onFormsChange: (values: UseFormReturnType<PurchaseOrderItemForm>[]) => void;
 };
 
-export type PurchaseOrderItemTableHandler = {
-  validate: () => boolean;
-  getValues: () => PurchaseOrderItemForm[];
-};
-
-export const PurchaseOrderItemTable = forwardRef<
-  PurchaseOrderItemTableHandler,
-  PurchaseOrderItemTableProps
->(function (props, ref) {
-  const { initialData, disabled } = props;
+export const PurchaseOrderItemTable = memo(function (
+  props: PurchaseOrderItemTableProps
+) {
+  const { initialData, disabled, onFormsChange } = props;
   const [records, setRecords] = useState<PurchaseOrderItemForm[]>(initialData);
-  const rowRefs = useRef<PurchaseOrderItemTableRowHandler[]>([]);
+  const [forms, setForms] = useState<
+    UseFormReturnType<PurchaseOrderItemForm>[]
+  >([]);
 
   useEffect(() => {
     setRecords(initialData);
@@ -47,35 +36,37 @@ export const PurchaseOrderItemTable = forwardRef<
     ]);
   };
 
-  const setRowRef = (
-    index: number,
-    ref: PurchaseOrderItemTableRowHandler | null
-  ) => {
-    if (ref) {
-      rowRefs.current[index] = ref;
-    }
-  };
-
-  useImperativeHandle(
-    ref,
-    () => {
-      return {
-        validate: () => {
-          for (const ref of rowRefs.current) {
-            const { hasErrors } = ref.validate();
-            if (hasErrors) {
-              return false;
-            }
-          }
-          return true;
-        },
-        getValues: () => {
-          return rowRefs.current.map((ref) => ref.getValues());
-        },
-      };
+  const handleFormChange = useCallback(
+    (index: number, form: UseFormReturnType<PurchaseOrderItemForm>) => {
+      setForms((prevState) => {
+        const newState = [...prevState];
+        newState[index] = form;
+        return newState;
+      });
     },
     []
   );
+
+  const handleRecordDelete = useCallback((index: number) => {
+    setRecords((prevState) => {
+      const newState = [...prevState];
+      newState.splice(index, 1);
+      return newState;
+    });
+    setForms((prevState) => {
+      const newState = [...prevState];
+      newState.splice(index, 1);
+      return newState;
+    });
+  }, []);
+
+  const total = records.reduce((prev, current) => {
+    return prev + current.quantity * current.unitPrice;
+  }, 0);
+
+  useEffect(() => {
+    onFormsChange(forms);
+  }, [forms, onFormsChange]);
 
   return (
     <Table.ScrollContainer minWidth="100%">
@@ -95,9 +86,12 @@ export const PurchaseOrderItemTable = forwardRef<
         <Table.Tbody>
           {records.map((record, index) => (
             <PurchaseOrderItemTableRow
+              key={`item-${index}`}
               initialData={record}
               disabled={disabled}
-              ref={(ref) => setRowRef(index, ref)}
+              index={index}
+              onFormChange={handleFormChange}
+              onDelete={handleRecordDelete}
             />
           ))}
           {!disabled && (
@@ -110,9 +104,10 @@ export const PurchaseOrderItemTable = forwardRef<
             </Table.Tr>
           )}
           <Table.Tr>
-            <Table.Td colSpan={8} align="right">
-              <Text fw="bold"></Text>
+            <Table.Td colSpan={7} align="right">
+              <Text fw="bold">{formatCurrency(total)}</Text>
             </Table.Td>
+            <Table.Td></Table.Td>
           </Table.Tr>
         </Table.Tbody>
       </Table>

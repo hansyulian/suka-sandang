@@ -42,7 +42,7 @@ export class ReactApiContractClient extends ApiContractClient {
     TMutationContractSchema extends MutationContractSchema
   >(
     contract: TMutationContractSchema,
-    options: Partial<
+    baseOptions: Partial<
       UseMutationOptions<
         InferApiContract<TMutationContractSchema>["response"],
         Error, // Error type
@@ -69,10 +69,20 @@ export class ReactApiContractClient extends ApiContractClient {
       });
     };
 
-    const useRequest = (params: Params = {}) => {
+    const useRequest = (
+      params: Params = {},
+      options: Partial<
+        UseMutationOptions<
+          InferApiContract<TMutationContractSchema>["response"],
+          Error, // Error type
+          InferApiContract<TMutationContractSchema>["body"]
+        >
+      > = {}
+    ) => {
       return useMutation<Response, Error, Body, unknown>({
         mutationFn: (data) => request(params, data),
 
+        ...baseOptions,
         ...options,
       });
     };

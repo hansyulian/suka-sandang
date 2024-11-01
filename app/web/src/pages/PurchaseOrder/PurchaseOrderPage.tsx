@@ -3,15 +3,14 @@ import {
   Button,
   Grid,
   Group,
-  Select,
   Stack,
   Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -21,16 +20,15 @@ import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { formValidations } from "~/utils/formValidations";
-import { OptionData, PurchaseOrderForm } from "~/types";
-import { purchaseOrderStatus } from "@app/common";
+import { OptionData, PurchaseOrderForm, PurchaseOrderItemForm } from "~/types";
 import { useSupplierSelectOptions } from "~/hooks/useSupplierSelectOptions";
 import { formatDateCode } from "~/utils/formatDateCode";
 import { calculateCode } from "~/utils/calculateCode";
 import { SelectE } from "~/components/SelectE";
-import {
-  PurchaseOrderItemTable,
-  PurchaseOrderItemTableHandler,
-} from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTable";
+import { PurchaseOrderItemTable } from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTable";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
+import { usePurchaseOrderStatusOptions } from "~/hooks/usePurchaseOrderStatusOptions";
+import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
 
@@ -39,12 +37,15 @@ export default function PurchaseOrderPage() {
   const supplierOptions = useSupplierSelectOptions();
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
+  const purchaseOrderStatusOptions = usePurchaseOrderStatusOptions();
   const [isActing, setIsActing] = useState(false);
-  const purchaseOrderItemTableRef =
-    useRef<PurchaseOrderItemTableHandler | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<OptionData | null>(
     null
   );
+  const [forms, setForms] = useState<
+    UseFormReturnType<PurchaseOrderItemForm>[]
+  >([]);
+
   const { mutateAsync: create } =
     Api.purchaseOrder.createPurchaseOrder.useRequest();
   const {
@@ -62,7 +63,10 @@ export default function PurchaseOrderPage() {
   const { mutateAsync: update } =
     Api.purchaseOrder.updatePurchaseOrder.useRequest({ id: data?.id ?? "" });
   const { mutateAsync: syncItems } =
-    Api.purchaseOrder.syncPurchaseOrderItems.useRequest({ id: data?.id ?? "" });
+    Api.purchaseOrder.syncPurchaseOrderItems.useRequest(
+      { id: data?.id ?? "" },
+      { onSuccess: () => {} }
+    );
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
@@ -93,16 +97,29 @@ export default function PurchaseOrderPage() {
     }
   }, [autoCode, selectedSupplier, setValues]);
 
-  const handleCreate = async () => {
-    if (!purchaseOrderItemTableRef.current) {
-      return;
+  const validateForms = () => {
+    const validation = validate();
+    if (validation.hasErrors) {
+      return false;
     }
+    let valid = true;
+    for (const form of forms) {
+      const { hasErrors } = form.validate();
+      if (hasErrors) {
+        valid = false;
+      }
+    }
+    return valid;
+  };
+
+  const getItems = () => forms.map((form) => form.values);
+
+  const handleCreate = async () => {
     setIsActing(true);
-    const items = purchaseOrderItemTableRef.current.getValues();
     const result = await create(values);
     await Api.purchaseOrder.syncPurchaseOrderItems.request(
       { id: result.id },
-      { items }
+      { items: getItems() }
     );
     await invalidateQuery("purchaseOrder");
     setIsActing(false);
@@ -110,23 +127,15 @@ export default function PurchaseOrderPage() {
   };
 
   const handleUpdate = async () => {
-    if (!purchaseOrderItemTableRef.current) {
-      return;
-    }
     setIsActing(true);
-    const items = purchaseOrderItemTableRef.current.getValues();
-    await Promise.all([update(values), syncItems({ items })]);
+    await Promise.all([update(values), syncItems({ items: getItems() })]);
     await invalidateQuery("purchaseOrder");
     setIsActing(false);
   };
 
   const save = () => {
-    if (!purchaseOrderItemTableRef.current) {
-      return;
-    }
-    const itemsValid = purchaseOrderItemTableRef.current.validate();
-    const { hasErrors } = validate();
-    if (hasErrors || !itemsValid) {
+    const formValid = validateForms();
+    if (!formValid) {
       return;
     }
     if (isEditMode) {
@@ -197,11 +206,11 @@ export default function PurchaseOrderPage() {
           <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
         </Grid.Col>
         <Grid.Col>
-          <Select
-            required
+          <SegmentedControlInput
             label="Status"
-            data={purchaseOrderStatus}
+            data={purchaseOrderStatusOptions}
             disabled={!isEditMode}
+            color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />
         </Grid.Col>
@@ -209,7 +218,8 @@ export default function PurchaseOrderPage() {
       <Title order={2}>Items</Title>
       <PurchaseOrderItemTable
         initialData={d?.purchaseOrderItems || []}
-        ref={purchaseOrderItemTableRef}
+        onFormsChange={setForms}
+        disabled={data?.status !== "draft"}
       />
       <Grid>
         <Grid.Col span={{ md: 6 }}></Grid.Col>

@@ -5,11 +5,14 @@ export function getStatusColor(
 ): DefaultMantineColor | undefined {
   switch (status) {
     case "draft":
+    case "cancelled":
       return "gray";
+    case "processing":
+      return "blue";
     case "active":
+    case "completed":
       return "green";
     case "deleted":
-      return "red";
     case "blocked":
       return "red";
     default:

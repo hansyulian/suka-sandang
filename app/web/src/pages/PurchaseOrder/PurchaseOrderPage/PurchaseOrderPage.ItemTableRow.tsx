@@ -1,7 +1,6 @@
 import { Table, TextInput, NumberInput, Text, Box, Group } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { FormValidationResult } from "node_modules/@mantine/form/lib/types";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { useForm, UseFormReturnType } from "@mantine/form";
+import { memo, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
 import { SelectE } from "~/components/SelectE";
 import { Api } from "~/config/api";
@@ -13,18 +12,18 @@ import { formValidations } from "~/utils/formValidations";
 export type PurchaseOrderItemTableRowProps = {
   initialData?: PurchaseOrderItemForm;
   disabled?: boolean;
+  onDelete: (index: number) => void;
+  onFormChange: (
+    index: number,
+    form: UseFormReturnType<PurchaseOrderItemForm>
+  ) => void;
+  index: number;
 };
 
-export type PurchaseOrderItemTableRowHandler = {
-  validate: () => FormValidationResult;
-  getValues: () => PurchaseOrderItemForm;
-};
-
-export const PurchaseOrderItemTableRow = forwardRef<
-  PurchaseOrderItemTableRowHandler,
-  PurchaseOrderItemTableRowProps
->(function (props, ref) {
-  const { initialData, disabled } = props;
+export const PurchaseOrderItemTableRow = memo(function (
+  props: PurchaseOrderItemTableRowProps
+) {
+  const { initialData, disabled, onFormChange, index, onDelete } = props;
   const materialNameOptions = useMaterialSelectOptions("name");
   const materialCodeOptions = useMaterialSelectOptions("code");
 
@@ -53,8 +52,6 @@ export const PurchaseOrderItemTableRow = forwardRef<
     }
   );
 
-  const promptDelete = () => {};
-
   useEffect(() => {
     if (!selectedMaterial) {
       return;
@@ -67,22 +64,15 @@ export const PurchaseOrderItemTableRow = forwardRef<
     });
   }, [initialData?.materialId, selectedMaterial, setValues]);
 
-  useImperativeHandle(
-    ref,
-    () => {
-      return {
-        validate: form.validate,
-        getValues: () => form.values,
-      };
-    },
-    [form.validate, form.values]
-  );
-
   useEffect(() => {
     if (initialData) {
       setValues(initialData);
     }
   }, [initialData, setValues]);
+
+  useEffect(() => {
+    onFormChange(index, form);
+  }, [index, onFormChange, form]);
 
   return (
     <Table.Tr>
@@ -121,7 +111,11 @@ export const PurchaseOrderItemTableRow = forwardRef<
       </Table.Td>
       <Table.Td valign="middle">
         <Group>
-          <IconButton name="delete" color="red" onClick={promptDelete} />
+          <IconButton
+            name="delete"
+            color="red"
+            onClick={() => onDelete(index)}
+          />
         </Group>
       </Table.Td>
     </Table.Tr>

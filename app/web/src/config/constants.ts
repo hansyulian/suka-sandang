@@ -1,4 +1,9 @@
-import { CustomerStatus, MaterialStatus, SupplierStatus } from "@app/common";
+import {
+  CustomerStatus,
+  MaterialStatus,
+  PurchaseOrderStatus,
+  SupplierStatus,
+} from "@app/common";
 
 export const materialStatusLabels: Record<MaterialStatus, string> = {
   active: "Active",
@@ -18,4 +23,12 @@ export const supplierStatusLabels: Record<SupplierStatus, string> = {
   blocked: "Blocked",
   deleted: "Deleted",
   draft: "Draft",
+};
+
+export const purchaseOrderStatusLabels: Record<PurchaseOrderStatus, string> = {
+  draft: "Draft",
+  deleted: "Deleted",
+  cancelled: "Cancelled",
+  completed: "Completed",
+  processing: "Processing",
 };

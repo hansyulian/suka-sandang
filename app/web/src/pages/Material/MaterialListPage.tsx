@@ -89,13 +89,22 @@ export default function MaterialListPage() {
             <SortableTableHeader
               sortManager={sortManager}
               column="purchasePrice"
+              justify="flex-end"
             >
               Purchase
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="retailPrice">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="retailPrice"
+              justify="flex-end"
+            >
               Retail
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="status">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="status"
+              justify="center"
+            >
               Status
             </SortableTableHeader>
             <Table.Th w="100"></Table.Th>

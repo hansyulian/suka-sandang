@@ -42,7 +42,6 @@ export default function PurchaseOrderPage() {
   const supplierOptions = useSupplierSelectOptions();
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
-  const purchaseOrderStatusOptions = usePurchaseOrderStatusOptions();
   const [isActing, setIsActing] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<OptionData | null>(
     null
@@ -63,6 +62,7 @@ export default function PurchaseOrderPage() {
       enabled: isEditMode,
     }
   );
+  const purchaseOrderStatusOptions = usePurchaseOrderStatusOptions(d);
   const data = usePersistable(d);
   const { mutateAsync: update } = updatePurchaseOrderApi.useRequest({
     id: data?.id ?? "",

@@ -93,7 +93,11 @@ export default function SupplierListPage() {
             <SortableTableHeader sortManager={sortManager} column="address">
               Address
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="status">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="status"
+              justify="center"
+            >
               Status
             </SortableTableHeader>
             <Table.Th></Table.Th>
@@ -106,7 +110,7 @@ export default function SupplierListPage() {
             <Table.Td>{record.email}</Table.Td>
             <Table.Td>{record.phone}</Table.Td>
             <Table.Td>{record.address}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="center">
               <StatusBadge status={record.status} />
             </Table.Td>
             <Table.Td>

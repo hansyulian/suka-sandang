@@ -93,13 +93,25 @@ export default function PurchaseOrderListPage() {
             <SortableTableHeader sortManager={sortManager} column="supplier">
               Supplier
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="date">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="date"
+              justify="center"
+            >
               Date
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="status">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="status"
+              justify="center"
+            >
               Status
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="total">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="total"
+              justify="flex-end"
+            >
               Total
             </SortableTableHeader>
             <Table.Th></Table.Th>
@@ -120,7 +132,7 @@ export default function PurchaseOrderListPage() {
               </Group>
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="center">
               <StatusBadge status={record.status} />
             </Table.Td>
             <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>

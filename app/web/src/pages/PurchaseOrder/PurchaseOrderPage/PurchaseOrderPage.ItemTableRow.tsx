@@ -3,7 +3,7 @@ import { useForm, UseFormReturnType } from "@mantine/form";
 import { memo, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
 import { SelectE } from "~/components/SelectE";
-import { Api } from "~/config/api";
+import { getMaterialApi } from "~/config/api/materialApi";
 import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
 import { PurchaseOrderItemForm } from "~/types";
 import { formatCurrency } from "~/utils/formatCurrency";
@@ -44,7 +44,7 @@ export const PurchaseOrderItemTableRow = memo(function (
   });
   const { setValues, values } = form;
 
-  const { data: selectedMaterial } = Api.material.getMaterial.useRequest(
+  const { data: selectedMaterial } = getMaterialApi.useRequest(
     { idOrCode: values.materialId },
     {},
     {

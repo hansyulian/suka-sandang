@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Api } from "~/config/api";
+import { getUserInfoApi } from "~/config/api/sessionApi";
 
 export interface AuthContext {
   authenticatedUser: AuthenticatedUser | null | undefined;
@@ -9,7 +9,7 @@ export interface AuthContext {
 export const AuthContext = React.createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: user, ...rest } = Api.session.getUserInfo.useRequest({}, {});
+  const { data: user, ...rest } = getUserInfoApi.useRequest({}, {});
   const [authenticatedUser, setAuthenticatedUser] = useState<
     AuthenticatedUser | null | undefined
   >();

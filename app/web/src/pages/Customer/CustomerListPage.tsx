@@ -9,7 +9,7 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
-import { Api } from "~/config/api";
+import { deleteCustomerApi, listCustomerApi } from "~/config/api/customerApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
@@ -31,7 +31,7 @@ export default function CustomerListPage() {
     onChange: updateSearchQuery,
   });
 
-  const { data } = Api.customer.listCustomer.useRequest({}, query);
+  const { data } = listCustomerApi.useRequest({}, query);
   const updateSearch = () => {
     updateSearchQuery({
       search: searchText,
@@ -43,7 +43,7 @@ export default function CustomerListPage() {
     });
   };
   const promptDelete = (
-    record: ContractResponseModel<typeof Api.customer.listCustomer>
+    record: ContractResponseModel<typeof listCustomerApi>
   ) => {
     confirmationDialog({
       title: "Confirm Deletion?",
@@ -51,7 +51,7 @@ export default function CustomerListPage() {
       highlight: [record.name],
       variant: "danger",
       onConfirm: async () => {
-        await Api.customer.deleteCustomer.request({ id: record.id }, {});
+        await deleteCustomerApi.request({ id: record.id }, {});
         await invalidateQuery("customer");
       },
     });
@@ -93,7 +93,11 @@ export default function CustomerListPage() {
             <SortableTableHeader sortManager={sortManager} column="address">
               Address
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="status">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="status"
+              justify="center"
+            >
               Status
             </SortableTableHeader>
             <Table.Th></Table.Th>
@@ -106,7 +110,7 @@ export default function CustomerListPage() {
             <Table.Td>{record.email}</Table.Td>
             <Table.Td>{record.phone}</Table.Td>
             <Table.Td>{record.address}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="center">
               <StatusBadge status={record.status} />
             </Table.Td>
             <Table.Td>

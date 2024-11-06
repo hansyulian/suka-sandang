@@ -8,15 +8,15 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { getHotkeyHandler } from "@mantine/hooks";
+import { emailLoginApi } from "~/config/api/sessionApi";
 
-import { Api } from "~/config/api";
 import { useHandleRedirect } from "~/hooks/useHandleRedirect";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 
 export default function LoginPage() {
-  const { mutateAsync: login } = Api.session.emailLogin.useRequest({});
+  const { mutateAsync: login } = emailLoginApi.useRequest({});
   const invalidateQuery = useInvalidateQuery();
   const handleRedirect = useHandleRedirect();
   const { redirect } = useSearchQuery("login");

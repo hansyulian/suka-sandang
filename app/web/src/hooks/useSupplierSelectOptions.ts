@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Api } from "~/config/api";
+import { getSupplierOptionsApi } from "~/config/api/supplierApi";
 
 export function useSupplierSelectOptions() {
-  const { data } = Api.supplier.getSupplierOptions.useRequest({}, {});
+  const { data } = getSupplierOptionsApi.useRequest({}, {});
 
   return useMemo(() => {
     if (!data) {

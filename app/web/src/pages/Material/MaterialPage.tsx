@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
-import { Api } from "~/config/api";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
@@ -25,6 +24,11 @@ import { calculateCode } from "~/utils/calculateCode";
 import { useMaterialStatusOptions } from "~/hooks/useMaterialStatusOptions";
 import { getStatusColor } from "~/utils/getStatusColor";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
+import {
+  createMaterialApi,
+  getMaterialApi,
+  updateMaterialApi,
+} from "~/config/api/materialApi";
 
 const defaultSpan = {};
 
@@ -34,12 +38,12 @@ export default function MaterialPage() {
   const [autoCode, setAutoCode] = useState(!isEditMode);
   const materialStatusOptions = useMaterialStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
-    Api.material.createMaterial.useRequest();
+    createMaterialApi.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = Api.material.getMaterial.useRequest(
+  } = getMaterialApi.useRequest(
     { idOrCode },
     {},
     {
@@ -48,7 +52,7 @@ export default function MaterialPage() {
   );
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
-    Api.material.updateMaterial.useRequest({ id: data?.id ?? "" });
+    updateMaterialApi.useRequest({ id: data?.id ?? "" });
 
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();

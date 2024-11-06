@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Api } from "~/config/api";
+import { getMaterialOptionsApi } from "~/config/api/materialApi";
 
 export function useMaterialSelectOptions(labelKey: "name" | "code") {
-  const { data } = Api.material.getMaterialOptions.useRequest({}, {});
+  const { data } = getMaterialOptionsApi.useRequest({}, {});
 
   return useMemo(() => {
     if (!data) {

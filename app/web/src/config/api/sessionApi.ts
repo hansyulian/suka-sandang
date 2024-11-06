@@ -7,20 +7,21 @@ import {
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
+import { queryKeyFn } from "~/utils/queryKeyFn";
 
-export const sessionApi = {
-  getUserInfo: apiClient.registerQueryContract(
-    getUserInfoContract,
-    queryKeys.userInfo
-  ),
-  emailLogin: apiClient.registerMutationContract(
-    emailLoginContract,
-    apiMutationOptions({
-      title: "Login",
-      successMessage: "Logged in!",
-      message: "Logging In",
-    })
-  ),
-  updateUserInfo: apiClient.registerMutationContract(updateUserInfoContract),
-  logout: apiClient.registerMutationContract(logoutContract),
-};
+export const getUserInfoApi = apiClient.registerQueryContract(
+  getUserInfoContract,
+  queryKeyFn.simple(queryKeys.userInfo)
+);
+export const emailLoginApi = apiClient.registerMutationContract(
+  emailLoginContract,
+  apiMutationOptions({
+    title: "Login",
+    successMessage: "Logged in!",
+    message: "Logging In",
+  })
+);
+export const updateUserInfoApi = apiClient.registerMutationContract(
+  updateUserInfoContract
+);
+export const logoutApi = apiClient.registerMutationContract(logoutContract);

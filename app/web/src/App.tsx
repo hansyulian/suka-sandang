@@ -14,7 +14,6 @@ import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
 import { RouterProvider } from "react-router-dom";
-import "~/config/api";
 import { AuthProvider } from "~/contexts";
 import { useAuth } from "~/hooks/useAuth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

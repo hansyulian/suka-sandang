@@ -9,7 +9,7 @@ import { PaginationController } from "~/components/PaginationController";
 import { SortableTableHeader } from "~/components/SortableTableHeader";
 import { StatusBadge } from "~/components/StatusBadge";
 import { TextBox } from "~/components/TextBox";
-import { Api } from "~/config/api";
+import { deleteSupplierApi, listSupplierApi } from "~/config/api/supplierApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
@@ -31,7 +31,7 @@ export default function SupplierListPage() {
     onChange: updateSearchQuery,
   });
 
-  const { data } = Api.supplier.listSupplier.useRequest({}, query);
+  const { data } = listSupplierApi.useRequest({}, query);
   const updateSearch = () => {
     updateSearchQuery({
       search: searchText,
@@ -43,7 +43,7 @@ export default function SupplierListPage() {
     });
   };
   const promptDelete = (
-    record: ContractResponseModel<typeof Api.supplier.listSupplier>
+    record: ContractResponseModel<typeof listSupplierApi>
   ) => {
     confirmationDialog({
       title: "Confirm Deletion?",
@@ -51,7 +51,7 @@ export default function SupplierListPage() {
       highlight: [record.name],
       variant: "danger",
       onConfirm: async () => {
-        await Api.supplier.deleteSupplier.request({ id: record.id }, {});
+        await deleteSupplierApi.request({ id: record.id }, {});
         await invalidateQuery("supplier");
       },
     });
@@ -93,7 +93,11 @@ export default function SupplierListPage() {
             <SortableTableHeader sortManager={sortManager} column="address">
               Address
             </SortableTableHeader>
-            <SortableTableHeader sortManager={sortManager} column="status">
+            <SortableTableHeader
+              sortManager={sortManager}
+              column="status"
+              justify="center"
+            >
               Status
             </SortableTableHeader>
             <Table.Th></Table.Th>
@@ -106,7 +110,7 @@ export default function SupplierListPage() {
             <Table.Td>{record.email}</Table.Td>
             <Table.Td>{record.phone}</Table.Td>
             <Table.Td>{record.address}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="center">
               <StatusBadge status={record.status} />
             </Table.Td>
             <Table.Td>

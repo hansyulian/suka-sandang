@@ -9,14 +9,15 @@ import {
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
+import { queryKeyFn } from "~/utils/queryKeyFn";
 
 export const getMaterialApi = apiClient.registerQueryContract(
   getMaterialContract,
-  queryKeys.material
+  queryKeyFn.single(queryKeys.material)
 );
 export const listMaterialApi = apiClient.registerQueryContract(
   listMaterialsContract,
-  queryKeys.material
+  queryKeyFn.many(queryKeys.material)
 );
 export const createMaterialApi = apiClient.registerMutationContract(
   createMaterialContract,
@@ -44,5 +45,5 @@ export const deleteMaterialApi = apiClient.registerMutationContract(
 );
 export const getMaterialOptionsApi = apiClient.registerQueryContract(
   getMaterialOptionsContract,
-  queryKeys.materialOptions
+  queryKeyFn.option(queryKeys.material)
 );

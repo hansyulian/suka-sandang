@@ -9,14 +9,15 @@ import {
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
+import { queryKeyFn } from "~/utils/queryKeyFn";
 
 export const getSupplierApi = apiClient.registerQueryContract(
   getSupplierContract,
-  queryKeys.supplier
+  queryKeyFn.single(queryKeys.supplier)
 );
 export const listSupplierApi = apiClient.registerQueryContract(
   listSuppliersContract,
-  queryKeys.supplier
+  queryKeyFn.many(queryKeys.supplier)
 );
 export const createSupplierApi = apiClient.registerMutationContract(
   createSupplierContract,
@@ -44,5 +45,5 @@ export const deleteSupplierApi = apiClient.registerMutationContract(
 );
 export const getSupplierOptionsApi = apiClient.registerQueryContract(
   getSupplierOptionsContract,
-  queryKeys.supplierOptions
+  queryKeyFn.option(queryKeys.supplier)
 );

@@ -21,6 +21,11 @@ export type ReactApiContractClientMutationOptions = UseMutationOptions<
   any,
   any
 >;
+
+export type QueryKeyFn = (
+  params: unknown,
+  query: unknown
+) => (string | object)[];
 export type ApiContractClientOptions = {
   baseUrl: string;
   queryOptions?: ReactApiContractClientQueryOptions;
@@ -97,7 +102,7 @@ export class ReactApiContractClient extends ApiContractClient {
     TQueryContractSchema extends QueryContractSchema
   >(
     contract: TQueryContractSchema,
-    queryKey: string,
+    queryKeyFn: QueryKeyFn,
     baseOptions: Partial<
       UseQueryOptions<
         InferApiContract<TQueryContractSchema>["response"] | undefined,
@@ -139,7 +144,7 @@ export class ReactApiContractClient extends ApiContractClient {
     ) => {
       return useQuery<Response, unknown>({
         ...(self.queryOptions as any),
-        queryKey: [queryKey, { ...query, ...params }],
+        queryKey: queryKeyFn(params, query),
         queryFn: () => {
           return request(params, query);
         },

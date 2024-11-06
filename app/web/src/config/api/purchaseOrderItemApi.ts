@@ -8,14 +8,15 @@ import {
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
+import { queryKeyFn } from "~/utils/queryKeyFn";
 
 export const getPurchaseOrderItemApi = apiClient.registerQueryContract(
   getPurchaseOrderItemContract,
-  queryKeys.purchaseOrderItem
+  queryKeyFn.single(queryKeys.purchaseOrderItem)
 );
 export const listPurchaseOrderItemApi = apiClient.registerQueryContract(
   listPurchaseOrderItemsContract,
-  queryKeys.purchaseOrderItem
+  queryKeyFn.many(queryKeys.purchaseOrderItem)
 );
 export const createPurchaseOrderItemApi = apiClient.registerMutationContract(
   createPurchaseOrderItemContract,

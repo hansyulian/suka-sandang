@@ -8,14 +8,15 @@ import {
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
 import { apiMutationOptions } from "~/utils/apiMutationOptions";
+import { queryKeyFn } from "~/utils/queryKeyFn";
 
 export const getCustomerApi = apiClient.registerQueryContract(
   getCustomerContract,
-  queryKeys.customer
+  queryKeyFn.single(queryKeys.customer)
 );
 export const listCustomerApi = apiClient.registerQueryContract(
   listCustomersContract,
-  queryKeys.customer
+  queryKeyFn.many(queryKeys.customer)
 );
 export const createCustomerApi = apiClient.registerMutationContract(
   createCustomerContract,

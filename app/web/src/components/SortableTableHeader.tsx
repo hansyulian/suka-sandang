@@ -1,4 +1,4 @@
-import { Group, GroupProps, Table, TableTheadProps } from "@mantine/core";
+import { Group, GroupProps, Table } from "@mantine/core";
 import { PropsWithChildren } from "react";
 import { IconButton } from "~/components/IconButton";
 import { useSortManager } from "~/hooks/useSortManager";

@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "node dist/src/app.js",
+    "start": "node dist/src/index.js",
     "dev": "npx nodemon",
     "build": "tsc -p tsconfig.build.json",
     "postbuild": "tsc-alias",

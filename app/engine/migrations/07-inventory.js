@@ -43,6 +43,10 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      total: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
     });
   },
   async down(queryInterface) {

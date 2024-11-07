@@ -4,7 +4,6 @@ import type {
   PurchaseOrderStatus,
 } from "@app/common";
 import {
-  BeforeCreate,
   BelongsTo,
   Column,
   ForeignKey,

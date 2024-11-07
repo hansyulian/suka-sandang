@@ -6,3 +6,5 @@ export * from "./Supplier";
 export * from "./Customer";
 export * from "./PurchaseOrder";
 export * from "./PurchaseOrderItem";
+export * from "./Inventory";
+export * from "./InventoryFlow";

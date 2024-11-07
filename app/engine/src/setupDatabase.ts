@@ -9,6 +9,8 @@ import {
   Supplier,
   Customer,
   PurchaseOrderItem,
+  Inventory,
+  InventoryFlow,
 } from "~/models";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
 
@@ -49,6 +51,8 @@ export function setupDatabase(
       Customer,
       PurchaseOrder,
       PurchaseOrderItem,
+      Inventory,
+      InventoryFlow,
     ],
     ...sequelizeOptions,
   };

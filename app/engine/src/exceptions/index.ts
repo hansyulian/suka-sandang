@@ -9,3 +9,6 @@ export * from "./PurchaseOrderDuplicationException";
 export * from "./PurchaseOrderInvalidStatusException";
 export * from "./PurchaseOrderItemNotFoundException";
 export * from "./PurchaseOrderNotFoundException";
+export * from "./InventoryDuplicationException";
+export * from "./InventoryInvalidStatusException";
+export * from "./InventoryNotFoundException";

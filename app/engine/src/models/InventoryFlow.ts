@@ -1,16 +1,10 @@
 import type {
+  InventoryFlowActivity,
   InventoryFlowAttributes,
   InventoryFlowCreationAttributes,
   InventoryFlowStatus,
 } from "@app/common";
-import {
-  BeforeCreate,
-  BeforeUpdate,
-  BelongsTo,
-  Column,
-  ForeignKey,
-  Table,
-} from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Table } from "sequelize-typescript";
 import { BaseModel } from "~/models/BaseModel";
 import { Inventory } from "~/models/Inventory";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
@@ -37,9 +31,11 @@ export class InventoryFlow extends BaseModel<
   declare remarks?: string;
 
   @Column({
-    defaultValue: "completed",
+    defaultValue: "valid",
   })
   declare status: InventoryFlowStatus;
+  @Column({})
+  declare activity: InventoryFlowActivity;
 
   @BelongsTo(() => PurchaseOrder, "purchaseOrderId")
   declare purchaseOrder: PurchaseOrder;

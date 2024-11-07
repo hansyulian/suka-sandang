@@ -137,12 +137,9 @@ export class PurchaseOrderFacade extends FacadeBase {
 
   @WithTransaction
   async sync(id: string, records: PurchaseOrderItemSyncAttributes[]) {
-    const purchaseOrder = await this.engine.purchaseOrder.findById(id);
-    if (purchaseOrder.status !== "draft") {
-      throw new PurchaseOrderInvalidStatusException(
-        "draft",
-        purchaseOrder.status
-      );
+    const record = await this.engine.purchaseOrder.findById(id);
+    if (record.status !== "draft") {
+      throw new PurchaseOrderInvalidStatusException("draft", record.status);
     }
     const materialIds = filterDuplicates(
       records.map((record) => record.materialId)
@@ -176,13 +173,13 @@ export class PurchaseOrderFacade extends FacadeBase {
     for (const record of records) {
       total += record.quantity * record.unitPrice;
     }
-    const purchaseOrderItems = await PurchaseOrderItem.findAll({
+    const items = await PurchaseOrderItem.findAll({
       where: {
-        purchaseOrderId: purchaseOrder.id,
+        purchaseOrderId: record.id,
       },
     });
     const compareResult = compareArray(
-      purchaseOrderItems,
+      items,
       records,
       (left, right) => left.id === right.id
     );
@@ -194,7 +191,7 @@ export class PurchaseOrderFacade extends FacadeBase {
       const { materialId, quantity, remarks, unitPrice } = rightOnly;
       promises.push(
         PurchaseOrderItem.create({
-          purchaseOrderId: purchaseOrder.id,
+          purchaseOrderId: record.id,
           materialId,
           quantity,
           remarks,
@@ -214,7 +211,7 @@ export class PurchaseOrderFacade extends FacadeBase {
       );
     }
     promises.push(
-      purchaseOrder.update({
+      record.update({
         total,
       })
     );

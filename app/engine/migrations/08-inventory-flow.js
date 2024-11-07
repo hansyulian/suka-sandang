@@ -56,9 +56,9 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM("completed", "cancelled", "deleted"),
+        type: Sequelize.ENUM("valid", "cancelled", "deleted"),
         allowNull: false,
-        defaultValue: "completed",
+        defaultValue: "valid",
       },
       remarks: {
         type: Sequelize.STRING,

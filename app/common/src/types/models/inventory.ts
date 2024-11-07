@@ -7,19 +7,9 @@ export const inventoryCreateFields = apiContractModelSchema({
   materialId: { type: "string" },
   remarks: { type: "string", optional: true },
   code: { type: "string" },
-  status: {
-    type: "enum",
-    optional: true,
-    values: inventoryStatus,
-  },
 });
 export const inventoryUpdateFields = apiContractModelSchema({
   remarks: { type: "string", optional: true },
-  status: {
-    type: "enum",
-    optional: true,
-    values: inventoryStatus,
-  },
 });
 export const inventoryFields = apiContractModelSchema({
   materialId: { type: "string" },
@@ -30,6 +20,7 @@ export const inventoryFields = apiContractModelSchema({
     optional: true,
     values: inventoryStatus,
   },
+  total: { type: "number" },
 });
 export type InventoryFields = SchemaType<typeof inventoryFields>;
 export type InventoryStatus = (typeof inventoryStatus)[number];

@@ -13,12 +13,6 @@ import { InventoryFlow, PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { WithTransaction } from "~/modules";
 import { type SequelizePaginationOptions } from "~/types";
 
-const updatableActivities: InventoryFlowActivity[] = [
-  "adjustment",
-  "scrap",
-  "transfer",
-];
-
 export class InventoryFlowFacade extends FacadeBase {
   @WithTransaction
   async list(
@@ -88,19 +82,27 @@ export class InventoryFlowFacade extends FacadeBase {
     if (remarks) {
       record.remarks = remarks;
     }
-    if (quantity && updatableActivities.includes(record.activity)) {
-      record.quantity = quantity;
+    if (quantity && quantity !== record.quantity) {
+      if (InventoryFlow.updatableActivities.includes(record.activity)) {
+        record.quantity = quantity;
+      } else {
+        throw new InventoryFlowInvalidActivityException(
+          record.activity,
+          InventoryFlow.updatableActivities
+        );
+      }
     }
     await record.save();
+    return this.findById(id);
   }
 
   @WithTransaction
   async delete(id: string) {
     const record = await this.findById(id);
-    if (!updatableActivities.includes(record.activity)) {
+    if (!InventoryFlow.updatableActivities.includes(record.activity)) {
       throw new InventoryFlowInvalidActivityException(
         record.activity,
-        updatableActivities
+        InventoryFlow.updatableActivities
       );
     }
     await record.destroy();

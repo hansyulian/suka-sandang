@@ -32,5 +32,14 @@ export async function inventoryFixtures() {
       );
     }
   }
+  promises.push(
+    InventoryFlow.create({
+      id: idGenerator.inventoryFlow(1, 0),
+      inventoryId: idGenerator.inventory(1),
+      quantity: -5,
+      activity: "adjustment",
+      remarks: "adjustment due to damage",
+    })
+  );
   await Promise.all(promises);
 }

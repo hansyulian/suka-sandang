@@ -42,4 +42,8 @@ export class InventoryFlow extends BaseModel<
 
   @BelongsTo(() => Inventory)
   declare inventory: Inventory;
+
+  static get updatableActivities() {
+    return ["adjustment", "scrap", "transfer"] as InventoryFlowActivity[];
+  }
 }

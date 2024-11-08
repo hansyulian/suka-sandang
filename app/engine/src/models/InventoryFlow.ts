@@ -5,23 +5,23 @@ import type {
   InventoryFlowStatus,
 } from "@app/common";
 import { BelongsTo, Column, ForeignKey, Table } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { Inventory } from "~/models/Inventory";
-import { PurchaseOrder } from "~/models/PurchaseOrder";
+import { PurchaseOrderItem } from "~/models/PurchaseOrderItem";
 
 @Table({
   paranoid: false,
 })
 export class InventoryFlow extends BaseModel<
   InventoryFlowAttributes,
-  InventoryFlowCreationAttributes
+  SequelizeCreationPreset<InventoryFlowCreationAttributes>
 > {
   @Column
   declare quantity: number;
 
-  @ForeignKey(() => PurchaseOrder)
+  @ForeignKey(() => PurchaseOrderItem)
   @Column
-  declare purchaseOrderId?: string;
+  declare purchaseOrderItemId?: string;
 
   @ForeignKey(() => Inventory)
   @Column
@@ -37,8 +37,8 @@ export class InventoryFlow extends BaseModel<
   @Column({})
   declare activity: InventoryFlowActivity;
 
-  @BelongsTo(() => PurchaseOrder, "purchaseOrderId")
-  declare purchaseOrder: PurchaseOrder;
+  @BelongsTo(() => PurchaseOrderItem, "purchaseOrderItemId")
+  declare purchaseOrderItem: PurchaseOrderItem;
 
   @BelongsTo(() => Inventory)
   declare inventory: Inventory;

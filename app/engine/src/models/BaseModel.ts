@@ -19,3 +19,5 @@ export abstract class BaseModel<
     instance.status = "deleted";
   }
 }
+
+export type SequelizeCreationPreset<T> = T & { id?: string };

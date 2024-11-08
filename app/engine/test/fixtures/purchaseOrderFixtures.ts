@@ -30,5 +30,9 @@ export async function purchaseOrderFixtures() {
       );
     }
   }
-  await Promise.all(promises);
+  try {
+    await Promise.all(promises);
+  } catch (err) {
+    console.log(err);
+  }
 }

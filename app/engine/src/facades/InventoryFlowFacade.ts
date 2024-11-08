@@ -9,7 +9,7 @@ import { InventoryFlowInvalidActivityException } from "~/exceptions/InventoryFlo
 import { InventoryFlowInvalidQuantityException } from "~/exceptions/InventoryFlowInvalidQuantityException";
 import { InventoryFlowNotFoundException } from "~/exceptions/InventoryFlowNotFoundException";
 import { FacadeBase } from "~/facades/FacadeBase";
-import { InventoryFlow } from "~/models";
+import { InventoryFlow, PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { WithTransaction } from "~/modules";
 import { type SequelizePaginationOptions } from "~/types";
 
@@ -30,6 +30,16 @@ export class InventoryFlowFacade extends FacadeBase {
         ...query,
       },
       ...options,
+      include: [
+        {
+          model: PurchaseOrderItem,
+          include: [
+            {
+              model: PurchaseOrder,
+            },
+          ],
+        },
+      ],
     });
     return {
       count: result.count,

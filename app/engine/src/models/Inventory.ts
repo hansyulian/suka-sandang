@@ -10,7 +10,7 @@ import {
   HasMany,
   Table,
 } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { InventoryFlow } from "~/models/InventoryFlow";
 import { Material } from "~/models/Material";
 
@@ -19,12 +19,14 @@ import { Material } from "~/models/Material";
 })
 export class Inventory extends BaseModel<
   InventoryAttributes,
-  Omit<InventoryCreationAttributes, "items">
+  SequelizeCreationPreset<InventoryCreationAttributes> & { total?: number }
 > {
   @Column
   declare code: string;
 
-  @Column
+  @Column({
+    defaultValue: 0,
+  })
   declare total: number;
 
   @ForeignKey(() => Material)
@@ -41,4 +43,7 @@ export class Inventory extends BaseModel<
 
   @HasMany(() => InventoryFlow, "inventoryId")
   declare inventoryFlows: InventoryFlow[];
+
+  @BelongsTo(() => Material, "materialId")
+  declare material: Material;
 }

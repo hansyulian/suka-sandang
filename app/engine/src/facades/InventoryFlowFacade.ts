@@ -1,5 +1,4 @@
 import type {
-  InventoryFlowActivity,
   InventoryFlowAttributes,
   InventoryFlowCreationAttributes,
   InventoryFlowUpdateAttributes,
@@ -11,13 +10,16 @@ import { InventoryFlowNotFoundException } from "~/exceptions/InventoryFlowNotFou
 import { FacadeBase } from "~/facades/FacadeBase";
 import { InventoryFlow, PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { WithTransaction } from "~/modules";
-import { type SequelizePaginationOptions } from "~/types";
+import type {
+  SequelizeIncludeOptions,
+  SequelizePaginationOptions,
+} from "~/types";
 
 export class InventoryFlowFacade extends FacadeBase {
   @WithTransaction
   async list(
     query: WhereOptions<InventoryFlowAttributes>,
-    options: SequelizePaginationOptions
+    options: SequelizePaginationOptions & SequelizeIncludeOptions
   ) {
     const result = await InventoryFlow.findAndCountAll({
       where: {
@@ -42,8 +44,10 @@ export class InventoryFlowFacade extends FacadeBase {
   }
 
   @WithTransaction
-  async findById(id: string) {
-    const result = await InventoryFlow.findByPk(id);
+  async findById(id: string, options: SequelizeIncludeOptions = {}) {
+    const result = await InventoryFlow.findByPk(id, {
+      ...options,
+    });
     if (!result) {
       throw new InventoryFlowNotFoundException({ id });
     }

@@ -1,9 +1,13 @@
-import { Order } from "sequelize";
+import { Includeable, Order } from "sequelize";
 
 export type SequelizePaginationOptions = {
   limit?: number;
   offset?: number;
   order?: Order;
+};
+
+export type SequelizeIncludeOptions = {
+  include?: Includeable | Includeable[];
 };
 
 export type FindAndCountAllResult<T> = {

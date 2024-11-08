@@ -10,14 +10,17 @@ import { InventoryNotFoundException } from "~/exceptions/InventoryNotFoundExcept
 import { FacadeBase } from "~/facades/FacadeBase";
 import { Material, Inventory, InventoryFlow } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
-import type { SequelizePaginationOptions } from "~/types";
+import type {
+  SequelizeIncludeOptions,
+  SequelizePaginationOptions,
+} from "~/types";
 import { isUuid } from "~/utils/isUuid";
 
 export class InventoryFacade extends FacadeBase {
   @WithTransaction
   async list(
     query: WhereOptions<InventoryAttributes>,
-    options: SequelizePaginationOptions
+    options: SequelizePaginationOptions & SequelizeIncludeOptions
   ) {
     const result = await Inventory.findAndCountAll({
       where: {
@@ -37,7 +40,7 @@ export class InventoryFacade extends FacadeBase {
   }
 
   @WithTransaction
-  async findById(id: string) {
+  async findById(id: string, options: SequelizeIncludeOptions = {}) {
     const record = await Inventory.findByPk(id, {
       paranoid: false,
       include: [
@@ -48,6 +51,7 @@ export class InventoryFacade extends FacadeBase {
           model: InventoryFlow,
         },
       ],
+      ...options,
     });
     if (!record) {
       throw new InventoryNotFoundException({ id });
@@ -56,7 +60,10 @@ export class InventoryFacade extends FacadeBase {
   }
 
   @WithTransaction
-  async findByIdOrCode(idOrCode: string) {
+  async findByIdOrCode(
+    idOrCode: string,
+    options: SequelizeIncludeOptions = {}
+  ) {
     const where: WhereOptions<InventoryAttributes> = isUuid(idOrCode)
       ? { id: idOrCode }
       : { code: idOrCode };
@@ -71,6 +78,7 @@ export class InventoryFacade extends FacadeBase {
           model: InventoryFlow,
         },
       ],
+      ...options,
     });
     if (!result) {
       throw new InventoryNotFoundException({ idOrCode });
@@ -109,7 +117,7 @@ export class InventoryFacade extends FacadeBase {
 
   @WithTransaction
   async delete(id: string) {
-    const record = await this.findById(id);
+    const record = await this.findById(id, { include: undefined });
     await record.destroy();
   }
 

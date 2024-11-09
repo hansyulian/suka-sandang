@@ -9,6 +9,7 @@ import { supplierController } from "~/controllers/supplier";
 import { customerController } from "~/controllers/customer";
 import { PurchaseOrderController } from "~/controllers/purchaseOrder";
 import { PurchaseOrderItemController } from "~/controllers/purchaseOrderItem";
+import { InventoryController } from "~/controllers/inventory";
 
 export const controllers = createRouter((atlas) => {
   atlas.controller(getServerInfoController);
@@ -19,4 +20,5 @@ export const controllers = createRouter((atlas) => {
   atlas.router("customer", customerController);
   atlas.router("purchase-order", PurchaseOrderController);
   atlas.router("purchase-order-item", PurchaseOrderItemController);
+  atlas.router("inventory", InventoryController);
 });

@@ -1,7 +1,7 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { queryParameters } from "~/base";
 import { modelBase } from "~/base/modelBase";
-import { inventoryFields, supplierFields } from "~/types";
+import { inventoryFields, materialFields } from "~/types";
 
 export const listInventoriesContract = apiContractSchema({
   method: "get",
@@ -26,11 +26,11 @@ export const listInventoriesContract = apiContractSchema({
   model: {
     ...modelBase,
     ...inventoryFields,
-    supplier: {
+    material: {
       type: "object",
       spec: {
         ...modelBase,
-        ...supplierFields,
+        ...materialFields,
       },
     },
   },

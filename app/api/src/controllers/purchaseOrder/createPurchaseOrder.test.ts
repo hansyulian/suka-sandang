@@ -3,7 +3,6 @@ import {
   PurchaseOrderAttributes,
 } from "@app/common";
 import { PurchaseOrderFacade } from "@app/engine";
-import { dateStringUtil } from "@hyulian/api-contract";
 import {
   apiTest,
   checkStrayValues,
@@ -63,7 +62,7 @@ describe("Controller: createPurchaseOrderController", () => {
     const id = "mock-id";
     const payload: PurchaseOrderCreationAttributes = {
       code: "sample-purchase-order-1",
-      date: dateStringUtil.toDateString(new Date()),
+      date: new Date(),
       supplierId: "mock-supplier-id",
       remarks: "Sample remarks",
     };

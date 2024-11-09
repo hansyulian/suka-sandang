@@ -18,6 +18,7 @@ export const inventoryFlowFields = apiContractModelSchema({
   quantity: { type: "number" },
   remarks: { type: "string", optional: true },
   activity: { type: "enum", values: inventoryFlowActivity },
+  status: { type: "enum", values: inventoryFlowStatus },
 });
 export const inventoryFlowCreateFields = apiContractModelSchema({
   inventoryId: { type: "string" },

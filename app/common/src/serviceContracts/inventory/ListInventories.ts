@@ -3,7 +3,7 @@ import { queryParameters } from "~/base";
 import { modelBase } from "~/base/modelBase";
 import { inventoryFields, supplierFields } from "~/types";
 
-export const listInventorysContract = apiContractSchema({
+export const listInventoriesContract = apiContractSchema({
   method: "get",
   path: "/inventory",
   params: {},
@@ -36,6 +36,6 @@ export const listInventorysContract = apiContractSchema({
   },
 } as const);
 
-export type ListInventorysContract = InferApiContract<
-  typeof listInventorysContract
+export type ListInventoriesContract = InferApiContract<
+  typeof listInventoriesContract
 >;

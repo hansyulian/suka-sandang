@@ -12,3 +12,6 @@ export * from "./PurchaseOrderNotFoundException";
 export * from "./InventoryDuplicationException";
 export * from "./InventoryInvalidStatusException";
 export * from "./InventoryNotFoundException";
+export * from "./InventoryFlowInvalidActivityException";
+export * from "./InventoryFlowInvalidQuantityException";
+export * from "./InventoryFlowNotFoundException";

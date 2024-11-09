@@ -7,9 +7,10 @@ import { materialController } from "~/controllers/material";
 import { enumController } from "~/controllers/enum";
 import { supplierController } from "~/controllers/supplier";
 import { customerController } from "~/controllers/customer";
-import { PurchaseOrderController } from "~/controllers/purchaseOrder";
-import { PurchaseOrderItemController } from "~/controllers/purchaseOrderItem";
-import { InventoryController } from "~/controllers/inventory";
+import { purchaseOrderController } from "~/controllers/purchaseOrder";
+import { purchaseOrderItemController } from "~/controllers/purchaseOrderItem";
+import { inventoryController } from "~/controllers/inventory";
+import { inventoryFlowController } from "~/controllers/inventoryFlow";
 
 export const controllers = createRouter((atlas) => {
   atlas.controller(getServerInfoController);
@@ -18,7 +19,8 @@ export const controllers = createRouter((atlas) => {
   atlas.router("material", materialController);
   atlas.router("supplier", supplierController);
   atlas.router("customer", customerController);
-  atlas.router("purchase-order", PurchaseOrderController);
-  atlas.router("purchase-order-item", PurchaseOrderItemController);
-  atlas.router("inventory", InventoryController);
+  atlas.router("purchase-order", purchaseOrderController);
+  atlas.router("purchase-order-item", purchaseOrderItemController);
+  atlas.router("inventory", inventoryController);
+  atlas.router("inventory-flow", inventoryFlowController);
 });

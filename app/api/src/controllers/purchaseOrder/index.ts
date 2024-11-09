@@ -7,7 +7,7 @@ import { syncPurchaseOrderItemsController } from "~/controllers/purchaseOrder/sy
 import { updatePurchaseOrderController } from "~/controllers/purchaseOrder/updatePurchaseOrder";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
 
-export const PurchaseOrderController = createRouter((atlas) => {
+export const purchaseOrderController = createRouter((atlas) => {
   atlas.middleware(authenticationMiddleware);
 
   atlas.controller(createPurchaseOrderController);

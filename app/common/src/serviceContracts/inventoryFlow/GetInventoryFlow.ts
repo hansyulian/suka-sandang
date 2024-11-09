@@ -4,9 +4,9 @@ import { inventoryFlowFields } from "~/types";
 
 export const getInventoryFlowContract = apiContractSchema({
   method: "get",
-  path: "/inventory-flow/{idOrCode}",
+  path: "/inventory-flow/{id}",
   params: {
-    idOrCode: { type: "string" },
+    id: { type: "string" },
   },
   query: {},
   responseType: "object",

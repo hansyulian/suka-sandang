@@ -12,15 +12,7 @@ export const listInventoryFlowsContract = apiContractSchema({
   path: "/inventory-flow",
   params: {},
   query: {
-    name: {
-      type: "string",
-      optional: true,
-    },
-    code: {
-      type: "string",
-      optional: true,
-    },
-    search: {
+    inventoryId: {
       type: "string",
       optional: true,
     },

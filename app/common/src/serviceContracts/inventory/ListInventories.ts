@@ -8,10 +8,6 @@ export const listInventoriesContract = apiContractSchema({
   path: "/inventory",
   params: {},
   query: {
-    name: {
-      type: "string",
-      optional: true,
-    },
     code: {
       type: "string",
       optional: true,

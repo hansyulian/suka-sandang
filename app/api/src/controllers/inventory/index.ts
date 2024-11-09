@@ -6,7 +6,7 @@ import { listInventoriesController } from "~/controllers/inventory/listInventori
 import { updateInventoryController } from "~/controllers/inventory/updateInventory";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
 
-export const InventoryController = createRouter((atlas) => {
+export const inventoryController = createRouter((atlas) => {
   atlas.middleware(authenticationMiddleware);
 
   atlas.controller(createInventoryController);

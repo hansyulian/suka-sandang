@@ -88,7 +88,7 @@ export class InventoryFacade extends FacadeBase {
 
   @WithTransaction
   async create(data: InventoryCreationAttributes) {
-    const { id, code, materialId, remarks } = data;
+    const { code, materialId, remarks } = data;
     const recordByCode = await Inventory.findOne({
       where: { code },
       paranoid: true,
@@ -99,7 +99,6 @@ export class InventoryFacade extends FacadeBase {
     const record = await Inventory.create({
       code,
       materialId,
-      id,
       remarks,
     });
     return this.findById(record.id);
@@ -124,9 +123,6 @@ export class InventoryFacade extends FacadeBase {
   @WithTransaction
   async recalculateTotal(id: string) {
     const record = await this.findById(id);
-    const total = sum(record.inventoryFlows, (item) => item.quantity);
-    await record.update({
-      total,
-    });
+    await record.recalculateTotal();
   }
 }

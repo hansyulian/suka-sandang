@@ -14,7 +14,7 @@ import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 describe("InventoryFlowFacade", () => {
   const engine = new Engine();
   const testInventoryFlowId = idGenerator.inventoryFlow(0, 10);
-  const testUpdatableInventoryFlowId = idGenerator.inventoryFlow(1, 0);
+  const testUpdatableInventoryFlowId = idGenerator.inventoryFlow(2, 0);
   const testNonUpdatableFlowId = idGenerator.inventoryFlow(0, 1); // A flow with "procurement" activity
 
   beforeAll(async () => {
@@ -34,7 +34,7 @@ describe("InventoryFlowFacade", () => {
         {},
         { limit: 10, offset: 0 }
       );
-      expect(result.count).toBeGreaterThanOrEqual(50);
+      expect(result.count).toBeGreaterThanOrEqual(250);
       expect(result.records).toHaveLength(10);
       expect(result.records[0].inventoryId).toBeDefined();
       expect(result.records[0].purchaseOrderItem).toBeDefined();
@@ -62,7 +62,7 @@ describe("InventoryFlowFacade", () => {
   });
 
   describe("create", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await resetData([Inventory, InventoryFlow]);
       await inventoryFixtures();
     });
@@ -72,12 +72,14 @@ describe("InventoryFlowFacade", () => {
         quantity: 10,
         purchaseOrderItemId: idGenerator.purchaseOrderItem(1, 0),
         remarks: "New Flow",
-        activity: "procurement",
+        activity: "adjustment",
       };
       const result = await engine.inventoryFlow.create(data);
       expect(result).toBeDefined();
       expect(result.inventoryId).toBe(data.inventoryId);
       expect(result.activity).toBe("sales");
+      const inventory = await Inventory.findByPk(idGenerator.inventory(10));
+      expect(inventory?.total).toStrictEqual(29);
     });
 
     it("should throw InventoryFlowInvalidQuantityException for negative total quantity", async () => {
@@ -90,16 +92,18 @@ describe("InventoryFlowFacade", () => {
       await expect(engine.inventoryFlow.create(data)).rejects.toThrow(
         InventoryFlowInvalidQuantityException
       );
+      const inventory = await Inventory.findByPk(idGenerator.inventory(10));
+      expect(inventory?.total).toStrictEqual(19);
     });
   });
 
   describe("update", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await resetData([Inventory, InventoryFlow]);
       await inventoryFixtures();
     });
     it("should update the quantity of an inventory flow with updatable activity", async () => {
-      const data = { quantity: 15, remarks: "Updated remarks" };
+      const data = { quantity: -10, remarks: "Updated remarks" };
       const result = await engine.inventoryFlow.update(
         testUpdatableInventoryFlowId,
         data
@@ -110,6 +114,8 @@ describe("InventoryFlowFacade", () => {
       );
       expect(updatedFlow.quantity).toBe(data.quantity);
       expect(updatedFlow.remarks).toBe(data.remarks);
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toStrictEqual(9);
     });
 
     it("should reject updates on inventory flows with non-updatable activity", async () => {
@@ -117,6 +123,9 @@ describe("InventoryFlowFacade", () => {
       await expect(
         engine.inventoryFlow.update(testNonUpdatableFlowId, data)
       ).rejects.toThrow(InventoryFlowInvalidActivityException);
+
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toStrictEqual(14);
     });
     it("should accept updates on inventory flows with non-updatable activity but quantity not changing", async () => {
       const data = { quantity: 20, remarks: "Attempted update" };
@@ -127,11 +136,14 @@ describe("InventoryFlowFacade", () => {
       );
       expect(updatedFlow.quantity).toBe(data.quantity);
       expect(updatedFlow.remarks).toBe(data.remarks);
+
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toStrictEqual(14);
     });
   });
 
   describe("delete", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await resetData([Inventory, InventoryFlow]);
       await inventoryFixtures();
     });
@@ -140,12 +152,16 @@ describe("InventoryFlowFacade", () => {
       await expect(
         engine.inventoryFlow.findById(testUpdatableInventoryFlowId)
       ).rejects.toThrow(InventoryFlowNotFoundException);
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toStrictEqual(19);
     });
 
     it("should throw InventoryFlowInvalidActivityException when deleting non-updatable activity", async () => {
       await expect(
         engine.inventoryFlow.delete(testNonUpdatableFlowId)
       ).rejects.toThrow(InventoryFlowInvalidActivityException);
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toStrictEqual(14);
     });
   });
 });

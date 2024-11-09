@@ -58,17 +58,12 @@ export class InventoryFlowFacade extends FacadeBase {
   async create(data: InventoryFlowCreationAttributes) {
     const { inventoryId, quantity, purchaseOrderItemId, remarks, activity } =
       data;
-    const record = await this.engine.inventory.findById(inventoryId);
     let calculatedActivity = activity;
     if (purchaseOrderItemId) {
       await this.engine.purchaseOrderItem.findById(purchaseOrderItemId);
       calculatedActivity = "sales";
     }
-    if (record.total + quantity < 0) {
-      throw new InventoryFlowInvalidQuantityException({
-        max: record.total,
-      });
-    }
+    await this.validateQuantity(quantity, inventoryId);
     const result = await InventoryFlow.create({
       inventoryId,
       quantity,
@@ -76,7 +71,30 @@ export class InventoryFlowFacade extends FacadeBase {
       remarks,
       activity: calculatedActivity,
     });
+    await this.engine.inventory.recalculateTotal(inventoryId);
     return result;
+  }
+
+  @WithTransaction
+  async validateQuantity(change: number, inventoryId: string) {
+    const inventory = await this.engine.inventory.findById(inventoryId);
+    const total = inventory.inventoryFlows.reduce(
+      (prev, current) => prev + current.quantity,
+      0
+    );
+    const newTotal = total + change;
+    if (newTotal < 0) {
+      throw new InventoryFlowInvalidQuantityException({
+        max: total,
+        attemptedChange: change,
+        resultingTotal: newTotal,
+      });
+    }
+    return {
+      isFinished: newTotal === 0,
+      newTotal,
+      inventory,
+    };
   }
 
   @WithTransaction
@@ -88,6 +106,10 @@ export class InventoryFlowFacade extends FacadeBase {
     }
     if (quantity && quantity !== record.quantity) {
       if (InventoryFlow.updatableActivities.includes(record.activity)) {
+        await this.validateQuantity(
+          quantity - record.quantity,
+          record.inventoryId
+        );
         record.quantity = quantity;
       } else {
         throw new InventoryFlowInvalidActivityException(
@@ -97,6 +119,7 @@ export class InventoryFlowFacade extends FacadeBase {
       }
     }
     await record.save();
+    await this.engine.inventory.recalculateTotal(record.inventoryId);
     return this.findById(id);
   }
 
@@ -109,6 +132,9 @@ export class InventoryFlowFacade extends FacadeBase {
         InventoryFlow.updatableActivities
       );
     }
-    await record.destroy();
+    await Promise.all([
+      this.engine.inventory.recalculateTotal(record.inventoryId),
+      record.destroy(),
+    ]);
   }
 }

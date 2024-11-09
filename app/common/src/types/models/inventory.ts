@@ -3,7 +3,6 @@ import { BaseAttributes } from "~/types/models/base";
 
 export const inventoryStatus = ["active", "finished", "deleted"] as const;
 export const inventoryCreateFields = apiContractModelSchema({
-  id: { type: "string", optional: true },
   materialId: { type: "string" },
   remarks: { type: "string", optional: true },
   code: { type: "string" },

@@ -3,6 +3,7 @@ import type {
   InventoryCreationAttributes,
   InventoryStatus,
 } from "@app/common";
+import { sum } from "@hyulian/common";
 import {
   BelongsTo,
   Column,
@@ -46,4 +47,14 @@ export class Inventory extends BaseModel<
 
   @BelongsTo(() => Material, "materialId")
   declare material: Material;
+
+  async recalculateTotal() {
+    if (!this.inventoryFlows) {
+      this.inventoryFlows = await InventoryFlow.findAll({
+        where: { inventoryId: this.id },
+      });
+    }
+    this.total = sum(this.inventoryFlows, (record) => record.quantity);
+    await this.save();
+  }
 }

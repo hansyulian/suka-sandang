@@ -43,7 +43,7 @@ describe("InventoryFacade", () => {
       expect(result).toBeDefined();
       expect(result.id).toBe(testInventoryId);
       expect(result.material).toBeDefined();
-      expect(result.inventoryFlows).toHaveLength(1);
+      expect(result.inventoryFlows).toHaveLength(2);
     });
 
     it("should throw InventoryNotFoundException for non-existent id", async () => {
@@ -64,7 +64,7 @@ describe("InventoryFacade", () => {
       expect(result).toBeDefined();
       expect(result.id).toBe(testInventoryId);
       expect(result.material).toBeDefined();
-      expect(result.inventoryFlows).toHaveLength(1);
+      expect(result.inventoryFlows).toHaveLength(2);
     });
 
     it("should throw InventoryNotFoundException for non-existent code", async () => {

@@ -11,7 +11,7 @@ export async function inventoryFixtures() {
           id: idGenerator.inventory(inventoryIdOffset),
           code: `inventory-po${i}-${j}`,
           materialId: idGenerator.material(j),
-          total: 20,
+          total: inventoryIdOffset === 1 ? 14 : 19,
         })
       );
     }
@@ -30,11 +30,20 @@ export async function inventoryFixtures() {
           remarks: `remarks-${i}-${j}`,
         })
       );
+      promises.push(
+        InventoryFlow.create({
+          id: idGenerator.inventoryFlow(1, inventoryIdOffset),
+          inventoryId: idGenerator.inventory(inventoryIdOffset),
+          quantity: -1,
+          activity: "adjustment",
+          remarks: `adjustment-${i}-${j}`,
+        })
+      );
     }
   }
   promises.push(
     InventoryFlow.create({
-      id: idGenerator.inventoryFlow(1, 0),
+      id: idGenerator.inventoryFlow(2, 0),
       inventoryId: idGenerator.inventory(1),
       quantity: -5,
       activity: "adjustment",

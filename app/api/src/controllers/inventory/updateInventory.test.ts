@@ -79,6 +79,7 @@ describe("Controller: updateInventoryController", () => {
       createdAt: now,
       updatedAt: now,
       deletedAt: now,
+      status: "active",
       remarks: "empty remarks",
     };
 
@@ -105,6 +106,7 @@ describe("Controller: updateInventoryController", () => {
 
       total: 5000,
       remarks: "empty remarks",
+      status: "active",
       createdAt: nowString,
       updatedAt: nowString,
       deletedAt: nowString,

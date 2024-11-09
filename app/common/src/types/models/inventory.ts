@@ -16,7 +16,6 @@ export const inventoryFields = apiContractModelSchema({
   code: { type: "string" },
   status: {
     type: "enum",
-    optional: true,
     values: inventoryStatus,
   },
   total: { type: "number" },

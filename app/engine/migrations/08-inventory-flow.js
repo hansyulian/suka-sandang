@@ -68,5 +68,11 @@ module.exports = {
   },
   async down(queryInterface) {
     await queryInterface.dropTable("InventoryFlows");
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_InventoryFlows_status"'
+    );
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_InventoryFlows_activity"'
+    );
   },
 };

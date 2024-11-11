@@ -137,7 +137,7 @@ export class PurchaseOrderFacade extends FacadeBase {
 
   @WithTransaction
   async sync(id: string, records: PurchaseOrderItemSyncAttributes[]) {
-    const record = await this.engine.purchaseOrder.findById(id);
+    const record = await this.findById(id);
     if (record.status !== "draft") {
       throw new PurchaseOrderInvalidStatusException("draft", record.status);
     }

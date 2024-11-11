@@ -8,6 +8,7 @@ import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { purchaseOrderFixtures } from "~test/fixtures/purchaseOrderFixtures";
 import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 import { Inventory, InventoryFlow } from "~/models";
+import { InventoryFlowSyncAttributes } from "@app/common";
 
 describe("InventoryFacade", () => {
   const engine = new Engine();
@@ -149,6 +150,71 @@ describe("InventoryFacade", () => {
       );
 
       expect(updatedInventory.total).toBe(expectedTotal);
+    });
+  });
+
+  describe("sync", () => {
+    beforeEach(async () => {
+      await resetData([Inventory, InventoryFlow]);
+      await inventoryFixtures();
+    });
+
+    it("should delete left-only inventory flows with updatable activities", async () => {
+      const testInventoryFlowId = idGenerator.inventoryFlow(2, 0);
+      const inventoryId = idGenerator.inventory(1);
+      const syncData: InventoryFlowSyncAttributes[] = [
+        {
+          id: testInventoryFlowId,
+          activity: "adjustment",
+          quantity: 5,
+          remarks: "Existing sync",
+        },
+      ];
+      await engine.inventory.sync(inventoryId, syncData);
+      const updatedFlows = await InventoryFlow.findAll({
+        where: { inventoryId },
+      });
+
+      expect(updatedFlows).toHaveLength(2);
+      const procurementFlow = updatedFlows.find(
+        (record) => record.activity === "procurement"
+      );
+      const adjustmentFlow = updatedFlows.find(
+        (record) => record.activity === "adjustment"
+      );
+      expect(procurementFlow?.inventoryId).toStrictEqual(inventoryId);
+      expect(adjustmentFlow?.quantity).toStrictEqual(5);
+      const inventory = await Inventory.findByPk(idGenerator.inventory(1));
+      expect(inventory?.total).toBe(25);
+    });
+
+    it("should ignore non-updatable activity when created", async () => {
+      const inventoryId = idGenerator.inventory(1);
+      const inventory = await engine.inventory.findById(inventoryId);
+      const newFlow: InventoryFlowSyncAttributes = {
+        activity: "sales",
+        quantity: -10,
+        remarks: "New sync flow",
+      };
+
+      await engine.inventory.sync(idGenerator.inventory(1), [
+        ...inventory.inventoryFlows,
+        newFlow,
+      ]);
+
+      const updatedFlows = await InventoryFlow.findAll({
+        where: { inventoryId: idGenerator.inventory(1) },
+      });
+      const createdFlow = updatedFlows.find(
+        (flow) => flow.activity === "sales"
+      );
+
+      expect(createdFlow).toBeUndefined();
+
+      const udpatedInventory = await Inventory.findByPk(
+        idGenerator.inventory(1)
+      );
+      expect(udpatedInventory?.total).toBe(14);
     });
   });
 });

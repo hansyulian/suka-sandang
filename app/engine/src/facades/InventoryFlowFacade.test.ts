@@ -70,14 +70,13 @@ describe("InventoryFlowFacade", () => {
       const data: InventoryFlowCreationAttributes = {
         inventoryId: idGenerator.inventory(10),
         quantity: 10,
-        purchaseOrderItemId: idGenerator.purchaseOrderItem(1, 0),
         remarks: "New Flow",
         activity: "adjustment",
       };
       const result = await engine.inventoryFlow.create(data);
       expect(result).toBeDefined();
       expect(result.inventoryId).toBe(data.inventoryId);
-      expect(result.activity).toBe("sales");
+      expect(result.activity).toBe("adjustment");
       const inventory = await Inventory.findByPk(idGenerator.inventory(10));
       expect(inventory?.total).toStrictEqual(29);
     });

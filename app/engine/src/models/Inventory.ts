@@ -48,8 +48,8 @@ export class Inventory extends BaseModel<
   @BelongsTo(() => Material, "materialId")
   declare material: Material;
 
-  async recalculateTotal() {
-    if (!this.inventoryFlows) {
+  async recalculateTotal(force = false) {
+    if (!this.inventoryFlows || force) {
       this.inventoryFlows = await InventoryFlow.findAll({
         where: { inventoryId: this.id },
       });

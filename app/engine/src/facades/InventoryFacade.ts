@@ -1,10 +1,12 @@
 import type {
   InventoryAttributes,
   InventoryCreationAttributes,
+  InventoryFlowSyncAttributes,
   InventoryUpdateAttributes,
 } from "@app/common";
-import { sum } from "@hyulian/common";
+import { compareArray } from "@hyulian/common";
 import { type WhereOptions } from "sequelize";
+import { InventoryInvalidStatusException } from "~/exceptions";
 import { InventoryDuplicationException } from "~/exceptions/InventoryDuplicationException";
 import { InventoryNotFoundException } from "~/exceptions/InventoryNotFoundException";
 import { FacadeBase } from "~/facades/FacadeBase";
@@ -112,6 +114,56 @@ export class InventoryFacade extends FacadeBase {
       remarks,
     });
     return this.findById(id);
+  }
+
+  @WithTransaction
+  async sync(id: string, records: InventoryFlowSyncAttributes[]) {
+    const record = await this.findById(id);
+    if (record.status !== "active") {
+      throw new InventoryInvalidStatusException("active", record.status);
+    }
+    const promises = [];
+    const { inventoryFlows } = record;
+    const compareResult = compareArray(
+      inventoryFlows,
+      records,
+      (left, right) => left.id === right.id
+    );
+    for (const record of compareResult.leftOnly) {
+      if (InventoryFlow.updatableActivities.includes(record.activity)) {
+        promises.push(record.destroy());
+      }
+    }
+    for (const record of compareResult.rightOnly) {
+      const { activity, quantity, remarks } = record;
+      if (InventoryFlow.updatableActivities.includes(activity)) {
+        promises.push(
+          InventoryFlow.create({
+            activity,
+            inventoryId: id,
+            quantity,
+            id: record.id,
+            remarks,
+          })
+        );
+      }
+    }
+    for (const record of compareResult.both) {
+      const { activity } = record.left;
+      const { quantity, remarks } = record.right;
+      if (InventoryFlow.updatableActivities.includes(activity)) {
+        if (activity) {
+          record.left.activity = record.right.activity;
+        }
+        if (quantity) {
+          record.left.quantity = quantity;
+        }
+      }
+      record.left.remarks = remarks;
+      promises.push(record.left.save());
+    }
+    await Promise.all(promises);
+    await record.recalculateTotal(true);
   }
 
   @WithTransaction

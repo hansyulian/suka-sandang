@@ -56,18 +56,12 @@ export class InventoryFlowFacade extends FacadeBase {
 
   @WithTransaction
   async create(data: InventoryFlowCreationAttributes) {
-    const { inventoryId, quantity, purchaseOrderItemId, remarks, activity } =
-      data;
+    const { inventoryId, quantity, remarks, activity } = data;
     let calculatedActivity = activity;
-    if (purchaseOrderItemId) {
-      await this.engine.purchaseOrderItem.findById(purchaseOrderItemId);
-      calculatedActivity = "sales";
-    }
     await this.validateQuantity(quantity, inventoryId);
     const result = await InventoryFlow.create({
       inventoryId,
       quantity,
-      purchaseOrderItemId,
       remarks,
       activity: calculatedActivity,
     });

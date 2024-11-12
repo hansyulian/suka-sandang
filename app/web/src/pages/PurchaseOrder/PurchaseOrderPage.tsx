@@ -133,7 +133,10 @@ export default function PurchaseOrderPage() {
   const handleUpdate = async () => {
     setIsActing(true);
     await Promise.all([update(values), syncItems({ items: getItems() })]);
-    await invalidateQuery("purchaseOrder");
+    await Promise.all([
+      invalidateQuery("purchaseOrder"),
+      invalidateQuery("purchaseOrder", { idOrCode }),
+    ]);
     setIsActing(false);
   };
 

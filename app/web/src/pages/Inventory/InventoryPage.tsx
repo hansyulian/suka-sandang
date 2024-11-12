@@ -140,7 +140,11 @@ export default function Page() {
   const handleUpdate = async () => {
     setIsActing(true);
     await Promise.all([update(values), syncFlows({ items: getItems() })]);
-    await invalidateQuery("inventory");
+    await Promise.all([
+      invalidateQuery("inventory"),
+      invalidateQuery("inventory", { idOrCode }),
+    ]);
+
     setIsActing(false);
   };
 

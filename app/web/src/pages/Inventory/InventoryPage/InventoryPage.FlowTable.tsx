@@ -3,50 +3,49 @@ import { Button, Table, Text } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Icon } from "~/components/Icon";
-import { PurchaseOrderItemTableRow } from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTableRow";
-import { PurchaseOrderItemForm } from "~/types";
-import { formatCurrency } from "~/utils/formatCurrency";
+import { InventoryFlowTableRow } from "~/pages/Inventory/InventoryPage/InventoryPage.FlowTableRow";
+import { InventoryFlowForm } from "~/types";
 
-export type PurchaseOrderItemTableProps = {
-  initialData: PurchaseOrderItemForm[];
+export type InventoryFlowTableProps = {
+  initialData: InventoryFlowForm[];
   disabled?: boolean;
-  onFormsChange: (values: UseFormReturnType<PurchaseOrderItemForm>[]) => void;
+  onFormsChange: (values: UseFormReturnType<InventoryFlowForm>[]) => void;
 };
 
-export const PurchaseOrderItemTable = memo(function (
-  props: PurchaseOrderItemTableProps
+export const InventoryFlowTable = memo(function (
+  props: InventoryFlowTableProps
 ) {
   const { initialData, disabled, onFormsChange } = props;
-  const [records, setRecords] = useState<PurchaseOrderItemForm[]>(initialData);
-  const [forms, setForms] = useState<
-    UseFormReturnType<PurchaseOrderItemForm>[]
-  >([]);
+  const [records, setRecords] = useState<InventoryFlowForm[]>(initialData);
+  const [forms, setForms] = useState<UseFormReturnType<InventoryFlowForm>[]>(
+    []
+  );
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
     setRecords(initialData);
-    setTotal(sum(initialData, (record) => record.quantity * record.unitPrice));
   }, [initialData]);
+
+  useEffect(() => {
+    setTotal(sum(records, (form) => form.quantity));
+  }, [records]);
 
   const addRow = () => {
     setRecords([
       ...records,
       {
-        materialId: "",
+        activity: "adjustment",
         quantity: 0,
-        unitPrice: 0,
       },
     ]);
   };
 
   const handleFormChange = useCallback(
-    (index: number, form: UseFormReturnType<PurchaseOrderItemForm>) => {
+    (index: number, form: UseFormReturnType<InventoryFlowForm>) => {
       setForms((prevState) => {
         const newState = [...prevState];
         newState[index] = form;
-        setTotal(
-          sum(newState, (form) => form.values.quantity * form.values.unitPrice)
-        );
+        setTotal(sum(newState, (record) => record.values.quantity));
         return newState;
       });
     },
@@ -75,19 +74,19 @@ export const PurchaseOrderItemTable = memo(function (
       <Table striped withColumnBorders>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th ta="center">Code</Table.Th>
-            <Table.Th ta="center">Name</Table.Th>
-            <Table.Th ta="center">Color</Table.Th>
+            <Table.Th ta="center" w="150">
+              Activity
+            </Table.Th>
             <Table.Th ta="center">Remarks</Table.Th>
-            <Table.Th ta="center">Quantity</Table.Th>
-            <Table.Th ta="center">Price</Table.Th>
-            <Table.Th ta="center">Total</Table.Th>
-            <Table.Th></Table.Th>
+            <Table.Th ta="center" w="200">
+              Quantity
+            </Table.Th>
+            <Table.Th w="50"></Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {records.map((record, index) => (
-            <PurchaseOrderItemTableRow
+            <InventoryFlowTableRow
               key={`item-${index}`}
               initialData={record}
               disabled={disabled}
@@ -106,8 +105,9 @@ export const PurchaseOrderItemTable = memo(function (
             </Table.Tr>
           )}
           <Table.Tr>
-            <Table.Td colSpan={7} align="right">
-              <Text fw="bold">{formatCurrency(total)}</Text>
+            <Table.Td colSpan={2} />
+            <Table.Td colSpan={1} ta="right">
+              <Text fw="bold">{total}</Text>
             </Table.Td>
             <Table.Td></Table.Td>
           </Table.Tr>

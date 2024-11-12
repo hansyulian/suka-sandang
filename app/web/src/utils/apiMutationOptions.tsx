@@ -9,6 +9,7 @@ export type ApiMutationOptions = {
   title: string;
   message: string;
   successMessage?: string;
+  disableNotification?: boolean;
 };
 
 const showErrorDetails = (details: any, stack: string[]) =>
@@ -31,10 +32,13 @@ const showErrorDetails = (details: any, stack: string[]) =>
 export function apiMutationOptions(
   options: ApiMutationOptions
 ): ReactApiContractClientMutationOptions {
-  const { title, successMessage, message } = options;
+  const { title, successMessage, message, disableNotification } = options;
   let id: any = null;
   return {
     onMutate: () => {
+      if (disableNotification) {
+        return;
+      }
       id = notifications.show({
         loading: true,
         title,

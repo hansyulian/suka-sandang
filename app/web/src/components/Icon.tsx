@@ -23,6 +23,7 @@ import {
   IconShoppingCart,
   IconLink,
   IconExternalLink,
+  IconBuildingWarehouse,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -50,6 +51,7 @@ const iconMap = {
   purchaseOrder: IconShoppingCart,
   link: IconLink,
   openLink: IconExternalLink,
+  inventory: IconBuildingWarehouse,
 };
 
 export type IconNames = keyof typeof iconMap;

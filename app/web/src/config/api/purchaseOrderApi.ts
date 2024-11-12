@@ -49,5 +49,6 @@ export const syncPurchaseOrderItemsApi = apiClient.registerMutationContract(
     title: "Purchase Order",
     message: "Synching purchase order items",
     successMessage: "Purchase order item synched!",
+    disableNotification: true,
   })
 );

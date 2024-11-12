@@ -1,5 +1,5 @@
+import { PurchaseOrderStatus } from "@app/common";
 import { ContractResponseModel } from "@hyulian/react-api-contract";
-import { SegmentedControlItem } from "@mantine/core";
 import { useMemo } from "react";
 import { getPurchaseOrderApi } from "~/config/api/purchaseOrderApi";
 import { purchaseOrderStatusLabels } from "~/config/constants";
@@ -10,7 +10,7 @@ export function usePurchaseOrderStatusOptions(
   const isEdit = !!data;
   const isDraft = data?.status === "draft";
   const isProcessing = data?.status === "processing";
-  return useMemo<SegmentedControlItem[]>(() => {
+  return useMemo<SelectionOption<PurchaseOrderStatus>[]>(() => {
     return [
       {
         label: purchaseOrderStatusLabels.draft,

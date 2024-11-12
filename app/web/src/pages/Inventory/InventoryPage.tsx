@@ -9,8 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { DatePickerInput } from "@mantine/dates";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -19,87 +18,99 @@ import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { formValidations } from "~/utils/formValidations";
-import { OptionData, PurchaseOrderForm, PurchaseOrderItemForm } from "~/types";
-import { useSupplierSelectOptions } from "~/hooks/useSupplierSelectOptions";
+import { InventoryForm, InventoryFlowForm } from "~/types";
 import { formatDateCode } from "~/utils/formatDateCode";
 import { calculateCode } from "~/utils/calculateCode";
-import { SelectE } from "~/components/SelectE";
-import { PurchaseOrderItemTable } from "~/pages/PurchaseOrder/PurchaseOrderPage/PurchaseOrderPage.ItemTable";
-import { SegmentedControlInput } from "~/components/SegmentedControlInput";
-import { usePurchaseOrderStatusOptions } from "~/hooks/usePurchaseOrderStatusOptions";
-import { getStatusColor } from "~/utils/getStatusColor";
+import { InventoryFlowTable } from "~/pages/Inventory/InventoryPage/InventoryPage.FlowTable";
 import {
-  createPurchaseOrderApi,
-  getPurchaseOrderApi,
-  syncPurchaseOrderItemsApi,
-  updatePurchaseOrderApi,
-} from "~/config/api/purchaseOrderApi";
+  createInventoryApi,
+  getInventoryApi,
+  syncInventoryFlowsApi,
+  updateInventoryApi,
+} from "~/config/api/inventoryApi";
+import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
+import { getMaterialOptionsApi } from "~/config/api/materialApi";
+import { SelectColor } from "~/components/SelectColor";
+import { ContractResponseModel } from "@hyulian/react-api-contract";
+import { getStatusColor } from "~/utils/getStatusColor";
+import { SegmentedControlInput } from "~/components/SegmentedControlInput";
+import { useInventoryStatusOptions } from "~/hooks/useInventoryStatusOptions";
 
 const defaultSpan = {};
 
-export default function PurchaseOrderPage() {
-  const { idOrCode } = useParams("purchaseOrderEdit");
-  const supplierOptions = useSupplierSelectOptions();
+export default function Page() {
+  const { idOrCode } = useParams("inventoryEdit");
+  const materialSelectOptions = useMaterialSelectOptions("name-code");
+  const { data: materialOptions } = getMaterialOptionsApi.useRequest({}, {});
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
   const [isActing, setIsActing] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState<OptionData | null>(
-    null
+  const inventoryStatusOptions = useInventoryStatusOptions();
+  const [forms, setForms] = useState<UseFormReturnType<InventoryFlowForm>[]>(
+    []
   );
-  const [forms, setForms] = useState<
-    UseFormReturnType<PurchaseOrderItemForm>[]
-  >([]);
 
-  const { mutateAsync: create } = createPurchaseOrderApi.useRequest();
+  const { mutateAsync: create } = createInventoryApi.useRequest();
   const {
     data: d,
     error,
     isLoading,
-  } = getPurchaseOrderApi.useRequest(
+  } = getInventoryApi.useRequest(
     { idOrCode },
     {},
     {
       enabled: isEditMode,
     }
   );
-  const purchaseOrderStatusOptions = usePurchaseOrderStatusOptions(d);
-  const data = usePersistable(d);
-  const { mutateAsync: update } = updatePurchaseOrderApi.useRequest({
-    id: data?.id ?? "",
+  const inventory = usePersistable(d);
+  const { mutateAsync: update } = updateInventoryApi.useRequest({
+    id: inventory?.id ?? "",
   });
-  const { mutateAsync: syncItems } = syncPurchaseOrderItemsApi.useRequest(
-    { id: data?.id ?? "" },
-    { onSuccess: () => {} }
-  );
+  const { mutateAsync: syncFlows } = syncInventoryFlowsApi.useRequest({
+    id: inventory?.id ?? "",
+  });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
-  const isDeleted = !!data?.deletedAt;
-  const { setValues, getInputProps, validate, values } =
-    useForm<PurchaseOrderForm>({
+  const isDeleted = !!inventory?.deletedAt;
+  const optionColorExtractor = useCallback(
+    (
+      record: SelectionOption<
+        string,
+        ContractResponseModel<typeof getMaterialOptionsApi>
+      >
+    ) => record.data?.color,
+    []
+  );
+  const { setValues, getInputProps, validate, values } = useForm<InventoryForm>(
+    {
       initialValues: {
-        code: `po-${formatDateCode()}`,
-        date: new Date(),
-        status: "draft",
-        supplierId: "",
+        code: `inv-`,
+        materialId: "",
         remarks: "",
       },
       validate: {
         code: formValidations({ required: true }),
-        date: formValidations({ required: true }),
-        supplierId: formValidations({ required: true }),
+        materialId: formValidations({ required: true }),
       },
-    });
+    }
+  );
+
+  const selectedMaterial = useMemo(() => {
+    return materialOptions?.records.find(
+      (record) => record.id === values.materialId
+    );
+  }, [materialOptions?.records, values.materialId]);
 
   useEffect(() => {
     if (!autoCode) {
       return;
     }
-    if (selectedSupplier) {
+    if (selectedMaterial) {
       setValues({
-        code: `po-${calculateCode(selectedSupplier.label)}-${formatDateCode()}`,
+        code: `inv-${calculateCode(selectedMaterial.code)}-${formatDateCode()}`,
       });
     }
-  }, [autoCode, selectedSupplier, setValues]);
+  }, [autoCode, selectedMaterial, setValues]);
 
   const validateForms = () => {
     const validation = validate();
@@ -121,19 +132,15 @@ export default function PurchaseOrderPage() {
   const handleCreate = async () => {
     setIsActing(true);
     const result = await create(values);
-    await syncPurchaseOrderItemsApi.request(
-      { id: result.id },
-      { items: getItems() }
-    );
-    await invalidateQuery("purchaseOrder");
+    await invalidateQuery("inventory");
     setIsActing(false);
-    navigate("purchaseOrderEdit", { idOrCode: result.id });
+    navigate("inventoryEdit", { idOrCode: result.id });
   };
 
   const handleUpdate = async () => {
     setIsActing(true);
-    await Promise.all([update(values), syncItems({ items: getItems() })]);
-    await invalidateQuery("purchaseOrder");
+    await Promise.all([update(values), syncFlows({ items: getItems() })]);
+    await invalidateQuery("inventory");
     setIsActing(false);
   };
 
@@ -149,14 +156,14 @@ export default function PurchaseOrderPage() {
   };
 
   useEffect(() => {
-    if (data) {
+    if (inventory) {
       setValues({
-        ...data,
+        ...inventory,
       });
     }
-  }, [data, setValues]);
+  }, [inventory, setValues]);
   const onCancel = () => {
-    navigate("purchaseOrderList", {});
+    navigate("inventoryList", {});
   };
 
   if (isLoading) {
@@ -170,7 +177,7 @@ export default function PurchaseOrderPage() {
     <Stack>
       <Group>
         <Title>
-          {isEditMode ? `Purchase Order: ${data?.code}` : "New Purchase Order"}
+          {isEditMode ? `Inventory: ${inventory?.code}` : "New Inventory"}
         </Title>
         {isDeleted && <Badge color="red">Deleted</Badge>}
       </Group>
@@ -188,22 +195,15 @@ export default function PurchaseOrderPage() {
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <SelectE
+          <SelectColor
+            flex={1}
+            color={selectedMaterial?.color}
+            label="Material"
             disabled={isEditMode}
-            label="Supplier"
-            data={supplierOptions}
-            required
+            data={materialSelectOptions}
             searchable
-            onSelectOption={setSelectedSupplier}
-            {...getInputProps("supplierId")}
-          />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <DatePickerInput
-            disabled={isEditMode}
-            label="Date"
-            required
-            {...getInputProps("date")}
+            optionColorExtractor={optionColorExtractor}
+            {...getInputProps("materialId")}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
@@ -212,20 +212,21 @@ export default function PurchaseOrderPage() {
         <Grid.Col>
           <SegmentedControlInput
             label="Status"
-            data={purchaseOrderStatusOptions}
-            disabled={!isEditMode}
-            color={getStatusColor(values.status)}
+            data={inventoryStatusOptions}
+            disabled
+            color={getStatusColor(inventory?.status || "active")}
             {...getInputProps("status")}
           />
         </Grid.Col>
       </Grid>
       {isEditMode && (
         <>
-          <Title order={2}>Items</Title>
-          <PurchaseOrderItemTable
-            initialData={d?.purchaseOrderItems || []}
+          <Title order={2}>Activities</Title>
+
+          <InventoryFlowTable
+            initialData={d?.inventoryFlows || []}
             onFormsChange={setForms}
-            disabled={data?.status !== "draft"}
+            disabled={inventory?.status !== "active"}
           />
         </>
       )}

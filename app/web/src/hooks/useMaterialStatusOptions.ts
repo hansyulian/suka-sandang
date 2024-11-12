@@ -1,9 +1,9 @@
-import { SegmentedControlItem } from "@mantine/core";
+import { MaterialStatus } from "@app/common";
 import { useMemo } from "react";
 import { materialStatusLabels } from "~/config/constants";
 
 export function useMaterialStatusOptions() {
-  return useMemo<SegmentedControlItem[]>(() => {
+  return useMemo<SelectionOption<MaterialStatus>[]>(() => {
     return [
       {
         label: materialStatusLabels.draft,

@@ -31,7 +31,6 @@ import { getStatusColor } from "~/utils/getStatusColor";
 import {
   createPurchaseOrderApi,
   getPurchaseOrderApi,
-  syncPurchaseOrderItemsApi,
   updatePurchaseOrderApi,
 } from "~/config/api/purchaseOrderApi";
 
@@ -42,7 +41,6 @@ export default function PurchaseOrderPage() {
   const supplierOptions = useSupplierSelectOptions();
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
-  const [isActing, setIsActing] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<OptionData | null>(
     null
   );
@@ -50,7 +48,8 @@ export default function PurchaseOrderPage() {
     UseFormReturnType<PurchaseOrderItemForm>[]
   >([]);
 
-  const { mutateAsync: create } = createPurchaseOrderApi.useRequest();
+  const { mutateAsync: create, isPending: isCreatePending } =
+    createPurchaseOrderApi.useRequest();
   const {
     data: d,
     error,
@@ -64,13 +63,10 @@ export default function PurchaseOrderPage() {
   );
   const purchaseOrderStatusOptions = usePurchaseOrderStatusOptions(d);
   const data = usePersistable(d);
-  const { mutateAsync: update } = updatePurchaseOrderApi.useRequest({
-    id: data?.id ?? "",
-  });
-  const { mutateAsync: syncItems } = syncPurchaseOrderItemsApi.useRequest(
-    { id: data?.id ?? "" },
-    { onSuccess: () => {} }
-  );
+  const { mutateAsync: update, isPending: isUpdatePending } =
+    updatePurchaseOrderApi.useRequest({
+      id: data?.id ?? "",
+    });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
@@ -119,25 +115,20 @@ export default function PurchaseOrderPage() {
   const getItems = () => forms.map((form) => form.values);
 
   const handleCreate = async () => {
-    setIsActing(true);
-    const result = await create(values);
-    await syncPurchaseOrderItemsApi.request(
-      { id: result.id },
-      { items: getItems() }
-    );
+    const result = await create({
+      ...values,
+      items: getItems(),
+    });
     await invalidateQuery("purchaseOrder");
-    setIsActing(false);
     navigate("purchaseOrderEdit", { idOrCode: result.id });
   };
 
   const handleUpdate = async () => {
-    setIsActing(true);
-    await Promise.all([update(values), syncItems({ items: getItems() })]);
+    await update({ ...values, items: getItems() });
     await Promise.all([
       invalidateQuery("purchaseOrder"),
       invalidateQuery("purchaseOrder", { idOrCode }),
     ]);
-    setIsActing(false);
   };
 
   const save = () => {
@@ -168,7 +159,7 @@ export default function PurchaseOrderPage() {
   if (error) {
     return <ErrorState error={error} />;
   }
-
+  const isActing = isCreatePending || isUpdatePending;
   return (
     <Stack>
       <Group>
@@ -222,16 +213,12 @@ export default function PurchaseOrderPage() {
           />
         </Grid.Col>
       </Grid>
-      {isEditMode && (
-        <>
-          <Title order={2}>Items</Title>
-          <PurchaseOrderItemTable
-            initialData={d?.purchaseOrderItems || []}
-            onFormsChange={setForms}
-            disabled={data?.status !== "draft"}
-          />
-        </>
-      )}
+      <Title order={2}>Items</Title>
+      <PurchaseOrderItemTable
+        initialData={d?.purchaseOrderItems}
+        onFormsChange={setForms}
+        disabled={isEditMode && data?.status !== "draft"}
+      />
       <Grid>
         <Grid.Col span={{ md: 6 }}></Grid.Col>
         <Grid.Col span={{ md: 3 }}>

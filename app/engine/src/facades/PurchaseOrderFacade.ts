@@ -83,8 +83,12 @@ export class PurchaseOrderFacade extends FacadeBase {
   }
 
   @WithTransaction
-  async create(data: PurchaseOrderCreationAttributes) {
-    const { code, date, supplierId, remarks, status } = data;
+  async create(
+    data: PurchaseOrderCreationAttributes & {
+      items?: PurchaseOrderItemSyncAttributes[];
+    }
+  ) {
+    const { code, date, supplierId, remarks, status, items } = data;
     const recordByCode = await PurchaseOrder.findOne({
       where: { code },
       paranoid: true,
@@ -99,12 +103,20 @@ export class PurchaseOrderFacade extends FacadeBase {
       status,
       remarks,
     });
+    if (items) {
+      await this.sync(record.id, items);
+    }
     return this.findById(record.id);
   }
 
   @WithTransaction
-  async update(id: string, data: PurchaseOrderUpdateAttributes) {
-    const { date, remarks, status } = data;
+  async update(
+    id: string,
+    data: PurchaseOrderUpdateAttributes & {
+      items?: PurchaseOrderItemSyncAttributes[];
+    }
+  ) {
+    const { date, remarks, status, items } = data;
     const record = await this.findById(id);
     if (record.status !== "draft") {
       throw new PurchaseOrderInvalidStatusException("draft", record.status);
@@ -114,6 +126,9 @@ export class PurchaseOrderFacade extends FacadeBase {
       status,
       remarks,
     });
+    if (items) {
+      await this.sync(id, items);
+    }
     return this.findById(id);
   }
 

@@ -7,6 +7,7 @@ import type {
 import { compareArray } from "@hyulian/common";
 import { type WhereOptions } from "sequelize";
 import { InventoryInvalidStatusException } from "~/exceptions";
+import { InvalidInventoryTotalException } from "~/exceptions/InvalidInventoryTotalException";
 import { InventoryDuplicationException } from "~/exceptions/InventoryDuplicationException";
 import { InventoryNotFoundException } from "~/exceptions/InventoryNotFoundException";
 import { FacadeBase } from "~/facades/FacadeBase";
@@ -107,12 +108,18 @@ export class InventoryFacade extends FacadeBase {
   }
 
   @WithTransaction
-  async update(id: string, data: InventoryUpdateAttributes) {
-    const { remarks } = data;
+  async update(
+    id: string,
+    data: InventoryUpdateAttributes & { items?: InventoryFlowSyncAttributes[] }
+  ) {
+    const { remarks, items } = data;
     const record = await this.findById(id);
     await record.update({
       remarks,
     });
+    if (items) {
+      await this.sync(id, items);
+    }
     return this.findById(id);
   }
 
@@ -163,7 +170,10 @@ export class InventoryFacade extends FacadeBase {
       promises.push(record.left.save());
     }
     await Promise.all(promises);
-    await record.recalculateTotal(true);
+    const newTotal = await record.recalculateTotal(true);
+    if (newTotal < 0) {
+      throw new InvalidInventoryTotalException({ total: newTotal });
+    }
   }
 
   @WithTransaction

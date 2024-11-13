@@ -1,9 +1,6 @@
-import jwt, { decode, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { appConfig } from "~/config";
-import {
-  ExpiredJwtTokenException,
-  InvalidJwtTokenException,
-} from "~/exceptions";
+import { InvalidJwtTokenException } from "~/exceptions";
 import { JwtService, UserTokenPayload } from "~/services/JwtService";
 
 describe("JwtService", () => {

@@ -59,5 +59,6 @@ export class Inventory extends BaseModel<
       this.status = "finished";
     }
     await this.save();
+    return this.total;
   }
 }

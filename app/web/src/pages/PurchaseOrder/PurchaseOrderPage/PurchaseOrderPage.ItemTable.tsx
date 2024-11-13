@@ -8,7 +8,7 @@ import { PurchaseOrderItemForm } from "~/types";
 import { formatCurrency } from "~/utils/formatCurrency";
 
 export type PurchaseOrderItemTableProps = {
-  initialData: PurchaseOrderItemForm[];
+  initialData?: PurchaseOrderItemForm[];
   disabled?: boolean;
   onFormsChange: (values: UseFormReturnType<PurchaseOrderItemForm>[]) => void;
 };
@@ -17,15 +17,21 @@ export const PurchaseOrderItemTable = memo(function (
   props: PurchaseOrderItemTableProps
 ) {
   const { initialData, disabled, onFormsChange } = props;
-  const [records, setRecords] = useState<PurchaseOrderItemForm[]>(initialData);
+  const [records, setRecords] = useState<PurchaseOrderItemForm[]>(
+    initialData || []
+  );
   const [forms, setForms] = useState<
     UseFormReturnType<PurchaseOrderItemForm>[]
   >([]);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    setRecords(initialData);
-    setTotal(sum(initialData, (record) => record.quantity * record.unitPrice));
+    if (initialData) {
+      setRecords(initialData);
+      setTotal(
+        sum(initialData, (record) => record.quantity * record.unitPrice)
+      );
+    }
   }, [initialData]);
 
   const addRow = () => {
@@ -45,7 +51,17 @@ export const PurchaseOrderItemTable = memo(function (
         const newState = [...prevState];
         newState[index] = form;
         setTotal(
-          sum(newState, (form) => form.values.quantity * form.values.unitPrice)
+          sum(newState, (form) => {
+            const quantity = parseFloat(form.values.quantity as never);
+            if (isNaN(quantity)) {
+              return 0;
+            }
+            const unitPrice = parseFloat(form.values.unitPrice as never);
+            if (isNaN(unitPrice)) {
+              return 0;
+            }
+            return quantity * unitPrice;
+          })
         );
         return newState;
       });

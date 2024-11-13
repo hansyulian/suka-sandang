@@ -4,7 +4,6 @@ import {
   createInventoryContract,
   updateInventoryContract,
   deleteInventoryContract,
-  syncInventoryFlowsContract,
 } from "@app/common";
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
@@ -41,15 +40,5 @@ export const deleteInventoryApi = apiClient.registerMutationContract(
     title: "Inventory",
     message: "Deleting inventory",
     successMessage: "Inventory deleted!",
-  })
-);
-
-export const syncInventoryFlowsApi = apiClient.registerMutationContract(
-  syncInventoryFlowsContract,
-  apiMutationOptions({
-    title: "Inventory Flows",
-    message: "Synching inventory flows items",
-    successMessage: "Inventory flows item synched!",
-    disableNotification: true,
   })
 );

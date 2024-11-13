@@ -6,9 +6,10 @@ export const updateInventoryController = contractController(
   async ({ params, body, locals }) => {
     const { engine } = locals;
     const { id } = params;
-    const { remarks } = body;
+    const { remarks, items } = body;
     const result = await engine.inventory.update(id, {
       remarks,
+      items,
     });
     return result;
   }

@@ -25,7 +25,6 @@ import { InventoryFlowTable } from "~/pages/Inventory/InventoryPage/InventoryPag
 import {
   createInventoryApi,
   getInventoryApi,
-  syncInventoryFlowsApi,
   updateInventoryApi,
 } from "~/config/api/inventoryApi";
 import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
@@ -44,13 +43,14 @@ export default function Page() {
   const { data: materialOptions } = getMaterialOptionsApi.useRequest({}, {});
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
-  const [isActing, setIsActing] = useState(false);
+
   const inventoryStatusOptions = useInventoryStatusOptions();
   const [forms, setForms] = useState<UseFormReturnType<InventoryFlowForm>[]>(
     []
   );
 
-  const { mutateAsync: create } = createInventoryApi.useRequest();
+  const { mutateAsync: create, isPending: isCreatePending } =
+    createInventoryApi.useRequest();
   const {
     data: d,
     error,
@@ -63,12 +63,10 @@ export default function Page() {
     }
   );
   const inventory = usePersistable(d);
-  const { mutateAsync: update } = updateInventoryApi.useRequest({
-    id: inventory?.id ?? "",
-  });
-  const { mutateAsync: syncFlows } = syncInventoryFlowsApi.useRequest({
-    id: inventory?.id ?? "",
-  });
+  const { mutateAsync: update, isPending: isUpdatePending } =
+    updateInventoryApi.useRequest({
+      id: inventory?.id ?? "",
+    });
   const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!inventory?.deletedAt;
@@ -130,22 +128,20 @@ export default function Page() {
   const getItems = () => forms.map((form) => form.values);
 
   const handleCreate = async () => {
-    setIsActing(true);
     const result = await create(values);
     await invalidateQuery("inventory");
-    setIsActing(false);
     navigate("inventoryEdit", { idOrCode: result.id });
   };
 
   const handleUpdate = async () => {
-    setIsActing(true);
-    await Promise.all([update(values), syncFlows({ items: getItems() })]);
+    await update({
+      ...values,
+      items: getItems(),
+    });
     await Promise.all([
       invalidateQuery("inventory"),
       invalidateQuery("inventory", { idOrCode }),
     ]);
-
-    setIsActing(false);
   };
 
   const save = () => {
@@ -176,6 +172,7 @@ export default function Page() {
   if (error) {
     return <ErrorState error={error} />;
   }
+  const isActing = isUpdatePending || isCreatePending;
 
   return (
     <Stack>

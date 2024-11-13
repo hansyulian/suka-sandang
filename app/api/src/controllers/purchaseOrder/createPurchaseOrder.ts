@@ -5,13 +5,14 @@ export const createPurchaseOrderController = contractController(
   createPurchaseOrderContract,
   async ({ body, locals }) => {
     const { engine } = locals;
-    const { code, date, supplierId, remarks, status } = body;
+    const { code, date, supplierId, remarks, status, items } = body;
     const result = await engine.purchaseOrder.create({
       code,
       date,
       supplierId,
       remarks,
       status,
+      items,
     });
     return result;
   }

@@ -1,6 +1,10 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { modelBase } from "~/base/modelBase";
-import { purchaseOrderFields, purchaseOrderUpdateFields } from "~/types";
+import {
+  purchaseOrderFields,
+  purchaseOrderItemSyncFields,
+  purchaseOrderUpdateFields,
+} from "~/types";
 
 export const updatePurchaseOrderContract = apiContractSchema({
   method: "put",
@@ -11,6 +15,13 @@ export const updatePurchaseOrderContract = apiContractSchema({
   },
   body: {
     ...purchaseOrderUpdateFields,
+    items: {
+      type: "objects",
+      optional: true,
+      spec: {
+        ...purchaseOrderItemSyncFields,
+      },
+    },
   },
   bodyType: "object",
   model: {

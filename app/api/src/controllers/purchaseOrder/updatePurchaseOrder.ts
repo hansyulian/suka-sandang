@@ -6,11 +6,12 @@ export const updatePurchaseOrderController = contractController(
   async ({ params, body, locals }) => {
     const { engine } = locals;
     const { id } = params;
-    const { date, remarks, status } = body;
+    const { date, remarks, status, items } = body;
     const result = await engine.purchaseOrder.update(id, {
       date,
       remarks,
       status,
+      items,
     });
     return result;
   }

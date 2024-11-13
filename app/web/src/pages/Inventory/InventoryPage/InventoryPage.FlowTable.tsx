@@ -45,7 +45,15 @@ export const InventoryFlowTable = memo(function (
       setForms((prevState) => {
         const newState = [...prevState];
         newState[index] = form;
-        setTotal(sum(newState, (record) => record.values.quantity));
+        setTotal(
+          sum(newState, (record) => {
+            const parsed = parseFloat(record.values.quantity as never);
+            if (isNaN(parsed)) {
+              return 0;
+            }
+            return parsed;
+          })
+        );
         return newState;
       });
     },

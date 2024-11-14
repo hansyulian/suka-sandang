@@ -88,7 +88,7 @@ export const PurchaseOrderItemTable = memo(function (
 
   return (
     <Table.ScrollContainer minWidth="100%">
-      <Table striped withColumnBorders>
+      <Table striped withColumnBorders withTableBorder>
         <Table.Thead>
           <Table.Tr>
             <Table.Th ta="center">Code</Table.Th>

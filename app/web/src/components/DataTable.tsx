@@ -15,7 +15,7 @@ export function DataTable<T extends object>(props: DataTableProps<T>) {
 
   return (
     <Table.ScrollContainer minWidth="100%">
-      <Table striped highlightOnHover withColumnBorders>
+      <Table striped highlightOnHover withColumnBorders withTableBorder>
         <Table.Thead>
           <Table.Tr>{headers}</Table.Tr>
         </Table.Thead>

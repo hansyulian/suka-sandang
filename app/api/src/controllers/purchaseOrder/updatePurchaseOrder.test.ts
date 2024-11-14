@@ -44,7 +44,8 @@ describe("Controller: updatePurchaseOrderController", () => {
 
     expect(PurchaseOrderFacade.prototype.update).toHaveBeenCalledWith(id, {
       ...payload,
-      date: now.toISOString(),
+      date: now,
+      items: undefined,
     });
     expect(body.id).toStrictEqual(id);
     expect(body.code).toStrictEqual("sample-purchase-order-1");
@@ -110,7 +111,7 @@ describe("Controller: updatePurchaseOrderController", () => {
       {
         type: "invalidType",
         key: "body.date",
-        expected: "dateString",
+        expected: "date",
         actual: "string",
         value: "invalid date",
       },

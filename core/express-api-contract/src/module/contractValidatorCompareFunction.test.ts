@@ -35,7 +35,7 @@ describe("compareFunction", () => {
     expect(result).toBe(1); // because 'b' > 'a'
   });
 
-  it("should return 1 when the key is equal but the type of a is lesgreaters than the type of b", () => {
+  it("should return 1 when the key is equal but the type of a is greater than the type of b", () => {
     const a: RequiredSchemaValidationExceptionDetail = {
       key: "key1",
       type: "required",
@@ -50,7 +50,7 @@ describe("compareFunction", () => {
 
     const result = contractValidatorCompareFunction(a, b);
 
-    expect(result).toBe(-1); // because 'required' > 'invalidType'
+    expect(result).toBe(1); // because 'required' > 'invalidType'
   });
 
   it("should return -1 when the key is equal but the type of a is less than the type of b", () => {

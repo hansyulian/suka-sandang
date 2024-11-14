@@ -24,7 +24,6 @@ describe("Controller: createInventoryFlowController", () => {
       inventoryId: "mock-inventory-id",
       quantity: 150,
       activity: "procurement",
-      purchaseOrderItemId: "mock-po-item-id",
       remarks: "New inventory flow",
     };
 
@@ -34,7 +33,6 @@ describe("Controller: createInventoryFlowController", () => {
       updatedAt: now,
       deletedAt: now,
       status: "valid",
-      activity: "adjustment",
       ...payload,
     };
 
@@ -57,7 +55,6 @@ describe("Controller: createInventoryFlowController", () => {
       inventoryId: "mock-inventory-id",
       quantity: 150,
       activity: "procurement",
-      purchaseOrderItemId: "mock-po-item-id",
       remarks: "New inventory flow",
       status: "valid",
       createdAt: nowString,

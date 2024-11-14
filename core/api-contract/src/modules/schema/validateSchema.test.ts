@@ -134,8 +134,7 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
     const schema = objectSchema({
       date: { type: "date", min },
     });
-
-    const values = { date: now.getTime() };
+    const values = { date: now };
 
     const result = validateSchema(values as any, schema);
 
@@ -143,7 +142,7 @@ describe("@hyulian/common.modules.schema.validateSchema", () => {
     expect(result.errors).toContainEqual({
       key: "date",
       type: "invalidValue",
-      value: min.getTime(),
+      value: now,
     });
     expect(result.value.date instanceof Date).toStrictEqual(true);
     const msDifference = Math.abs(result.value.date.getTime() - now.getTime());

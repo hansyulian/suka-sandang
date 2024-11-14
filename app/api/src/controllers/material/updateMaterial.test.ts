@@ -60,8 +60,11 @@ describe("Controller: updateMaterialController", () => {
       updatedAt: new Date(),
       purchasePrice: 100,
       retailPrice: 110,
+      code: "",
+      name: "",
+      status: "draft",
       ...payload,
-    } as MaterialAttributes;
+    };
     MaterialFacade.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(material));

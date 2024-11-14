@@ -41,7 +41,8 @@ describe("Controller: createPurchaseOrderController", () => {
     expect(response.status).toStrictEqual(200);
     expect(PurchaseOrderFacade.prototype.create).toHaveBeenCalledWith({
       ...payload,
-      date: now.toISOString(),
+      date: now,
+      items: undefined,
       remarks: undefined,
       status: undefined,
     });
@@ -60,19 +61,19 @@ describe("Controller: createPurchaseOrderController", () => {
 
   it("should call PurchaseOrder facade create function while passing optional parameter as well", async () => {
     const id = "mock-id";
-    const payload: PurchaseOrderCreationAttributes = {
+    const payload = {
       code: "sample-purchase-order-1",
       date: new Date(),
       supplierId: "mock-supplier-id",
       remarks: "Sample remarks",
+      items: undefined,
     };
-    const PurchaseOrder: PurchaseOrderAttributes = {
+    const PurchaseOrder = {
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
       status: "draft",
       total: 0,
-      remarks: "",
       ...payload,
     };
     (PurchaseOrderFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
@@ -138,7 +139,7 @@ describe("Controller: createPurchaseOrderController", () => {
       {
         type: "invalidType",
         key: "body.date",
-        expected: "dateString",
+        expected: "date",
         actual: "string",
         value: "invalid date",
       },

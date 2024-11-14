@@ -27,6 +27,7 @@ describe("Controller: createInventoryController", () => {
       deletedAt: undefined,
       remarks: "",
       total: 0,
+      status: "active",
       ...payload,
     };
 
@@ -52,6 +53,7 @@ describe("Controller: createInventoryController", () => {
       id,
       code: "sample-inventory-1",
       materialId: "mock-material-id",
+      status: "active",
       total: 0,
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
@@ -75,6 +77,7 @@ describe("Controller: createInventoryController", () => {
       updatedAt: now,
       deletedAt: now,
       total: 0,
+      status: "active",
       ...payload,
     };
 
@@ -98,6 +101,7 @@ describe("Controller: createInventoryController", () => {
       materialId: "mock-material-id",
       remarks: "Sample remarks",
       total: 0,
+      status: "active",
       createdAt: nowString,
       updatedAt: nowString,
       deletedAt: nowString,

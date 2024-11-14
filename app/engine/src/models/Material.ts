@@ -3,8 +3,9 @@ import type {
   MaterialCreationAttributes,
   MaterialStatus,
 } from "@app/common";
-import { Column, Table } from "sequelize-typescript";
+import { Column, HasMany, Table } from "sequelize-typescript";
 import { BaseModel } from "~/models/BaseModel";
+import { Inventory } from "~/models/Inventory";
 
 @Table({
   paranoid: true,
@@ -32,4 +33,7 @@ export class Material extends BaseModel<
     defaultValue: "active",
   })
   declare status: MaterialStatus;
+
+  @HasMany(() => Inventory, "materialId")
+  declare inventories: Inventory[];
 }

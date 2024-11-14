@@ -1,4 +1,4 @@
-import { Table, TextInput, NumberInput, Text, Box, Group } from "@mantine/core";
+import { Table, TextInput, NumberInput, Text, Box, Stack } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { memo, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
@@ -109,14 +109,14 @@ export const PurchaseOrderItemTableRow = memo(function (
       <Table.Td valign="middle" ta="right">
         <Text>{formatCurrency(values.quantity * values.unitPrice)}</Text>
       </Table.Td>
-      <Table.Td valign="middle">
-        <Group>
+      <Table.Td>
+        <Stack align="center">
           <IconButton
             name="delete"
             color="red"
             onClick={() => onDelete(index)}
           />
-        </Group>
+        </Stack>
       </Table.Td>
     </Table.Tr>
   );

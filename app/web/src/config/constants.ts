@@ -1,5 +1,7 @@
 import {
   CustomerStatus,
+  InventoryFlowActivity,
+  InventoryStatus,
   MaterialStatus,
   PurchaseOrderStatus,
   SupplierStatus,
@@ -31,4 +33,23 @@ export const purchaseOrderStatusLabels: Record<PurchaseOrderStatus, string> = {
   cancelled: "Cancelled",
   completed: "Completed",
   processing: "Processing",
+};
+
+export const inventoryFlowActivityLabels: Record<
+  InventoryFlowActivity,
+  string
+> = {
+  adjustment: "Adjustment",
+  allocation: "Allocation",
+  procurement: "Procurement",
+  return: "Return",
+  sales: "Sales",
+  scrap: "Scrap",
+  transfer: "Transfer",
+};
+
+export const inventoryStatusLabels: Record<InventoryStatus, string> = {
+  active: "Active",
+  deleted: "Deleted",
+  finished: "Finished",
 };

@@ -6,7 +6,7 @@ import { listPurchaseOrderItemsController } from "~/controllers/purchaseOrderIte
 import { updatePurchaseOrderItemController } from "~/controllers/purchaseOrderItem/updatePurchaseOrderItem";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";
 
-export const PurchaseOrderItemController = createRouter((atlas) => {
+export const purchaseOrderItemController = createRouter((atlas) => {
   atlas.middleware(authenticationMiddleware);
 
   atlas.controller(createPurchaseOrderItemController);

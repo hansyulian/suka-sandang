@@ -3,6 +3,8 @@ import { ModelCtor } from "sequelize-typescript";
 import {
   Customer,
   Enum,
+  Inventory,
+  InventoryFlow,
   Material,
   PurchaseOrder,
   PurchaseOrderItem,
@@ -18,6 +20,8 @@ const models: ModelCtor[] = [
   PurchaseOrderItem,
   Supplier,
   User,
+  Inventory,
+  InventoryFlow,
 ];
 const config: TruncateOptions = {
   force: true,

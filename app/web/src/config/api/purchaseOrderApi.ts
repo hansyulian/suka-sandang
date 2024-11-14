@@ -4,7 +4,6 @@ import {
   createPurchaseOrderContract,
   updatePurchaseOrderContract,
   deletePurchaseOrderContract,
-  syncPurchaseOrderItemsContract,
 } from "@app/common";
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
@@ -41,13 +40,5 @@ export const deletePurchaseOrderApi = apiClient.registerMutationContract(
     title: "Purchase Order",
     message: "Deleting purchase order",
     successMessage: "Purchase order deleted!",
-  })
-);
-export const syncPurchaseOrderItemsApi = apiClient.registerMutationContract(
-  syncPurchaseOrderItemsContract,
-  apiMutationOptions({
-    title: "Purchase Order",
-    message: "Synching purchase order items",
-    successMessage: "Purchase order item synched!",
   })
 );

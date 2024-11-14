@@ -30,5 +30,19 @@ export async function purchaseOrderFixtures() {
       );
     }
   }
-  await Promise.all(promises);
+
+  try {
+    await Promise.all(promises);
+  } catch (err) {
+    console.log(err);
+  }
+  const deletedPurchaseOrder = await PurchaseOrder.create({
+    id: idGenerator.purchaseOrder(50),
+    code: `PO-51`,
+    date: now,
+    supplierId: idGenerator.supplier(0),
+    status: "draft",
+    remarks: "deleted purchase order",
+  });
+  await deletedPurchaseOrder.destroy();
 }

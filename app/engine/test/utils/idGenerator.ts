@@ -8,6 +8,8 @@ export const idGenerator = {
   customer,
   purchaseOrder,
   purchaseOrderItem,
+  inventory,
+  inventoryFlow,
 };
 
 const entityKeys = [
@@ -18,6 +20,8 @@ const entityKeys = [
   "customer",
   "purchaseOrder",
   "purchaseOrderItem",
+  "inventory",
+  "inventoryFlow",
 ] as const;
 type EntityKey = (typeof entityKeys)[number];
 const entityKeyIndex = valueIndex(
@@ -61,4 +65,12 @@ function purchaseOrder(id: number) {
 
 function purchaseOrderItem(id: number, purchaseOrderId: number) {
   return generator("purchaseOrderItem", [purchaseOrderId, id]);
+}
+
+function inventory(id: number) {
+  return generator("inventory", [id]);
+}
+
+function inventoryFlow(id: number, inventoryId: number) {
+  return generator("inventoryFlow", [inventoryId, id]);
 }

@@ -126,6 +126,25 @@ export const routes = lockRoutes({
     path: "/purchase-order/:idOrCode",
     element: lazy(() => import("~/pages/PurchaseOrder/PurchaseOrderPage")),
   },
+
+  inventoryList: {
+    path: "/inventory",
+    element: lazy(() => import("~/pages/Inventory/InventoryListPage")),
+    validateQuery: (query) => {
+      return {
+        search: query.search as string,
+        ...extractPaginationQuery(query),
+      };
+    },
+  },
+  inventoryAdd: {
+    path: "/inventory/add",
+    element: lazy(() => import("~/pages/Inventory/InventoryPage")),
+  },
+  inventoryEdit: {
+    path: "/inventory/:idOrCode",
+    element: lazy(() => import("~/pages/Inventory/InventoryPage")),
+  },
 } as const);
 export type Routes = typeof routes;
 export type RouteNames = keyof typeof routes;

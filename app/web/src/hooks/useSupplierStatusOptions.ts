@@ -1,9 +1,9 @@
-import { SegmentedControlItem } from "@mantine/core";
+import { SupplierStatus } from "@app/common";
 import { useMemo } from "react";
 import { supplierStatusLabels } from "~/config/constants";
 
 export function useSupplierStatusOptions() {
-  return useMemo<SegmentedControlItem[]>(() => {
+  return useMemo<SelectionOption<SupplierStatus>[]>(() => {
     return [
       {
         label: supplierStatusLabels.draft,

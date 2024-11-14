@@ -3,4 +3,3 @@ export * from "./DeletePurchaseOrder";
 export * from "./GetPurchaseOrder";
 export * from "./ListPurchaseOrders";
 export * from "./UpdatePurchaseOrder";
-export * from "./SyncPurchaseOrderItems";

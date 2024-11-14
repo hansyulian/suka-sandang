@@ -10,6 +10,7 @@ export const getMaterialOptionsContract = apiContractSchema({
     id: { type: "string" },
     name: { type: "string" },
     code: { type: "string" },
+    color: { type: "string" },
   },
 } as const);
 

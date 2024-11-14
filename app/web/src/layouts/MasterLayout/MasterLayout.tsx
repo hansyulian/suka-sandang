@@ -90,6 +90,12 @@ export function MasterLayout(props: MasterLayoutProps) {
             params={{}}
             label="Purchase Order"
           />
+          <NavMenu
+            leftSection={<NavIcon name="inventory" />}
+            target="inventoryList"
+            params={{}}
+            label="Inventory"
+          />
         </NavLink>
         <NavLink
           label="Master Data"

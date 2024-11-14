@@ -7,7 +7,9 @@ import {
   SupplierFacade,
   UserFacade,
   CustomerFacade,
+  InventoryFacade,
 } from "~/facades";
+import { InventoryFlowFacade } from "~/facades/InventoryFlowFacade";
 import { PurchaseOrderFacade } from "~/facades/PurchaseOrderFacade";
 import { PurchaseOrderItemFacade } from "~/facades/PurchaseOrderItemFacade";
 import { DBConfig, setupDatabase } from "~/setupDatabase";
@@ -31,6 +33,8 @@ export class Engine {
   public customer: CustomerFacade;
   public purchaseOrder: PurchaseOrderFacade;
   public purchaseOrderItem: PurchaseOrderItemFacade;
+  public inventory: InventoryFacade;
+  public inventoryFlow: InventoryFlowFacade;
 
   public constructor(options: EngineOptions = {}) {
     this.options = options;
@@ -43,6 +47,8 @@ export class Engine {
     this.customer = new CustomerFacade(this);
     this.purchaseOrder = new PurchaseOrderFacade(this);
     this.purchaseOrderItem = new PurchaseOrderItemFacade(this);
+    this.inventory = new InventoryFacade(this);
+    this.inventoryFlow = new InventoryFlowFacade(this);
   }
 
   public get sequelize() {

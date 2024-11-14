@@ -8,9 +8,11 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
+  HasMany,
   Table,
 } from "sequelize-typescript";
 import { BaseModel } from "~/models/BaseModel";
+import { InventoryFlow } from "~/models/InventoryFlow";
 import { Material } from "~/models/Material";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
 
@@ -46,6 +48,9 @@ export class PurchaseOrderItem extends BaseModel<
 
   @BelongsTo(() => Material)
   declare material: Material;
+
+  @HasMany(() => InventoryFlow, "purchaseOrderItemId")
+  declare inventoryFlows: InventoryFlow[];
 
   @BeforeCreate
   @BeforeUpdate

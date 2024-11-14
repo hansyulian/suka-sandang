@@ -1,5 +1,7 @@
 import {
   CustomerStatus,
+  InventoryFlowActivity,
+  InventoryFlowStatus,
   MaterialStatus,
   PurchaseOrderStatus,
   SupplierStatus,
@@ -47,4 +49,16 @@ export type PurchaseOrderItemForm = {
   quantity: number;
   unitPrice: number;
   remarks?: string;
+};
+
+export type InventoryForm = {
+  materialId: string;
+  remarks?: string;
+  code: string;
+};
+
+export type InventoryFlowForm = {
+  quantity: number;
+  remarks?: string;
+  activity: InventoryFlowActivity;
 };

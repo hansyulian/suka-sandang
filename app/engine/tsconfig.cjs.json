@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.cjs.json",
-  "include": ["src", "test", "config/config.js", "@types", "hans.js"],
+  "include": ["src", "test", "config/config.js", "@types"],
   "compilerOptions": {
     "outDir": "dist/cjs",
     "strict": true,

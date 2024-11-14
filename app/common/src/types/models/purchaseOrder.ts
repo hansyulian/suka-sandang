@@ -1,8 +1,4 @@
-import {
-  apiContractModelSchema,
-  DateStringConvert,
-  SchemaType,
-} from "@hyulian/api-contract";
+import { apiContractModelSchema, SchemaType } from "@hyulian/api-contract";
 import { BaseAttributes } from "~/types/models/base";
 
 export const purchaseOrderStatus = [
@@ -46,8 +42,7 @@ export const purchaseOrderFields = apiContractModelSchema({
 });
 export type PurchaseOrderFields = SchemaType<typeof purchaseOrderFields>;
 export type PurchaseOrderStatus = (typeof purchaseOrderStatus)[number];
-export type PurchaseOrderAttributes = BaseAttributes &
-  DateStringConvert<PurchaseOrderFields>;
+export type PurchaseOrderAttributes = BaseAttributes & PurchaseOrderFields;
 export type PurchaseOrderCreationAttributes = SchemaType<
   typeof purchaseOrderCreateFields
 >;

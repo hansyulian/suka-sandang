@@ -6,3 +6,5 @@ export * from "./SupplierFacade";
 export * from "./CustomerFacade";
 export * from "./PurchaseOrderFacade";
 export * from "./PurchaseOrderItemFacade";
+export * from "./InventoryFacade";
+export * from "./InventoryFlowFacade";

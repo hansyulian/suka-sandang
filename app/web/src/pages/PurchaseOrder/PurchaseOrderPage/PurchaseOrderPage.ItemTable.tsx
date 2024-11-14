@@ -1,3 +1,4 @@
+import { sum } from "@hyulian/common";
 import { Button, Table, Text } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -7,7 +8,7 @@ import { PurchaseOrderItemForm } from "~/types";
 import { formatCurrency } from "~/utils/formatCurrency";
 
 export type PurchaseOrderItemTableProps = {
-  initialData: PurchaseOrderItemForm[];
+  initialData?: PurchaseOrderItemForm[];
   disabled?: boolean;
   onFormsChange: (values: UseFormReturnType<PurchaseOrderItemForm>[]) => void;
 };
@@ -16,13 +17,21 @@ export const PurchaseOrderItemTable = memo(function (
   props: PurchaseOrderItemTableProps
 ) {
   const { initialData, disabled, onFormsChange } = props;
-  const [records, setRecords] = useState<PurchaseOrderItemForm[]>(initialData);
+  const [records, setRecords] = useState<PurchaseOrderItemForm[]>(
+    initialData || []
+  );
   const [forms, setForms] = useState<
     UseFormReturnType<PurchaseOrderItemForm>[]
   >([]);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    setRecords(initialData);
+    if (initialData) {
+      setRecords(initialData);
+      setTotal(
+        sum(initialData, (record) => record.quantity * record.unitPrice)
+      );
+    }
   }, [initialData]);
 
   const addRow = () => {
@@ -41,6 +50,19 @@ export const PurchaseOrderItemTable = memo(function (
       setForms((prevState) => {
         const newState = [...prevState];
         newState[index] = form;
+        setTotal(
+          sum(newState, (form) => {
+            const quantity = parseFloat(form.values.quantity as never);
+            if (isNaN(quantity)) {
+              return 0;
+            }
+            const unitPrice = parseFloat(form.values.unitPrice as never);
+            if (isNaN(unitPrice)) {
+              return 0;
+            }
+            return quantity * unitPrice;
+          })
+        );
         return newState;
       });
     },
@@ -60,17 +82,13 @@ export const PurchaseOrderItemTable = memo(function (
     });
   }, []);
 
-  const total = records.reduce((prev, current) => {
-    return prev + current.quantity * current.unitPrice;
-  }, 0);
-
   useEffect(() => {
     onFormsChange(forms);
   }, [forms, onFormsChange]);
 
   return (
     <Table.ScrollContainer minWidth="100%">
-      <Table striped>
+      <Table striped withColumnBorders>
         <Table.Thead>
           <Table.Tr>
             <Table.Th ta="center">Code</Table.Th>

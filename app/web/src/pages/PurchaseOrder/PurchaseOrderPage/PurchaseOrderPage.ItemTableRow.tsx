@@ -1,7 +1,8 @@
-import { Table, TextInput, NumberInput, Text, Box, Stack } from "@mantine/core";
+import { Table, TextInput, Text, Box, Stack } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { memo, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
+import { NumberInputE } from "~/components/NumberInputE";
 import { SelectE } from "~/components/SelectE";
 import { getMaterialApi } from "~/config/api/materialApi";
 import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
@@ -101,10 +102,18 @@ export const PurchaseOrderItemTableRow = memo(function (
         <TextInput disabled={disabled} {...form.getInputProps("remarks")} />
       </Table.Td>
       <Table.Td valign="top">
-        <NumberInput disabled={disabled} {...form.getInputProps("quantity")} />
+        <NumberInputE
+          rightAlign
+          disabled={disabled}
+          {...form.getInputProps("quantity")}
+        />
       </Table.Td>
       <Table.Td valign="top">
-        <NumberInput disabled={disabled} {...form.getInputProps("unitPrice")} />
+        <NumberInputE
+          rightAlign
+          disabled={disabled}
+          {...form.getInputProps("unitPrice")}
+        />
       </Table.Td>
       <Table.Td valign="middle" ta="right">
         <Text>{formatCurrency(values.quantity * values.unitPrice)}</Text>

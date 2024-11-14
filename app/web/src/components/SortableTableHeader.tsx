@@ -24,7 +24,8 @@ export function SortableTableHeader(props: SortableTableHeaderProps) {
   };
 
   return (
-    <Table.Th {...rest}>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <Table.Th {...(rest as any)}>
       <Group gap="xs" justify={justify}>
         {children}
         {orderBy === column ? (

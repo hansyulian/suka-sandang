@@ -1,7 +1,6 @@
 import {
   InventoryFlowAttributes,
   InventoryFlowCreationAttributes,
-  InventoryFlowActivity,
   inventoryFlowActivity,
 } from "@app/common";
 import { InventoryFlowFacade } from "@app/engine";

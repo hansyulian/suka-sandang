@@ -4,7 +4,13 @@ import type {
   PurchaseOrderItemSyncAttributes,
   PurchaseOrderUpdateAttributes,
 } from "@app/common";
-import { compareArray, filterDuplicates, sum } from "@hyulian/common";
+import {
+  compareArray,
+  filterDuplicates,
+  generateRandomNumber,
+  max,
+  sum,
+} from "@hyulian/common";
 import { Op, type WhereOptions } from "sequelize";
 import { MaterialNotFoundException } from "~/exceptions";
 import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
@@ -12,9 +18,17 @@ import { PurchaseOrderDuplicationException } from "~/exceptions/PurchaseOrderDup
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
 import { PurchaseOrderNotFoundException } from "~/exceptions/PurchaseOrderNotFoundException";
 import { FacadeBase } from "~/facades/FacadeBase";
-import { Material, PurchaseOrder, PurchaseOrderItem, Supplier } from "~/models";
+import {
+  Inventory,
+  InventoryFlow,
+  Material,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  Supplier,
+} from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
+import { uuid } from "~/utils";
 import { isUuid } from "~/utils/isUuid";
 
 export class PurchaseOrderFacade extends FacadeBase {
@@ -118,16 +132,46 @@ export class PurchaseOrderFacade extends FacadeBase {
   ) {
     const { date, remarks, status, items } = data;
     const record = await this.findById(id);
-    if (record.status !== "draft") {
-      throw new PurchaseOrderInvalidStatusException("draft", record.status);
-    }
-    await record.update({
-      date,
-      status,
-      remarks,
-    });
-    if (items) {
-      await this.sync(id, items);
+    // validating new status
+    switch (record.status) {
+      case "draft":
+        if (items) {
+          await this.sync(id, items);
+        }
+        await record.update({
+          date,
+          status,
+          remarks,
+        });
+        if (status === "completed") {
+          await this.createInventory(id);
+        }
+        break;
+      case "processing":
+        if (status === "draft") {
+          throw new PurchaseOrderInvalidStatusException(
+            "processing",
+            record.status
+          );
+        }
+        await record.update({
+          status,
+          remarks,
+        });
+        if (status === "completed") {
+          await this.createInventory(id);
+        }
+        break;
+      case "deleted":
+      case "cancelled":
+      case "completed":
+        if (status && status !== record.status) {
+          throw new PurchaseOrderInvalidStatusException(status, record.status);
+        }
+        await record.update({
+          remarks,
+        });
+        break;
     }
     return this.findById(id);
   }
@@ -144,7 +188,10 @@ export class PurchaseOrderFacade extends FacadeBase {
   @WithTransaction
   async recalculateTotal(id: string) {
     const record = await this.findById(id);
-    const total = sum(record.purchaseOrderItems, (item) => item.subTotal);
+    const total = sum(
+      record.purchaseOrderItems,
+      (item) => item.quantity * item.unitPrice
+    );
     await record.update({
       total,
     });
@@ -153,9 +200,6 @@ export class PurchaseOrderFacade extends FacadeBase {
   @WithTransaction
   async sync(id: string, records: PurchaseOrderItemSyncAttributes[]) {
     const record = await this.findById(id);
-    if (record.status !== "draft") {
-      throw new PurchaseOrderInvalidStatusException("draft", record.status);
-    }
     const materialIds = filterDuplicates(
       records.map((record) => record.materialId)
     );
@@ -182,11 +226,6 @@ export class PurchaseOrderFacade extends FacadeBase {
         "active",
         inactiveMaterial.status
       );
-    }
-
-    let total: number = 0;
-    for (const record of records) {
-      total += record.quantity * record.unitPrice;
     }
     const items = await PurchaseOrderItem.findAll({
       where: {
@@ -225,11 +264,56 @@ export class PurchaseOrderFacade extends FacadeBase {
         })
       );
     }
-    promises.push(
-      record.update({
-        total,
-      })
-    );
+    await Promise.all(promises);
+    await this.recalculateTotal(id);
+  }
+
+  @WithTransaction
+  async createInventory(id: string) {
+    const record = await this.findById(id);
+    if (record.status !== "completed") {
+      throw new PurchaseOrderInvalidStatusException("completed", record.status);
+    }
+    const purchaseOrderItems = await PurchaseOrderItem.findAll({
+      where: {
+        purchaseOrderId: id,
+      },
+      include: [
+        {
+          model: InventoryFlow,
+        },
+      ],
+    });
+    const promises = [];
+    for (const purchaseOrderItem of purchaseOrderItems) {
+      if (
+        purchaseOrderItem.inventoryFlows &&
+        purchaseOrderItem.inventoryFlows.length === 0
+      ) {
+        const randomNumber = generateRandomNumber(
+          0,
+          purchaseOrderItems.length * 100
+        );
+        const code = `inv-${record.code}-${randomNumber}`;
+        const id = uuid();
+        promises.push(
+          Inventory.create({
+            id,
+            code,
+            materialId: purchaseOrderItem.materialId,
+            remarks: "",
+            total: purchaseOrderItem.quantity,
+          }),
+          InventoryFlow.create({
+            activity: "procurement",
+            inventoryId: id,
+            quantity: purchaseOrderItem.quantity,
+            purchaseOrderItemId: purchaseOrderItem.id,
+            remarks: "",
+          })
+        );
+      }
+    }
     await Promise.all(promises);
   }
 }

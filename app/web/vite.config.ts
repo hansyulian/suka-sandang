@@ -5,6 +5,7 @@ import { defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 dotenv.config({ path: resolve(__dirname, "../../.env") });
+const port = parseInt(process.env.WEB_PORT || "2781");
 const apiPort = process.env.API_PORT;
 const apiEndpoint = process.env.VITE_API_URL || "/api";
 console.log(`forwarding /api to localhost:${apiPort}`);
@@ -34,6 +35,7 @@ const config: UserConfig = {
     ],
   },
   server: {
+    port: port,
     proxy: {
       [apiEndpoint]: {
         target: `http://localhost:${process.env.API_PORT}`,

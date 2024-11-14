@@ -5,13 +5,12 @@ export const createInventoryFlowController = contractController(
   createInventoryFlowContract,
   async ({ body, locals }) => {
     const { engine } = locals;
-    const { inventoryId, quantity, activity, purchaseOrderItemId, remarks } =
-      body;
+    const { inventoryId, quantity, activity, remarks } = body;
     const result = await engine.inventoryFlow.create({
       inventoryId,
       quantity,
       activity,
-      purchaseOrderItemId,
+
       remarks,
     });
     return result;

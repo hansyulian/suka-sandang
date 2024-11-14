@@ -114,6 +114,9 @@ export class InventoryFacade extends FacadeBase {
   ) {
     const { remarks, items } = data;
     const record = await this.findById(id);
+    if (record.status !== "active") {
+      throw new InventoryInvalidStatusException("active", record.status);
+    }
     await record.update({
       remarks,
     });

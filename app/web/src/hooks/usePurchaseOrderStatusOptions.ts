@@ -20,7 +20,7 @@ export function usePurchaseOrderStatusOptions(
       {
         label: purchaseOrderStatusLabels.processing,
         value: "processing",
-        disabled: !isEdit,
+        disabled: !isEdit || !isDraft || !isProcessing,
       },
       {
         label: purchaseOrderStatusLabels.completed,

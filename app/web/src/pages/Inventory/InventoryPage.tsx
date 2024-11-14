@@ -223,17 +223,15 @@ export default function Page() {
           />
         </Grid.Col>
       </Grid>
-      {isEditMode && (
-        <>
-          <Title order={2}>Activities</Title>
+      <>
+        <Title order={2}>Activities</Title>
 
-          <InventoryFlowTable
-            initialData={d?.inventoryFlows || []}
-            onFormsChange={setForms}
-            disabled={inventory?.status !== "active"}
-          />
-        </>
-      )}
+        <InventoryFlowTable
+          initialData={d?.inventoryFlows}
+          onFormsChange={setForms}
+          disabled={inventory?.status !== "active" && isEditMode}
+        />
+      </>
       <Grid>
         <Grid.Col span={{ md: 6 }}></Grid.Col>
         <Grid.Col span={{ md: 3 }}>

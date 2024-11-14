@@ -91,14 +91,18 @@ export const PurchaseOrderItemTable = memo(function (
       <Table striped withColumnBorders withTableBorder>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th ta="center">Code</Table.Th>
-            <Table.Th ta="center">Name</Table.Th>
-            <Table.Th ta="center">Color</Table.Th>
+            <Table.Th ta="center">Material</Table.Th>
             <Table.Th ta="center">Remarks</Table.Th>
-            <Table.Th ta="center">Quantity</Table.Th>
-            <Table.Th ta="center">Price</Table.Th>
-            <Table.Th ta="center">Total</Table.Th>
-            <Table.Th></Table.Th>
+            <Table.Th w="100" ta="center">
+              Quantity
+            </Table.Th>
+            <Table.Th w="150" ta="center">
+              Price
+            </Table.Th>
+            <Table.Th w="150" ta="center">
+              Total
+            </Table.Th>
+            <Table.Th w="25"></Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -122,7 +126,7 @@ export const PurchaseOrderItemTable = memo(function (
             </Table.Tr>
           )}
           <Table.Tr>
-            <Table.Td colSpan={7} align="right">
+            <Table.Td colSpan={6} align="right">
               <Text fw="bold">{formatCurrency(total)}</Text>
             </Table.Td>
             <Table.Td></Table.Td>

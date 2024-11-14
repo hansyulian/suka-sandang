@@ -9,6 +9,7 @@ export const NumberInputE = (props: NumberInputEProps) => {
   const { rightAlign, className, ...rest } = props;
   return (
     <NumberInput
+      hideControls
       {...rest}
       className={`${className || ""} ${rightAlign ? classes.rightAlign : ""}`}
     />

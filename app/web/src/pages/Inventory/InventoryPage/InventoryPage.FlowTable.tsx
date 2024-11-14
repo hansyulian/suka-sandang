@@ -7,7 +7,7 @@ import { InventoryFlowTableRow } from "~/pages/Inventory/InventoryPage/Inventory
 import { InventoryFlowForm } from "~/types";
 
 export type InventoryFlowTableProps = {
-  initialData: InventoryFlowForm[];
+  initialData?: InventoryFlowForm[];
   disabled?: boolean;
   onFormsChange: (values: UseFormReturnType<InventoryFlowForm>[]) => void;
 };
@@ -16,14 +16,18 @@ export const InventoryFlowTable = memo(function (
   props: InventoryFlowTableProps
 ) {
   const { initialData, disabled, onFormsChange } = props;
-  const [records, setRecords] = useState<InventoryFlowForm[]>(initialData);
+  const [records, setRecords] = useState<InventoryFlowForm[]>(
+    initialData || []
+  );
   const [forms, setForms] = useState<UseFormReturnType<InventoryFlowForm>[]>(
     []
   );
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    setRecords(initialData);
+    if (initialData) {
+      setRecords(initialData);
+    }
   }, [initialData]);
 
   useEffect(() => {

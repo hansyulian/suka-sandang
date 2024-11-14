@@ -30,7 +30,7 @@ import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
 
-export default function SupplierPage() {
+export default function Page() {
   const { id } = useParams("supplierEdit");
   const supplierStatusOptions = useSupplierStatusOptions();
   const isEditMode = id !== undefined;

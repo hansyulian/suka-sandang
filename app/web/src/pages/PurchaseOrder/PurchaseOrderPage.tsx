@@ -36,7 +36,7 @@ import {
 
 const defaultSpan = {};
 
-export default function PurchaseOrderPage() {
+export default function Page() {
   const { idOrCode } = useParams("purchaseOrderEdit");
   const supplierOptions = useSupplierSelectOptions();
   const isEditMode = idOrCode !== undefined;

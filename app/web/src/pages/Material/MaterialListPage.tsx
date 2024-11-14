@@ -19,7 +19,7 @@ import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 import { formatCurrency } from "~/utils/formatCurrency";
 
-export default function MaterialListPage() {
+export default function Page() {
   const query = useSearchQuery("materialList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("materialList", {}, query);

@@ -18,7 +18,7 @@ import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 
-export default function SupplierListPage() {
+export default function Page() {
   const query = useSearchQuery("supplierList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("supplierList", {}, query);

@@ -22,7 +22,7 @@ import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 import { formatCurrency } from "~/utils/formatCurrency";
 
-export default function ListPage() {
+export default function Page() {
   const query = useSearchQuery("inventoryList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("inventoryList", {}, query);

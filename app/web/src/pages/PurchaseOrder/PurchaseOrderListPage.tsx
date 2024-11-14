@@ -23,7 +23,7 @@ import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 import { formatCurrency } from "~/utils/formatCurrency";
 import { formatDate } from "~/utils/formatDate";
 
-export default function PurchaseOrderListPage() {
+export default function Page() {
   const query = useSearchQuery("purchaseOrderList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery(

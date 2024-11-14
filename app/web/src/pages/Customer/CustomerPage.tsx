@@ -30,7 +30,7 @@ import {
 
 const defaultSpan = {};
 
-export default function CustomerPage() {
+export default function Page() {
   const { id } = useParams("customerEdit");
   const isEditMode = id !== undefined;
   const customerStatusOptions = useCustomerStatusOptions();

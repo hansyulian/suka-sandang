@@ -15,7 +15,7 @@ import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
 import { useNavigate } from "~/hooks/useNavigate";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 
-export default function LoginPage() {
+export default function Page() {
   const { mutateAsync: login } = emailLoginApi.useRequest({});
   const invalidateQuery = useInvalidateQuery();
   const handleRedirect = useHandleRedirect();

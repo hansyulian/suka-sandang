@@ -32,7 +32,7 @@ import {
 
 const defaultSpan = {};
 
-export default function MaterialPage() {
+export default function Page() {
   const { idOrCode } = useParams("materialEdit");
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);

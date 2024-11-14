@@ -33,6 +33,7 @@ import {
   getPurchaseOrderApi,
   updatePurchaseOrderApi,
 } from "~/config/api/purchaseOrderApi";
+import { generateRandomCodeNumber } from "~/utils/generateRandomCodeNumber";
 
 const defaultSpan = {};
 
@@ -73,7 +74,7 @@ export default function Page() {
   const { setValues, getInputProps, validate, values } =
     useForm<PurchaseOrderForm>({
       initialValues: {
-        code: `po-${formatDateCode()}`,
+        code: `po-${formatDateCode()}-${generateRandomCodeNumber()}`,
         date: new Date(),
         status: "draft",
         supplierId: "",
@@ -92,7 +93,9 @@ export default function Page() {
     }
     if (selectedSupplier) {
       setValues({
-        code: `po-${calculateCode(selectedSupplier.label)}-${formatDateCode()}`,
+        code: `po-${calculateCode(
+          selectedSupplier.label
+        )}-${formatDateCode()}-${generateRandomCodeNumber()}`,
       });
     }
   }, [autoCode, selectedSupplier, setValues]);

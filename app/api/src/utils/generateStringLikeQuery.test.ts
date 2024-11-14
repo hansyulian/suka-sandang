@@ -1,5 +1,5 @@
 import { Op } from "@app/engine";
-import { generateStringLikeQuery } from "~/utils";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 describe("generateStringLikeQuery", () => {
   it("should generate a query with multiple conditions using iLike", () => {

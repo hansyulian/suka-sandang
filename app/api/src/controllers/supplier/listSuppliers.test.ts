@@ -1,6 +1,7 @@
 import { SupplierAttributes } from "@app/common";
 import { SupplierEngine } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, injectStrayValues } from "~test/utils";
 
 describe("Controller: listSuppliersController", () => {

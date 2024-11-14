@@ -1,6 +1,7 @@
 import { CustomerAttributes } from "@app/common";
 import { CustomerEngine } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, injectStrayValues } from "~test/utils";
 
 describe("Controller: listCustomersController", () => {

@@ -1,5 +1,6 @@
 import { PurchaseOrderEngine } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: listPurchaseOrdersController", () => {

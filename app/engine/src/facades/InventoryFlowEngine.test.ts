@@ -11,7 +11,7 @@ import { Inventory, InventoryFlow } from "~/models";
 import { materialFixtures } from "~test/fixtures/materialFixtures";
 import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 
-describe("InventoryFlowFacade", () => {
+describe("InventoryFlowEngine", () => {
   const engine = new Engine();
   const testInventoryFlowId = idGenerator.inventoryFlow(0, 10);
   const testUpdatableInventoryFlowId = idGenerator.inventoryFlow(2, 0);

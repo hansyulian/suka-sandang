@@ -12,7 +12,7 @@ import { injectStrayValues } from "~test/utils/injectStrayValues";
 import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
 import { Engine } from "~/Engine";
 
-describe("MaterialFacade", () => {
+describe("MaterialEngine", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Material, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Material, "findByPk");

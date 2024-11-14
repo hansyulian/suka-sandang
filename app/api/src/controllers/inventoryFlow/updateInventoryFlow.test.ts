@@ -5,7 +5,7 @@ import {
   InventoryFlowUpdateAttributes,
   inventoryFlowActivity,
 } from "@app/common";
-import { InventoryFlowFacade } from "@app/engine";
+import { InventoryFlowEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -40,7 +40,7 @@ describe("Controller: updateInventoryFlowController", () => {
       deletedAt: now,
     };
 
-    InventoryFlowFacade.prototype.update = jest
+    InventoryFlowEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(updatedInventoryFlow));
 
@@ -51,7 +51,7 @@ describe("Controller: updateInventoryFlowController", () => {
 
     const { body, status } = response;
     expect(status).toEqual(200);
-    expect(InventoryFlowFacade.prototype.update).toHaveBeenCalledWith(
+    expect(InventoryFlowEngine.prototype.update).toHaveBeenCalledWith(
       "mock-id",
       payload
     );

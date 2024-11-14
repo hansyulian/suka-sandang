@@ -1,5 +1,5 @@
 import { MaterialCreationAttributes, MaterialAttributes } from "@app/common";
-import { MaterialFacade } from "@app/engine";
+import { MaterialEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -25,7 +25,7 @@ describe("Controller: createMaterialController", () => {
       status: "draft",
       ...payload,
     };
-    MaterialFacade.prototype.create = jest
+    MaterialEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(material));
     const response = await apiTest
@@ -33,7 +33,7 @@ describe("Controller: createMaterialController", () => {
       .post("/material")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(MaterialFacade.prototype.create).toHaveBeenCalledWith({
+    expect(MaterialEngine.prototype.create).toHaveBeenCalledWith({
       // ensure filtering of stray values
       ...payload,
     });
@@ -69,7 +69,7 @@ describe("Controller: createMaterialController", () => {
       status: "draft",
       ...payload,
     };
-    (MaterialFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
+    (MaterialEngine.prototype.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(material)
     );
     const response = await apiTest
@@ -78,7 +78,7 @@ describe("Controller: createMaterialController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(MaterialFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(MaterialEngine.prototype.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Material 1");

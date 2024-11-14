@@ -3,25 +3,25 @@ import type {
   FindAndCountAllResult,
   SequelizePaginationOptions,
 } from "~/types";
-import { Supplier } from "~/models/Supplier";
+import { Customer } from "~/models";
 import type {
-  SupplierAttributes,
-  SupplierCreationAttributes,
-  SupplierUpdateAttributes,
+  CustomerAttributes,
+  CustomerCreationAttributes,
+  CustomerUpdateAttributes,
 } from "@app/common";
-import { FacadeBase } from "~/facades/FacadeBase";
-import { SupplierNotFoundException } from "~/exceptions/SupplierNotFoundException";
+import { EngineBase } from "~/facades/EngineBase";
+import { CustomerNotFoundException } from "~/exceptions/CustomerNotFoundException";
 import { isEmail } from "@hyulian/common";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
-export class SupplierFacade extends FacadeBase {
+export class CustomerEngine extends EngineBase {
   @WithTransaction
   async list(
-    query: WhereOptions<SupplierAttributes>,
+    query: WhereOptions<CustomerAttributes>,
     options: SequelizePaginationOptions
-  ): Promise<FindAndCountAllResult<Supplier>> {
-    const result = await Supplier.findAndCountAll({
+  ): Promise<FindAndCountAllResult<Customer>> {
+    const result = await Customer.findAndCountAll({
       where: {
         ...query,
       },
@@ -35,20 +35,22 @@ export class SupplierFacade extends FacadeBase {
 
   @WithTransaction
   async findById(id: string) {
-    const record = await Supplier.findByPk(id, { paranoid: false });
+    const record = await Customer.findByPk(id, {
+      paranoid: false,
+    });
     if (!record) {
-      throw new SupplierNotFoundException({ id });
+      throw new CustomerNotFoundException({ id });
     }
     return record;
   }
 
   @WithTransaction
-  async create(data: SupplierCreationAttributes) {
+  async create(data: CustomerCreationAttributes) {
     const { name, remarks, status, address, email, phone, identity } = data;
     if (email && !isEmail(email)) {
       throw new InvalidEmailException(email);
     }
-    const result = await Supplier.create({
+    const result = await Customer.create({
       name,
       remarks,
       status,
@@ -57,19 +59,18 @@ export class SupplierFacade extends FacadeBase {
       phone,
       identity,
     });
-    return Supplier.findByPk(result.id) as unknown as Supplier;
+    return Customer.findByPk(result.id) as unknown as Customer;
   }
 
   @WithTransaction
-  async update(id: string, data: SupplierUpdateAttributes) {
+  async update(id: string, data: CustomerUpdateAttributes) {
     const record = await this.findById(id);
     const { name, remarks, status, address, email, phone, identity } = data;
-    if (email && !isEmail(email)) {
-      throw new InvalidEmailException(email);
-    }
-
     if (status && status !== "deleted") {
       await record.restore({});
+    }
+    if (email && !isEmail(email)) {
+      throw new InvalidEmailException(email);
     }
     const result = await record.update({
       name,
@@ -80,7 +81,7 @@ export class SupplierFacade extends FacadeBase {
       phone,
       identity,
     });
-    return Supplier.findByPk(result.id, { paranoid: false });
+    return Customer.findByPk(result.id, { paranoid: false });
   }
 
   @WithTransaction

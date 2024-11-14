@@ -1,5 +1,5 @@
 import { InventoryCreationAttributes, InventoryAttributes } from "@app/common";
-import { InventoryFacade } from "@app/engine";
+import { InventoryEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -31,7 +31,7 @@ describe("Controller: createInventoryController", () => {
       ...payload,
     };
 
-    InventoryFacade.prototype.create = jest
+    InventoryEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(record));
 
@@ -41,7 +41,7 @@ describe("Controller: createInventoryController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(InventoryFacade.prototype.create).toHaveBeenCalledWith({
+    expect(InventoryEngine.prototype.create).toHaveBeenCalledWith({
       ...payload,
       remarks: undefined,
     });
@@ -81,7 +81,7 @@ describe("Controller: createInventoryController", () => {
       ...payload,
     };
 
-    InventoryFacade.prototype.create = jest
+    InventoryEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(inventory));
 
@@ -91,7 +91,7 @@ describe("Controller: createInventoryController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(InventoryFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(InventoryEngine.prototype.create).toHaveBeenCalledWith(payload);
 
     const { body } = response;
 

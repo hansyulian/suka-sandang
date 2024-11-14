@@ -1,5 +1,5 @@
 import {
-  PurchaseOrderFacade,
+  PurchaseOrderEngine,
   PurchaseOrderNotFoundException,
 } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
@@ -12,7 +12,7 @@ describe("Controller: getPurchaseOrderController", () => {
   it("should call PurchaseOrder facade get function", async () => {
     const idOrCode = "mock-id";
     const now = new Date();
-    PurchaseOrderFacade.prototype.findByIdOrCode = jest
+    PurchaseOrderEngine.prototype.findByIdOrCode = jest
       .fn()
       .mockResolvedValueOnce({
         id: idOrCode,
@@ -53,7 +53,7 @@ describe("Controller: getPurchaseOrderController", () => {
       .get(`/purchase-order/${idOrCode}`)
       .send();
 
-    expect(PurchaseOrderFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+    expect(PurchaseOrderEngine.prototype.findByIdOrCode).toHaveBeenCalledWith(
       idOrCode
     );
     const { body } = response;
@@ -95,7 +95,7 @@ describe("Controller: getPurchaseOrderController", () => {
   });
   it("should handle not found exception if id not found", async () => {
     const idOrCode = "mock-id";
-    PurchaseOrderFacade.prototype.findByIdOrCode = jest
+    PurchaseOrderEngine.prototype.findByIdOrCode = jest
       .fn()
       .mockRejectedValueOnce(
         new PurchaseOrderNotFoundException({
@@ -107,7 +107,7 @@ describe("Controller: getPurchaseOrderController", () => {
       .get(`/purchase-order/${idOrCode}`)
       .send();
 
-    expect(PurchaseOrderFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+    expect(PurchaseOrderEngine.prototype.findByIdOrCode).toHaveBeenCalledWith(
       idOrCode
     );
     expectRejection(response, new PurchaseOrderNotFoundException({ idOrCode }));

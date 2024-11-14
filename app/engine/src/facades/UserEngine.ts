@@ -1,9 +1,9 @@
 import { UserUpdateAttributes } from "@app/common";
 import { UserNotFoundException } from "~/exceptions";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { User } from "~/models";
 
-export class UserFacade extends FacadeBase {
+export class UserEngine extends EngineBase {
   async findById(id: string) {
     const user = await User.findByPk(id);
     if (!user) {

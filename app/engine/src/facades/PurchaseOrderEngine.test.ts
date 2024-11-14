@@ -21,7 +21,7 @@ import {
 } from "~/models";
 import { MaterialNotFoundException } from "~/exceptions";
 
-describe("PurchaseOrderFacade", () => {
+describe("PurchaseOrderEngine", () => {
   const engine = new Engine();
   const draftPurchaseOrderId = idGenerator.purchaseOrder(0);
   const completedPurchaseOrderId = idGenerator.purchaseOrder(1);

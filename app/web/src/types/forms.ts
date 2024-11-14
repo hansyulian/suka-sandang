@@ -1,7 +1,6 @@
 import {
   CustomerStatus,
   InventoryFlowActivity,
-  InventoryFlowStatus,
   MaterialStatus,
   PurchaseOrderStatus,
   SupplierStatus,

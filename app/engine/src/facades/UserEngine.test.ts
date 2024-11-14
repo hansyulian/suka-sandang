@@ -8,7 +8,7 @@ import { idGenerator } from "~test/utils/idGenerator";
 import { injectStrayValues } from "~test/utils/injectStrayValues";
 import { resetData } from "~test/utils/resetData";
 
-describe("UserFacade", () => {
+describe("UserEngine", () => {
   const engine = new Engine();
   let findByPkSpy = jest.spyOn(User, "findByPk");
   beforeEach(async () => {

@@ -1,4 +1,4 @@
-import { PurchaseOrderItemFacade } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/engine";
 import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
@@ -9,7 +9,7 @@ describe("Controller: listPurchaseOrderItemsController", () => {
   it("should call PurchaseOrderItem facade list function", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderItemFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    PurchaseOrderItemEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         injectStrayValues({
           id: id,
@@ -30,7 +30,7 @@ describe("Controller: listPurchaseOrderItemsController", () => {
       .get(`/purchase-order-item`)
       .send();
 
-    expect(PurchaseOrderItemFacade.prototype.list).toHaveBeenCalledWith(
+    expect(PurchaseOrderItemEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -52,7 +52,7 @@ describe("Controller: listPurchaseOrderItemsController", () => {
   it("should handle queries", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderItemFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    PurchaseOrderItemEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         injectStrayValues({
           id: id,
@@ -77,7 +77,7 @@ describe("Controller: listPurchaseOrderItemsController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(PurchaseOrderItemFacade.prototype.list).toHaveBeenCalledWith(
+    expect(PurchaseOrderItemEngine.prototype.list).toHaveBeenCalledWith(
       { purchaseOrderId: "purchase-order-id" },
       extractQueryParameters({})
     );

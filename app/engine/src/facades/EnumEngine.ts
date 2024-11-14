@@ -1,5 +1,5 @@
 import { FindAllResult } from "~/types";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { Enum } from "~/models/Enum";
 import type { EnumCreationAttributes } from "@app/common";
 import { filterDuplicates, indexArray } from "@hyulian/common";
@@ -9,7 +9,7 @@ export type GroupSyncPayload = {
   label: string;
   value: string;
 };
-export class EnumFacade extends FacadeBase {
+export class EnumEngine extends EngineBase {
   @WithTransaction
   async list(): Promise<FindAllResult<Enum>> {
     const result = await Enum.findAll();

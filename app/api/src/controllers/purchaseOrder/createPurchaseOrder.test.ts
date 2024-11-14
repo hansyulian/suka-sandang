@@ -2,7 +2,7 @@ import {
   PurchaseOrderCreationAttributes,
   PurchaseOrderAttributes,
 } from "@app/common";
-import { PurchaseOrderFacade } from "@app/engine";
+import { PurchaseOrderEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -31,7 +31,7 @@ describe("Controller: createPurchaseOrderController", () => {
       remarks: "",
       ...payload,
     };
-    PurchaseOrderFacade.prototype.create = jest
+    PurchaseOrderEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(purchaseOrder));
     const response = await apiTest
@@ -39,7 +39,7 @@ describe("Controller: createPurchaseOrderController", () => {
       .post("/purchase-order")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderFacade.prototype.create).toHaveBeenCalledWith({
+    expect(PurchaseOrderEngine.prototype.create).toHaveBeenCalledWith({
       ...payload,
       date: now,
       items: undefined,
@@ -76,7 +76,7 @@ describe("Controller: createPurchaseOrderController", () => {
       total: 0,
       ...payload,
     };
-    (PurchaseOrderFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
+    (PurchaseOrderEngine.prototype.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(PurchaseOrder)
     );
     const response = await apiTest
@@ -85,7 +85,7 @@ describe("Controller: createPurchaseOrderController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(PurchaseOrderEngine.prototype.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.code).toStrictEqual("sample-purchase-order-1");

@@ -1,5 +1,5 @@
 import { SupplierAttributes } from "@app/common";
-import { SupplierFacade } from "@app/engine";
+import { SupplierEngine } from "@app/engine";
 import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
 import { apiTest, injectStrayValues } from "~test/utils";
 
@@ -21,13 +21,13 @@ describe("Controller: listSuppliersController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    SupplierFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    SupplierEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [record],
       count: 1,
     });
     const response = await apiTest.withAuthentication().get(`/supplier`).send();
 
-    expect(SupplierFacade.prototype.list).toHaveBeenCalledWith(
+    expect(SupplierEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -60,7 +60,7 @@ describe("Controller: listSuppliersController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    SupplierFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    SupplierEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [record],
       count: 1,
     });
@@ -73,7 +73,7 @@ describe("Controller: listSuppliersController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(SupplierFacade.prototype.list).toHaveBeenCalledWith(
+    expect(SupplierEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({
         name: query.search,
         address: query.search,

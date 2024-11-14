@@ -1,5 +1,5 @@
 import {
-  PurchaseOrderItemFacade,
+  PurchaseOrderItemEngine,
   PurchaseOrderItemNotFoundException,
 } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
@@ -14,7 +14,7 @@ describe("Controller: getPurchaseOrderItemController", () => {
   it("should call PurchaseOrderItem facade get function", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderItemFacade.prototype.findById = jest
+    PurchaseOrderItemEngine.prototype.findById = jest
       .fn()
       .mockResolvedValueOnce(
         injectStrayValues({
@@ -34,7 +34,7 @@ describe("Controller: getPurchaseOrderItemController", () => {
       .get(`/purchase-order-item/${id}`)
       .send();
 
-    expect(PurchaseOrderItemFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(PurchaseOrderItemEngine.prototype.findById).toHaveBeenCalledWith(id);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.materialId).toStrictEqual("material-id");
@@ -49,7 +49,7 @@ describe("Controller: getPurchaseOrderItemController", () => {
   });
   it("should handle not found exception if id not found", async () => {
     const id = "mock-id";
-    PurchaseOrderItemFacade.prototype.findById = jest
+    PurchaseOrderItemEngine.prototype.findById = jest
       .fn()
       .mockRejectedValueOnce(
         new PurchaseOrderItemNotFoundException({
@@ -61,7 +61,7 @@ describe("Controller: getPurchaseOrderItemController", () => {
       .get(`/purchase-order-item/${id}`)
       .send();
 
-    expect(PurchaseOrderItemFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(PurchaseOrderItemEngine.prototype.findById).toHaveBeenCalledWith(id);
     expectRejection(response, new PurchaseOrderItemNotFoundException({ id }));
   });
 });

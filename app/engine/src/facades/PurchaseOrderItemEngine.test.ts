@@ -13,7 +13,7 @@ import {
 } from "@app/common";
 import { PurchaseOrderItemNotFoundException } from "~/exceptions/PurchaseOrderItemNotFoundException";
 
-describe("PurchaseOrderItemFacade", () => {
+describe("PurchaseOrderItemEngine", () => {
   const engine = new Engine();
   const draftPurchaseOrderId = idGenerator.purchaseOrder(0);
   const completedPurchaseOrderId = idGenerator.purchaseOrder(1);

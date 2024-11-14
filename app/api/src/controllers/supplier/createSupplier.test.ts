@@ -1,5 +1,5 @@
 import { SupplierCreationAttributes, SupplierAttributes } from "@app/common";
-import { SupplierFacade } from "@app/engine";
+import { SupplierEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -23,7 +23,7 @@ describe("Controller: createSupplierController", () => {
       updatedAt: new Date(),
       ...payload,
     };
-    SupplierFacade.prototype.create = jest
+    SupplierEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(supplier));
     const response = await apiTest
@@ -31,7 +31,7 @@ describe("Controller: createSupplierController", () => {
       .post("/supplier")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(SupplierFacade.prototype.create).toHaveBeenCalledWith({
+    expect(SupplierEngine.prototype.create).toHaveBeenCalledWith({
       // ensure filtering of stray values
       ...payload,
     });
@@ -68,7 +68,7 @@ describe("Controller: createSupplierController", () => {
       status: "draft",
       ...payload,
     };
-    (SupplierFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
+    (SupplierEngine.prototype.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(supplier)
     );
     const response = await apiTest
@@ -77,7 +77,7 @@ describe("Controller: createSupplierController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(SupplierFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(SupplierEngine.prototype.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.email).toStrictEqual("email@email.com");

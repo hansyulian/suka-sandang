@@ -3,7 +3,7 @@ import {
   InventoryFlowActivity,
   InventoryFlowStatus,
 } from "@app/common";
-import { InventoryFlowFacade } from "@app/engine";
+import { InventoryFlowEngine } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: listInventoryFlowsController", () => {
@@ -28,7 +28,7 @@ describe("Controller: listInventoryFlowsController", () => {
       deletedAt: now,
     };
 
-    InventoryFlowFacade.prototype.list = jest.fn().mockResolvedValueOnce(
+    InventoryFlowEngine.prototype.list = jest.fn().mockResolvedValueOnce(
       injectStrayValues({
         count: 1,
         records: [injectStrayValues(mockInventoryFlow)],
@@ -42,7 +42,7 @@ describe("Controller: listInventoryFlowsController", () => {
 
     const { body, status } = response;
     expect(status).toStrictEqual(200);
-    expect(InventoryFlowFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryFlowEngine.prototype.list).toHaveBeenCalledWith(
       { inventoryId },
       {
         offset: undefined,

@@ -1,4 +1,4 @@
-import { InventoryFacade, Material } from "@app/engine";
+import { InventoryEngine, Material } from "@app/engine";
 import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
@@ -12,7 +12,7 @@ describe("Controller: listInventoriesController", () => {
     const now = new Date();
     const nowString = now.toISOString();
 
-    InventoryFacade.prototype.list = jest.fn().mockResolvedValueOnce(
+    InventoryEngine.prototype.list = jest.fn().mockResolvedValueOnce(
       injectStrayValues({
         records: [
           injectStrayValues({
@@ -40,7 +40,7 @@ describe("Controller: listInventoriesController", () => {
       .get(`/inventory`)
       .send();
 
-    expect(InventoryFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -76,7 +76,7 @@ describe("Controller: listInventoriesController", () => {
     const now = new Date();
     const nowString = now.toISOString();
 
-    InventoryFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    InventoryEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -107,7 +107,7 @@ describe("Controller: listInventoriesController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(InventoryFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery(query),
       extractQueryParameters({})
     );
@@ -142,7 +142,7 @@ describe("Controller: listInventoriesController", () => {
     const now = new Date();
     const nowString = now.toISOString();
 
-    InventoryFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    InventoryEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -173,7 +173,7 @@ describe("Controller: listInventoriesController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(InventoryFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({
         code: query.search,
       }),
@@ -210,7 +210,7 @@ describe("Controller: listInventoriesController", () => {
     const now = new Date();
     const nowString = now.toISOString();
 
-    InventoryFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    InventoryEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -242,7 +242,7 @@ describe("Controller: listInventoriesController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(InventoryFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({}),
       {
         order: [[{ model: Material, as: "material" }, "name", "asc"]],
@@ -279,7 +279,7 @@ describe("Controller: listInventoriesController", () => {
     const now = new Date();
     const nowString = now.toISOString();
 
-    InventoryFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    InventoryEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -311,7 +311,7 @@ describe("Controller: listInventoriesController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(InventoryFacade.prototype.list).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({}),
       {
         order: [[{ model: Material, as: "material" }, "code", "desc"]],

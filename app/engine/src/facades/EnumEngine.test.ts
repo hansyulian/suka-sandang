@@ -2,9 +2,9 @@ import { Engine } from "~/Engine";
 import { enumFixtures } from "~test/fixtures/enumFixtures";
 import { resetData } from "~test/utils/resetData";
 import { Enum } from "~/models/Enum";
-import { GroupSyncPayload } from "~/facades/EnumFacade";
+import { GroupSyncPayload } from "~/facades/EnumEngine";
 
-describe("EnumFacade", () => {
+describe("EnumEngine", () => {
   const engine = new Engine();
 
   describe("list", () => {

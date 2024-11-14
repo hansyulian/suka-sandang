@@ -1,5 +1,5 @@
 import { UserAttributes } from "@app/common";
-import { JwtService, UserFacade } from "@app/engine";
+import { JwtService, UserEngine } from "@app/engine";
 export const mockAuthenticatedUser: UserAttributes = {
   id: "mock-id",
   email: "mock@email.com",
@@ -17,6 +17,6 @@ export function mockAuthenticated() {
   const mockUser = {
     ...mockAuthenticatedUser,
   };
-  UserFacade.prototype.findById = jest.fn().mockResolvedValueOnce(mockUser);
+  UserEngine.prototype.findById = jest.fn().mockResolvedValueOnce(mockUser);
   return mockUser;
 }

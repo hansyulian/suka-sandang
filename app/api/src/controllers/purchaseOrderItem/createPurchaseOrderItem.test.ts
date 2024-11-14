@@ -2,7 +2,7 @@ import {
   PurchaseOrderItemCreationAttributes,
   PurchaseOrderItemAttributes,
 } from "@app/common";
-import { PurchaseOrderItemFacade } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/engine";
 import { dateStringUtil } from "@hyulian/api-contract";
 import {
   apiTest,
@@ -33,7 +33,7 @@ describe("Controller: createPurchaseOrderItemController", () => {
       subTotal: 500,
       ...payload,
     };
-    PurchaseOrderItemFacade.prototype.create = jest
+    PurchaseOrderItemEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(purchaseOrderItem));
     const response = await apiTest
@@ -41,7 +41,7 @@ describe("Controller: createPurchaseOrderItemController", () => {
       .post("/purchase-order-item")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderItemFacade.prototype.create).toHaveBeenCalledWith({
+    expect(PurchaseOrderItemEngine.prototype.create).toHaveBeenCalledWith({
       ...payload,
       remarks: "Sample remarks",
     });
@@ -77,7 +77,7 @@ describe("Controller: createPurchaseOrderItemController", () => {
       ...payload,
     };
     (
-      PurchaseOrderItemFacade.prototype.create as jest.Mock
+      PurchaseOrderItemEngine.prototype.create as jest.Mock
     ).mockResolvedValueOnce(injectStrayValues(PurchaseOrderItem));
     const response = await apiTest
       .withAuthentication()
@@ -85,7 +85,7 @@ describe("Controller: createPurchaseOrderItemController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderItemFacade.prototype.create).toHaveBeenCalledWith(
+    expect(PurchaseOrderItemEngine.prototype.create).toHaveBeenCalledWith(
       payload
     );
     const { body } = response;

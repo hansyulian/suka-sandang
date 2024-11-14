@@ -2,7 +2,7 @@ import {
   InvalidCredentialException,
   UserNotFoundException,
 } from "~/exceptions";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { User } from "~/models";
 import { JwtService } from "~/services";
 import { verifyPassword } from "~/utils";
@@ -11,7 +11,7 @@ export type EmailLoginResult = {
   sessionToken: string;
 };
 
-export class SessionFacade extends FacadeBase {
+export class SessionEngine extends EngineBase {
   async emailLogin(email: string, password: string): Promise<EmailLoginResult> {
     const user = await User.findOne({
       where: {

@@ -1,4 +1,4 @@
-import { InventoryFacade, InventoryNotFoundException } from "@app/engine";
+import { InventoryEngine, InventoryNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
@@ -7,7 +7,7 @@ describe("Controller: deleteInventoryController", () => {
     await apiTest.testRequireAuthentication().delete("/inventory/mock-id");
   });
   it("should call Inventory facade delete function", async () => {
-    InventoryFacade.prototype.delete = jest
+    InventoryEngine.prototype.delete = jest
       .fn()
       .mockResolvedValueOnce(undefined);
     const id = "mock-id";
@@ -16,13 +16,13 @@ describe("Controller: deleteInventoryController", () => {
       .delete(`/inventory/${id}`)
       .send();
 
-    expect(InventoryFacade.prototype.delete).toHaveBeenCalledWith(id);
+    expect(InventoryEngine.prototype.delete).toHaveBeenCalledWith(id);
     const { body } = response;
     expect(body).toEqual({ status: "success" });
   });
   it("should handle not found exception if id not found", async () => {
     const id = "mock-id";
-    InventoryFacade.prototype.delete = jest.fn().mockRejectedValueOnce(
+    InventoryEngine.prototype.delete = jest.fn().mockRejectedValueOnce(
       new InventoryNotFoundException({
         id,
       })
@@ -32,7 +32,7 @@ describe("Controller: deleteInventoryController", () => {
       .delete(`/inventory/${id}`)
       .send();
 
-    expect(InventoryFacade.prototype.delete).toHaveBeenCalledWith(id);
+    expect(InventoryEngine.prototype.delete).toHaveBeenCalledWith(id);
     expectRejection(response, new InventoryNotFoundException({ id }));
   });
 });

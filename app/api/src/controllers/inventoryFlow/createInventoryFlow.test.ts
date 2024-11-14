@@ -3,7 +3,7 @@ import {
   InventoryFlowCreationAttributes,
   inventoryFlowActivity,
 } from "@app/common";
-import { InventoryFlowFacade } from "@app/engine";
+import { InventoryFlowEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -36,7 +36,7 @@ describe("Controller: createInventoryFlowController", () => {
       ...payload,
     };
 
-    InventoryFlowFacade.prototype.create = jest
+    InventoryFlowEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(mockInventoryFlow));
 
@@ -47,7 +47,7 @@ describe("Controller: createInventoryFlowController", () => {
 
     const { body, status } = response;
     expect(status).toEqual(200);
-    expect(InventoryFlowFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(InventoryFlowEngine.prototype.create).toHaveBeenCalledWith(payload);
 
     checkStrayValues(body);
     expect(body).toEqual({

@@ -1,4 +1,4 @@
-import { MaterialFacade } from "@app/engine";
+import { MaterialEngine } from "@app/engine";
 import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
 import { apiTest, injectStrayValues } from "~test/utils";
 
@@ -8,7 +8,7 @@ describe("Controller: listMaterialsController", () => {
   });
   it("should call material facade list function", async () => {
     const id = "mock-id";
-    MaterialFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    MaterialEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -25,7 +25,7 @@ describe("Controller: listMaterialsController", () => {
     });
     const response = await apiTest.withAuthentication().get(`/material`).send();
 
-    expect(MaterialFacade.prototype.list).toHaveBeenCalledWith(
+    expect(MaterialEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -45,7 +45,7 @@ describe("Controller: listMaterialsController", () => {
   });
   it("should handle queries", async () => {
     const id = "mock-id";
-    MaterialFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    MaterialEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -70,7 +70,7 @@ describe("Controller: listMaterialsController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(MaterialFacade.prototype.list).toHaveBeenCalledWith(
+    expect(MaterialEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery(query),
       extractQueryParameters({})
     );
@@ -90,7 +90,7 @@ describe("Controller: listMaterialsController", () => {
   });
   it("should handle search query", async () => {
     const id = "mock-id";
-    MaterialFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    MaterialEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -114,7 +114,7 @@ describe("Controller: listMaterialsController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(MaterialFacade.prototype.list).toHaveBeenCalledWith(
+    expect(MaterialEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({
         code: query.search,
         name: query.search,

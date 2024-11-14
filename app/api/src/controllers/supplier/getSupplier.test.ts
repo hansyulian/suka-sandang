@@ -1,5 +1,5 @@
 import { SupplierAttributes } from "@app/common";
-import { SupplierFacade, SupplierNotFoundException } from "@app/engine";
+import { SupplierEngine, SupplierNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
@@ -21,13 +21,13 @@ describe("Controller: getSupplierController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    SupplierFacade.prototype.findById = jest.fn().mockResolvedValueOnce(record);
+    SupplierEngine.prototype.findById = jest.fn().mockResolvedValueOnce(record);
     const response = await apiTest
       .withAuthentication()
       .get(`/supplier/${id}`)
       .send();
 
-    expect(SupplierFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(SupplierEngine.prototype.findById).toHaveBeenCalledWith(id);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Supplier 1");
@@ -43,7 +43,7 @@ describe("Controller: getSupplierController", () => {
   });
   it("should handle not found exception if id not found", async () => {
     const id = "mock-id";
-    SupplierFacade.prototype.findById = jest.fn().mockRejectedValueOnce(
+    SupplierEngine.prototype.findById = jest.fn().mockRejectedValueOnce(
       new SupplierNotFoundException({
         id,
       })
@@ -53,7 +53,7 @@ describe("Controller: getSupplierController", () => {
       .get(`/supplier/${id}`)
       .send();
 
-    expect(SupplierFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(SupplierEngine.prototype.findById).toHaveBeenCalledWith(id);
     expectRejection(response, new SupplierNotFoundException({ id }));
   });
 });

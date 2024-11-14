@@ -1,10 +1,10 @@
-import { SessionFacade } from "@app/engine";
+import { SessionEngine } from "@app/engine";
 import { appConfig } from "~/config";
 import { apiTest, injectStrayValues, schemaValidationBody } from "~test/utils";
 
 describe("Controller: emailLogin", () => {
-  it("should call SessionFacade.emailLogin function with required parameters", async () => {
-    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
+  it("should call SessionEngine.emailLogin function with required parameters", async () => {
+    SessionEngine.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {
@@ -29,7 +29,7 @@ describe("Controller: emailLogin", () => {
     });
   });
   it("should be error when email or password is empty", async () => {
-    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
+    SessionEngine.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {};
@@ -54,7 +54,7 @@ describe("Controller: emailLogin", () => {
     );
   });
   it("email must be string and password must be string", async () => {
-    SessionFacade.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
+    SessionEngine.prototype.emailLogin = jest.fn().mockResolvedValueOnce({
       sessionToken: "mock-session-token",
     });
     const payload = {

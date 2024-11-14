@@ -97,6 +97,7 @@ export default function Page() {
               sortManager={sortManager}
               column="date"
               justify="center"
+              w="150"
             >
               Date
             </SortableTableHeader>
@@ -104,6 +105,7 @@ export default function Page() {
               sortManager={sortManager}
               column="status"
               justify="center"
+              w="150"
             >
               Status
             </SortableTableHeader>
@@ -111,10 +113,11 @@ export default function Page() {
               sortManager={sortManager}
               column="total"
               justify="flex-end"
+              w="150"
             >
               Total
             </SortableTableHeader>
-            <Table.Th></Table.Th>
+            <Table.Th w="100"></Table.Th>
           </>
         }
         renderRow={(record) => (
@@ -133,11 +136,11 @@ export default function Page() {
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
             <Table.Td ta="center">
-              <StatusBadge status={record.status} />
+              <StatusBadge w="100%" status={record.status} />
             </Table.Td>
             <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>
             <Table.Td>
-              <Group>
+              <Group justify="center">
                 <AppLinkIcon
                   target="purchaseOrderEdit"
                   params={{ idOrCode: record.id }}

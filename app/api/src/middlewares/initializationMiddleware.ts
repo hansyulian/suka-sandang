@@ -4,8 +4,10 @@ import { AtlasParameterizedMiddlewareWrapperFn } from "@hyulian/express-api-cont
 export const initializationMiddleware: AtlasParameterizedMiddlewareWrapperFn<
   [ReturnType<typeof setupDatabase>]
 > = (sequelize) =>
-  async function ({ locals }) {
-    locals.engine = new Engine({
+  async function (context) {
+    const engine = new Engine({
       sequelizeInstance: sequelize,
     });
+    context.locals.engine = engine;
+    context.engine = engine;
   };

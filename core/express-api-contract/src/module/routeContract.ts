@@ -14,7 +14,6 @@ import {
   SchemaType,
 } from "@hyulian/api-contract";
 
-import { requestContextBuilder } from "./requestContextBuilder";
 import { AtlasRouteContractController } from "./types";
 
 export type RouteContractOptions = {
@@ -36,10 +35,7 @@ export function routeContract<TApiContractSchema extends ApiContractSchema>(
       : undefined;
     try {
       // preprocess phase
-      const requestContext = requestContextBuilder<TParams, TQuery, TBody>(
-        request,
-        response
-      );
+      const requestContext = (request as any)._atlasContext;
       const functionResponse = await controller(requestContext);
       const responsePreset = response.status(200);
       response.locals = requestContext.locals;

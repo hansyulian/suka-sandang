@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const createMaterialController = contractController(
   createMaterialContract,
-  async ({ body, locals }) => {
-    const { engine } = locals;
+  async ({ body, engine }) => {
     const { code, name, purchasePrice, retailPrice, color, status } = body;
     const result = await engine.material.create({
       code,

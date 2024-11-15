@@ -11,7 +11,7 @@ export type RequestContext<
   locals: Atlas.Locals;
   request: Request;
   response: Response;
-};
+} & Atlas.ContextExtension;
 
 export function requestContextBuilder<
   Params extends {},
@@ -22,7 +22,7 @@ export function requestContextBuilder<
   const query = request.query as Query;
   const body = request.body as Body;
   const locals = response.locals || {};
-  return {
+  const context: any = {
     body,
     query,
     params,
@@ -30,4 +30,5 @@ export function requestContextBuilder<
     response,
     locals,
   };
+  return context;
 }

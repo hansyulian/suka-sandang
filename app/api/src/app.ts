@@ -7,7 +7,7 @@ import { appConfig } from "./config";
 import { controllers } from "./controllers";
 import cookieParser from "cookie-parser";
 import { initializationMiddleware } from "~/middlewares/initializationMiddleware";
-import { Engine, setupDatabase } from "@app/engine";
+import { setupDatabase } from "@app/engine";
 
 const sequelize = setupDatabase();
 

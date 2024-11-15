@@ -3,8 +3,7 @@ import { getMaterialOptionsContract } from "@app/common";
 
 export const getMaterialOptionsController = contractController(
   getMaterialOptionsContract,
-  async ({ query, locals }) => {
-    const { engine } = locals;
+  async ({ query, engine }) => {
     const result = await engine.material.list({}, {});
     return {
       records: result.records,

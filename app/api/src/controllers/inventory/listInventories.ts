@@ -6,8 +6,7 @@ import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 export const listInventoriesController = contractController(
   listInventoriesContract,
-  async ({ query, locals }) => {
-    const { engine } = locals;
+  async ({ query, engine }) => {
     const { code, search } = query;
     const processedQueryParameters = extractQueryParameters(query);
     if (query.orderBy === "materialName") {

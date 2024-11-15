@@ -5,8 +5,7 @@ import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 export const listMaterialsController = contractController(
   listMaterialsContract,
-  async ({ query, locals }) => {
-    const { engine } = locals;
+  async ({ query, engine }) => {
     const { code, name, search } = query;
     const result = await engine.material.list(
       generateStringLikeQuery({

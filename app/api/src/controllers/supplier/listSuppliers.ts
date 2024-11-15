@@ -5,8 +5,7 @@ import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 export const listSuppliersController = contractController(
   listSuppliersContract,
-  async ({ query, locals }) => {
-    const { engine } = locals;
+  async ({ query, engine }) => {
     const { search } = query;
     const result = await engine.supplier.list(
       generateStringLikeQuery({

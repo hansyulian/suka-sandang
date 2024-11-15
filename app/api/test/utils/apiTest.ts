@@ -4,13 +4,12 @@ import { controllers } from "~/controllers";
 import supertest, { Response } from "supertest";
 import { mockAuthenticated } from "~test/utils/mockAuthenticated";
 import { initializationMiddleware } from "~/middlewares/initializationMiddleware";
-import { Engine } from "@app/engine";
 
-const engine = new Engine();
 const app = atlas(
   (atlas) => {
     atlas.use(Express.json());
-    atlas.middleware(initializationMiddleware(engine));
+    // intended to cut connection to the database
+    atlas.middleware(initializationMiddleware(null as any));
     atlas.router("/", controllers);
   },
   {

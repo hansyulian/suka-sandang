@@ -1,9 +1,11 @@
-import { Engine } from "@app/engine";
+import { Engine, setupDatabase } from "@app/engine";
 import { AtlasParameterizedMiddlewareWrapperFn } from "@hyulian/express-api-contract/dist/types/src/module/types";
 
 export const initializationMiddleware: AtlasParameterizedMiddlewareWrapperFn<
-  [Engine]
-> = (engine) =>
+  [ReturnType<typeof setupDatabase>]
+> = (sequelize) =>
   async function ({ locals }) {
-    locals.engine = engine;
+    locals.engine = new Engine({
+      sequelizeInstance: sequelize,
+    });
   };

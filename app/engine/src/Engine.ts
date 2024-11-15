@@ -17,6 +17,9 @@ import { DBConfig, setupDatabase } from "~/setupDatabase";
 export type EngineOptions = {
   database?: DBConfig;
 };
+export type EngineConstructor = {
+  sequelizeInstance?: Sequelize;
+};
 export type EngineTransactionWrapperCallback<ReturnType> = (
   transaction: Transaction
 ) => PromiseLike<ReturnType>;
@@ -36,9 +39,10 @@ export class Engine {
   public inventory: InventoryEngine;
   public inventoryFlow: InventoryFlowEngine;
 
-  public constructor(options: EngineOptions = {}) {
-    this.options = options;
-    this._sequelize = setupDatabase(options.database);
+  public constructor(options: EngineOptions & EngineConstructor = {}) {
+    const { sequelizeInstance, ...rest } = options;
+    this.options = rest;
+    this._sequelize = sequelizeInstance || setupDatabase(options.database);
     this.user = new UserEngine(this);
     this.session = new SessionEngine(this);
     this.material = new MaterialEngine(this);

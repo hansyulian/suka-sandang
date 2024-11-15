@@ -1,7 +1,9 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { Box, Center, Group, Stack, Table } from "@mantine/core";
+import { AppLink } from "~/components/AppLink";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
+import { Icon } from "~/components/Icon";
 import { IconButton } from "~/components/IconButton";
 import { LinkButton } from "~/components/LinkButton";
 import { PageHeader } from "~/components/PageHeader";
@@ -89,15 +91,8 @@ export default function Page() {
               sortManager={sortManager}
               column="materialName"
             >
-              Mat. Name
+              Material
             </SortableTableHeader>
-            <SortableTableHeader
-              sortManager={sortManager}
-              column="materialCode"
-            >
-              Mat. Code
-            </SortableTableHeader>
-            <Table.Th>M. Color</Table.Th>
             <SortableTableHeader
               sortManager={sortManager}
               column="status"
@@ -121,23 +116,17 @@ export default function Page() {
           <>
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
-              <Group gap="xs">{record.material.name}</Group>
-            </Table.Td>
-            <Table.Td>
               <Group gap="xs">
-                {record.material.code}
-                <AppLinkIcon
+                <LinkButton
                   target="materialEdit"
                   params={{ idOrCode: record.material.code }}
-                  name="openLink"
-                  variant="transparent"
-                />
+                  rightSection={<Icon name="openLink" />}
+                  variant="light"
+                >
+                  {record.material.code}
+                </LinkButton>
+                {record.material.name}
               </Group>
-            </Table.Td>
-            <Table.Td>
-              {record.material.color && (
-                <Box bg={record.material.color} h={20} w="100%" />
-              )}
             </Table.Td>
             <Table.Td ta="center">
               <StatusBadge status={record.status} w="100%" />

@@ -5,7 +5,7 @@ import { AtlasMiddlewareWrapperFn } from "./types";
 export function middlewareWrapper(fn: AtlasMiddlewareWrapperFn) {
   return async (request: Request, response: Response, next: NextFunction) => {
     try {
-      const requestContext = (request as any)._atlasContext;
+      const requestContext = request._atlasContext;
       response.locals = requestContext.locals;
       await fn(requestContext);
       return next();

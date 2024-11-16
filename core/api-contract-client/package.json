@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "tsc --build --watch",
-    "prebuild": "shx mkdir -p dist && shx rm -rf dist",
     "build": "tsc --build tsconfig.build.json",
     "postbuild": "tsc-alias -p tsconfig.cjs.json --outDir dist/cjs && tsc-alias -p tsconfig.esm.json --outDir dist/esm",
     "clean": "shx mkdir -p dist && shx rm -rf dist",

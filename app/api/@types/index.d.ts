@@ -9,7 +9,7 @@ export declare global {
       engine: Engine;
     }
 
-    interface ContextExtension {
+    interface RequestContextExtension {
       engine: Engine;
     }
   }

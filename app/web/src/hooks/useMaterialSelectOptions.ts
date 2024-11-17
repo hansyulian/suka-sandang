@@ -19,7 +19,7 @@ export function useMaterialSelectOptions(
     return data.records.map((record) => {
       const label =
         labelKey === "name-code"
-          ? `${record.name} - ${record.code}`
+          ? `${record.name} (${record.code})`
           : record[labelKey];
       return {
         label,

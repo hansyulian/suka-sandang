@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const getSupplierController = contractController(
   getSupplierContract,
-  async ({ params, locals }) => {
-    const { engine } = locals;
+  async ({ params, engine }) => {
     const { id } = params;
     const record = await engine.supplier.findById(id);
 

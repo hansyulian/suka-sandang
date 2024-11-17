@@ -1,10 +1,9 @@
-import { Table, Text, TextInput, Stack } from "@mantine/core";
+import { Table, TextInput, Stack } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { memo, useEffect, useMemo } from "react";
 import { IconButton } from "~/components/IconButton";
 import { NumberInputE } from "~/components/NumberInputE";
 import { SelectE } from "~/components/SelectE";
-import { inventoryFlowActivityLabels } from "~/config/constants";
 import { useInventoryFlowActivityOptions } from "~/hooks/useInventoryFlowActivityOptions";
 import { InventoryFlowForm } from "~/types";
 import { formValidations } from "~/utils/formValidations";
@@ -58,36 +57,24 @@ export const InventoryFlowTableRow = memo(function (
   return (
     <Table.Tr>
       <Table.Td>
-        {!isEditableActivity ? (
-          <Text>
-            {
-              inventoryFlowActivityLabels[
-                initialData?.activity || "procurement"
-              ]
-            }
-          </Text>
-        ) : (
-          <SelectE
-            searchable
-            disabled={disabled}
-            data={inventoryFlowActivityOptions}
-            {...form.getInputProps("activity")}
-          />
-        )}
+        <SelectE
+          searchable
+          plainDisabled
+          disabled={disabled || !isEditableActivity}
+          data={inventoryFlowActivityOptions}
+          {...form.getInputProps("activity")}
+        />
       </Table.Td>
       <Table.Td valign="top">
         <TextInput disabled={disabled} {...form.getInputProps("remarks")} />
       </Table.Td>
       <Table.Td ta="right">
-        {isEditableActivity ? (
-          <NumberInputE
-            disabled={disabled}
-            rightAlign
-            {...form.getInputProps("quantity")}
-          />
-        ) : (
-          <Text>{initialData?.quantity}</Text>
-        )}
+        <NumberInputE
+          disabled={disabled || !isEditableActivity}
+          rightAlign
+          plainDisabled
+          {...form.getInputProps("quantity")}
+        />
       </Table.Td>
       <Table.Td>
         <Stack align="center">

@@ -23,7 +23,7 @@ import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 import { formatCurrency } from "~/utils/formatCurrency";
 import { formatDate } from "~/utils/formatDate";
 
-export default function PurchaseOrderListPage() {
+export default function Page() {
   const query = useSearchQuery("purchaseOrderList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery(
@@ -97,6 +97,7 @@ export default function PurchaseOrderListPage() {
               sortManager={sortManager}
               column="date"
               justify="center"
+              w="150"
             >
               Date
             </SortableTableHeader>
@@ -104,6 +105,7 @@ export default function PurchaseOrderListPage() {
               sortManager={sortManager}
               column="status"
               justify="center"
+              w="150"
             >
               Status
             </SortableTableHeader>
@@ -111,10 +113,11 @@ export default function PurchaseOrderListPage() {
               sortManager={sortManager}
               column="total"
               justify="flex-end"
+              w="150"
             >
               Total
             </SortableTableHeader>
-            <Table.Th></Table.Th>
+            <Table.Th w="100"></Table.Th>
           </>
         }
         renderRow={(record) => (
@@ -122,22 +125,22 @@ export default function PurchaseOrderListPage() {
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
               <Group gap="xs">
-                {record.supplier.name}
                 <AppLinkIcon
                   target="supplierEdit"
                   params={{ id: record.supplier.id }}
                   name="openLink"
-                  variant="transparent"
+                  variant="light"
                 />
+                {record.supplier.name}
               </Group>
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>
             <Table.Td ta="center">
-              <StatusBadge status={record.status} />
+              <StatusBadge w="100%" status={record.status} />
             </Table.Td>
             <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>
             <Table.Td>
-              <Group>
+              <Group justify="center">
                 <AppLinkIcon
                   target="purchaseOrderEdit"
                   params={{ idOrCode: record.id }}

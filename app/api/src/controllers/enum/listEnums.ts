@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const listEnumsController = contractController(
   listEnumsContract,
-  async ({ locals }) => {
-    const { engine } = locals;
+  async ({ engine }) => {
     const result = await engine.enum.list();
     return {
       records: result.records,

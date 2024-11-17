@@ -1,4 +1,4 @@
-import { UserFacade } from "@app/engine";
+import { UserEngine } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 import { mockAuthenticatedUser } from "~test/utils/mockAuthenticated";
 
@@ -6,8 +6,8 @@ describe("Controller: updateUserInfo", () => {
   it("should require authentication", async () => {
     await apiTest.testRequireAuthentication().put("/session/me");
   });
-  it("should call UserFacade.update", async () => {
-    UserFacade.prototype.update = jest.fn().mockResolvedValueOnce({
+  it("should call UserEngine.update", async () => {
+    UserEngine.prototype.update = jest.fn().mockResolvedValueOnce({
       ...mockAuthenticatedUser,
       name: "updated-name",
     });
@@ -22,7 +22,7 @@ describe("Controller: updateUserInfo", () => {
           status: "suspended",
         })
       );
-    expect(UserFacade.prototype.update).toHaveBeenCalledWith(
+    expect(UserEngine.prototype.update).toHaveBeenCalledWith(
       mockAuthenticatedUser.id,
       {
         name: "updated-name",

@@ -36,6 +36,7 @@ const config: UserConfig = {
   },
   server: {
     port: port,
+    host: "0.0.0.0",
     proxy: {
       [apiEndpoint]: {
         target: `http://localhost:${process.env.API_PORT}`,

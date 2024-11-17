@@ -1,9 +1,15 @@
-import { Table, TextInput, NumberInput, Text, Box, Stack } from "@mantine/core";
+import { ContractResponseModel } from "@hyulian/react-api-contract";
+import { Table, Text } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { memo, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
-import { SelectE } from "~/components/SelectE";
-import { getMaterialApi } from "~/config/api/materialApi";
+import { NumberInputE } from "~/components/NumberInputE";
+import { SelectColor } from "~/components/SelectColor";
+import { TextInputE } from "~/components/TextInputE";
+import {
+  getMaterialApi,
+  getMaterialOptionsApi,
+} from "~/config/api/materialApi";
 import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
 import { PurchaseOrderItemForm } from "~/types";
 import { formatCurrency } from "~/utils/formatCurrency";
@@ -24,8 +30,7 @@ export const PurchaseOrderItemTableRow = memo(function (
   props: PurchaseOrderItemTableRowProps
 ) {
   const { initialData, disabled, onFormChange, index, onDelete } = props;
-  const materialNameOptions = useMaterialSelectOptions("name");
-  const materialCodeOptions = useMaterialSelectOptions("code");
+  const materialSelectOptions = useMaterialSelectOptions("name-code");
 
   const form = useForm<PurchaseOrderItemForm>({
     initialValues: {
@@ -42,7 +47,7 @@ export const PurchaseOrderItemTableRow = memo(function (
       unitPrice: formValidations({ required: true }),
     },
   });
-  const { setValues, values } = form;
+  const { setValues, values, getInputProps } = form;
 
   const { data: selectedMaterial } = getMaterialApi.useRequest(
     { idOrCode: values.materialId },
@@ -50,6 +55,16 @@ export const PurchaseOrderItemTableRow = memo(function (
     {
       enabled: !!values.materialId,
     }
+  );
+
+  const optionColorExtractor = useCallback(
+    (
+      record: SelectionOption<
+        string,
+        ContractResponseModel<typeof getMaterialOptionsApi>
+      >
+    ) => record.data?.color,
+    []
   );
 
   useEffect(() => {
@@ -77,46 +92,45 @@ export const PurchaseOrderItemTableRow = memo(function (
   return (
     <Table.Tr>
       <Table.Td valign="top">
-        <SelectE
-          searchable
+        <SelectColor
+          flex={1}
+          color={selectedMaterial?.color}
           disabled={disabled}
-          data={materialCodeOptions}
-          {...form.getInputProps("materialId")}
+          data={materialSelectOptions}
+          searchable
+          plainDisabled
+          optionColorExtractor={optionColorExtractor}
+          {...getInputProps("materialId")}
         />
       </Table.Td>
       <Table.Td valign="top">
-        <SelectE
-          searchable
+        <TextInputE
+          plainDisabled
           disabled={disabled}
-          data={materialNameOptions}
-          {...form.getInputProps("materialId")}
+          {...form.getInputProps("remarks")}
         />
       </Table.Td>
-      <Table.Td valign="middle" ta="center">
-        {selectedMaterial?.color && (
-          <Box bg={selectedMaterial.color} h="20" w="100%" />
-        )}
+      <Table.Td valign="middle" ta="right">
+        <NumberInputE
+          rightAlign
+          plainDisabled
+          disabled={disabled}
+          {...form.getInputProps("quantity")}
+        />
       </Table.Td>
-      <Table.Td valign="top">
-        <TextInput disabled={disabled} {...form.getInputProps("remarks")} />
-      </Table.Td>
-      <Table.Td valign="top">
-        <NumberInput disabled={disabled} {...form.getInputProps("quantity")} />
-      </Table.Td>
-      <Table.Td valign="top">
-        <NumberInput disabled={disabled} {...form.getInputProps("unitPrice")} />
+      <Table.Td valign="middle" ta="right">
+        <NumberInputE
+          rightAlign
+          disabled={disabled}
+          plainDisabled
+          {...form.getInputProps("unitPrice")}
+        />
       </Table.Td>
       <Table.Td valign="middle" ta="right">
         <Text>{formatCurrency(values.quantity * values.unitPrice)}</Text>
       </Table.Td>
-      <Table.Td>
-        <Stack align="center">
-          <IconButton
-            name="delete"
-            color="red"
-            onClick={() => onDelete(index)}
-          />
-        </Stack>
+      <Table.Td ta="center">
+        <IconButton name="delete" color="red" onClick={() => onDelete(index)} />
       </Table.Td>
     </Table.Tr>
   );

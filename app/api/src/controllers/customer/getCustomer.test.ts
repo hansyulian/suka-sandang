@@ -1,5 +1,5 @@
 import { CustomerAttributes } from "@app/common";
-import { CustomerFacade, CustomerNotFoundException } from "@app/engine";
+import { CustomerEngine, CustomerNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
@@ -21,13 +21,13 @@ describe("Controller: getCustomerController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    CustomerFacade.prototype.findById = jest.fn().mockResolvedValueOnce(record);
+    CustomerEngine.prototype.findById = jest.fn().mockResolvedValueOnce(record);
     const response = await apiTest
       .withAuthentication()
       .get(`/customer/${id}`)
       .send();
 
-    expect(CustomerFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(CustomerEngine.prototype.findById).toHaveBeenCalledWith(id);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Customer 1");
@@ -43,7 +43,7 @@ describe("Controller: getCustomerController", () => {
   });
   it("should handle not found exception if id not found", async () => {
     const id = "mock-id";
-    CustomerFacade.prototype.findById = jest.fn().mockRejectedValueOnce(
+    CustomerEngine.prototype.findById = jest.fn().mockRejectedValueOnce(
       new CustomerNotFoundException({
         id,
       })
@@ -53,7 +53,7 @@ describe("Controller: getCustomerController", () => {
       .get(`/customer/${id}`)
       .send();
 
-    expect(CustomerFacade.prototype.findById).toHaveBeenCalledWith(id);
+    expect(CustomerEngine.prototype.findById).toHaveBeenCalledWith(id);
     expectRejection(response, new CustomerNotFoundException({ id }));
   });
 });

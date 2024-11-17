@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const updatePurchaseOrderItemController = contractController(
   updatePurchaseOrderItemContract,
-  async ({ params, body, locals }) => {
-    const { engine } = locals;
+  async ({ params, body, engine }) => {
     const { id } = params;
     const { remarks, materialId, quantity, unitPrice } = body;
     const result = await engine.purchaseOrderItem.update(id, {

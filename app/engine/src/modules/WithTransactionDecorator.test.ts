@@ -3,12 +3,12 @@ import type {
   UserCreationAttributes,
 } from "@app/common";
 import { Engine } from "~/Engine";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { Material, User } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import { resetData } from "~test/utils/resetData";
 
-class TestFacade extends FacadeBase {
+class SampleEngine extends EngineBase {
   @WithTransaction
   public async testSuccess(data: UserCreationAttributes) {
     const result = await User.create(data);
@@ -59,11 +59,11 @@ class TestFacade extends FacadeBase {
 }
 
 class TestEngine extends Engine {
-  public test: TestFacade;
+  public sample: SampleEngine;
 
   constructor() {
     super();
-    this.test = new TestFacade(this);
+    this.sample = new SampleEngine(this);
   }
 }
 
@@ -78,7 +78,7 @@ describe("testing", () => {
       name: "Sample success test name",
       password: "123123123",
     };
-    const result = await engine.test.testSuccess(data);
+    const result = await engine.sample.testSuccess(data);
     const foundRecord = await User.findByPk(result.id);
     expect(foundRecord?.email).toStrictEqual(data.email);
     expect(foundRecord?.name).toStrictEqual(data.name);
@@ -89,7 +89,7 @@ describe("testing", () => {
       name: "Sample rollback test name",
       password: "123123123",
     };
-    expect(engine.test.testRollback(data)).rejects.toThrow(Error);
+    expect(engine.sample.testRollback(data)).rejects.toThrow(Error);
     const foundRecords = await User.findAll();
     expect(foundRecords).toHaveLength(0);
   });
@@ -103,7 +103,7 @@ describe("testing", () => {
       code: "Material-code-1",
       name: "Material 1",
     };
-    const { user, material } = await engine.test.testNestedSuccess(
+    const { user, material } = await engine.sample.testNestedSuccess(
       userData,
       materialData
     );
@@ -123,7 +123,7 @@ describe("testing", () => {
       name: "Material 1",
     };
     expect(
-      engine.test.testSuccessThenFail(userData, materialData)
+      engine.sample.testSuccessThenFail(userData, materialData)
     ).rejects.toThrow("MaterialThrow");
     const foundUsers = await User.findAll();
     expect(foundUsers).toHaveLength(0);

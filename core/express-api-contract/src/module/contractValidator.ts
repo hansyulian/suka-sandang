@@ -12,6 +12,7 @@ import { contractValidatorCompareFunction } from "~/module/contractValidatorComp
 export function contractValidator(apiContract: ApiContractSchema) {
   return function (request: Request, response: Response, next: NextFunction) {
     const errors = [];
+    const context = request._atlasContext;
     const paramsValidation = validateSchema(
       request.params as any,
       apiContract.params,
@@ -19,6 +20,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
     );
     errors.push(...paramsValidation.errors);
     request.params = paramsValidation.value;
+    context.params = request.params;
     const method = request.method.toLowerCase();
     if (method === "get") {
       const queryContract = apiContract as QueryContractSchema;
@@ -29,6 +31,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
       );
       errors.push(...queryValidation.errors);
       request.query = queryValidation.value;
+      context.query = request.query;
     }
     if (!["get", "delete"].includes(method)) {
       const mutationContract = apiContract as MutationContractSchema;
@@ -44,6 +47,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
           result.push(bodyValidation.value);
         }
         request.body = result;
+        context.body = request.body;
       } else {
         const bodyValidation = validateSchema(
           request.body,
@@ -52,6 +56,7 @@ export function contractValidator(apiContract: ApiContractSchema) {
         );
         errors.push(...bodyValidation.errors);
         request.body = bodyValidation.value;
+        context.body = request.body;
       }
     }
     errors.sort(contractValidatorCompareFunction);

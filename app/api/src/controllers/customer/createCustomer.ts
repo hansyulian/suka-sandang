@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const createCustomerController = contractController(
   createCustomerContract,
-  async ({ body, locals }) => {
-    const { engine } = locals;
+  async ({ body, engine }) => {
     const { address, email, name, identity, phone, remarks, status } = body;
     const result = await engine.customer.create({
       address,

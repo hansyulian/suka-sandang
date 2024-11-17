@@ -4,8 +4,7 @@ import { appConfig } from "~/config";
 
 export const emailLoginController = contractController(
   emailLoginContract,
-  async ({ body, response, locals }) => {
-    const { engine } = locals;
+  async ({ body, response, engine }) => {
     const { email, password } = body;
     const loginResult = await engine.session.emailLogin(email, password);
     response.cookie(appConfig.jwt.cookieKey, loginResult.sessionToken, {

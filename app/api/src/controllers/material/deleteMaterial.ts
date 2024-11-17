@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const deleteMaterialController = contractController(
   deleteMaterialContract,
-  async ({ params, locals }) => {
-    const engine = locals.engine;
+  async ({ params, engine }) => {
     const { id } = params;
     await engine.material.delete(id);
     return simpleSuccessResponse;

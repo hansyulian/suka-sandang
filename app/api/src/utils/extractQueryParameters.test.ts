@@ -1,5 +1,5 @@
 import { QueryParameters } from "@app/common"; // Adjust the import path
-import { extractQueryParameters } from "~/utils";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 
 describe("extractPaginationQuery", () => {
   it("should return all properties when all are provided", () => {

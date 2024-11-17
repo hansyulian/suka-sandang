@@ -4,7 +4,6 @@ import {
   ColorPicker,
   Grid,
   Group,
-  NumberInput,
   Stack,
   TextInput,
   Title,
@@ -29,10 +28,11 @@ import {
   getMaterialApi,
   updateMaterialApi,
 } from "~/config/api/materialApi";
+import { NumberInputE } from "~/components/NumberInputE";
 
 const defaultSpan = {};
 
-export default function MaterialPage() {
+export default function Page() {
   const { idOrCode } = useParams("materialEdit");
   const isEditMode = idOrCode !== undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
@@ -149,16 +149,18 @@ export default function MaterialPage() {
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
+          <NumberInputE
             label="Purchase Price"
             hideControls
+            rightAlign
             {...getInputProps("purchasePrice")}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <NumberInput
+          <NumberInputE
             label="Retail Price"
             hideControls
+            rightAlign
             {...getInputProps("retailPrice")}
           />
         </Grid.Col>

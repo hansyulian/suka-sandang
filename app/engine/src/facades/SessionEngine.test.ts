@@ -8,7 +8,7 @@ import { userFixtures } from "~test/fixtures/userFixtures";
 import { idGenerator } from "~test/utils/idGenerator";
 import { resetData } from "~test/utils/resetData";
 
-describe("SessionFacade", () => {
+describe("SessionEngine", () => {
   const engine = new Engine();
   beforeAll(async () => {
     await resetData();

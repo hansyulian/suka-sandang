@@ -4,8 +4,7 @@ import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 
 export const listPurchaseOrderItemsController = contractController(
   listPurchaseOrderItemsContract,
-  async ({ query, locals }) => {
-    const { engine } = locals;
+  async ({ query, engine }) => {
     const { purchaseOrderId } = query;
     const result = await engine.purchaseOrderItem.list(
       { purchaseOrderId },

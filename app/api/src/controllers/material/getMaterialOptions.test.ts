@@ -1,5 +1,5 @@
-import { MaterialFacade } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { MaterialEngine } from "@app/engine";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: getMaterialOptionsController", () => {
@@ -8,7 +8,7 @@ describe("Controller: getMaterialOptionsController", () => {
   });
   it("should call material facade list function", async () => {
     const id = "mock-id";
-    MaterialFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    MaterialEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         injectStrayValues({
           id: id,
@@ -27,7 +27,7 @@ describe("Controller: getMaterialOptionsController", () => {
       .get(`/material/options`)
       .send();
 
-    expect(MaterialFacade.prototype.list).toHaveBeenCalledWith(
+    expect(MaterialEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );

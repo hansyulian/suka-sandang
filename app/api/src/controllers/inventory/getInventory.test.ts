@@ -1,4 +1,4 @@
-import { InventoryFacade, InventoryNotFoundException } from "@app/engine";
+import { InventoryEngine, InventoryNotFoundException } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
@@ -58,7 +58,7 @@ describe("Controller: getInventoryController", () => {
       ],
     });
 
-    InventoryFacade.prototype.findByIdOrCode = jest
+    InventoryEngine.prototype.findByIdOrCode = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(inventoryData));
 
@@ -67,7 +67,7 @@ describe("Controller: getInventoryController", () => {
       .get(`/inventory/${idOrCode}`)
       .send();
 
-    expect(InventoryFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.findByIdOrCode).toHaveBeenCalledWith(
       idOrCode
     );
 
@@ -138,7 +138,7 @@ describe("Controller: getInventoryController", () => {
 
   it("should handle not found exception if inventory not found", async () => {
     const idOrCode = "mock-id";
-    InventoryFacade.prototype.findByIdOrCode = jest
+    InventoryEngine.prototype.findByIdOrCode = jest
       .fn()
       .mockRejectedValueOnce(new InventoryNotFoundException({ idOrCode }));
 
@@ -147,7 +147,7 @@ describe("Controller: getInventoryController", () => {
       .get(`/inventory/${idOrCode}`)
       .send();
 
-    expect(InventoryFacade.prototype.findByIdOrCode).toHaveBeenCalledWith(
+    expect(InventoryEngine.prototype.findByIdOrCode).toHaveBeenCalledWith(
       idOrCode
     );
     expectRejection(response, new InventoryNotFoundException({ idOrCode }));

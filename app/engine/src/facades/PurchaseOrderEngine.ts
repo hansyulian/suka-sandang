@@ -17,7 +17,7 @@ import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStat
 import { PurchaseOrderDuplicationException } from "~/exceptions/PurchaseOrderDuplicationException";
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
 import { PurchaseOrderNotFoundException } from "~/exceptions/PurchaseOrderNotFoundException";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import {
   Inventory,
   InventoryFlow,
@@ -31,7 +31,7 @@ import type { SequelizePaginationOptions } from "~/types";
 import { uuid } from "~/utils";
 import { isUuid } from "~/utils/isUuid";
 
-export class PurchaseOrderFacade extends FacadeBase {
+export class PurchaseOrderEngine extends EngineBase {
   @WithTransaction
   async list(
     query: WhereOptions<PurchaseOrderAttributes>,

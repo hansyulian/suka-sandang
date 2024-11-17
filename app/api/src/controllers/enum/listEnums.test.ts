@@ -1,4 +1,4 @@
-import { EnumFacade } from "@app/engine";
+import { EnumEngine } from "@app/engine";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: listMaterialsController", () => {
@@ -6,7 +6,7 @@ describe("Controller: listMaterialsController", () => {
     await apiTest.testRequireAuthentication().get("/enum");
   });
   it("should call enum facade list function", async () => {
-    EnumFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    EnumEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         injectStrayValues({
           id: "id-1",
@@ -19,7 +19,7 @@ describe("Controller: listMaterialsController", () => {
     });
     const response = await apiTest.withAuthentication().get(`/enum`).send();
 
-    expect(EnumFacade.prototype.list).toHaveBeenCalledWith();
+    expect(EnumEngine.prototype.list).toHaveBeenCalledWith();
     const { body } = response;
     expect(body.records.length).toStrictEqual(1);
     const firstRecord = body.records[0];

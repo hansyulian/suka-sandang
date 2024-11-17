@@ -7,12 +7,12 @@ import type { WhereOptions } from "sequelize";
 import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
 import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
 import { PurchaseOrderItemNotFoundException } from "~/exceptions/PurchaseOrderItemNotFoundException";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
 
-export class PurchaseOrderItemFacade extends FacadeBase {
+export class PurchaseOrderItemEngine extends EngineBase {
   @WithTransaction
   async list(
     query: WhereOptions<PurchaseOrderItemAttributes>,

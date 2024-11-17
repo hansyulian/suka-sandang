@@ -1,5 +1,5 @@
 import { CustomerCreationAttributes, CustomerAttributes } from "@app/common";
-import { CustomerFacade } from "@app/engine";
+import { CustomerEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -23,7 +23,7 @@ describe("Controller: createCustomerController", () => {
       updatedAt: new Date(),
       ...payload,
     };
-    CustomerFacade.prototype.create = jest
+    CustomerEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(customer));
     const response = await apiTest
@@ -31,7 +31,7 @@ describe("Controller: createCustomerController", () => {
       .post("/customer")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(CustomerFacade.prototype.create).toHaveBeenCalledWith({
+    expect(CustomerEngine.prototype.create).toHaveBeenCalledWith({
       // ensure filtering of stray values
       ...payload,
     });
@@ -68,7 +68,7 @@ describe("Controller: createCustomerController", () => {
       status: "draft",
       ...payload,
     };
-    (CustomerFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
+    (CustomerEngine.prototype.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(customer)
     );
     const response = await apiTest
@@ -77,7 +77,7 @@ describe("Controller: createCustomerController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(CustomerFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(CustomerEngine.prototype.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.email).toStrictEqual("email@email.com");

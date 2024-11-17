@@ -1,5 +1,5 @@
 import { InventoryCreationAttributes, InventoryAttributes } from "@app/common";
-import { InventoryFacade } from "@app/engine";
+import { InventoryEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -27,10 +27,11 @@ describe("Controller: createInventoryController", () => {
       deletedAt: undefined,
       remarks: "",
       total: 0,
+      status: "active",
       ...payload,
     };
 
-    InventoryFacade.prototype.create = jest
+    InventoryEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(record));
 
@@ -40,7 +41,7 @@ describe("Controller: createInventoryController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(InventoryFacade.prototype.create).toHaveBeenCalledWith({
+    expect(InventoryEngine.prototype.create).toHaveBeenCalledWith({
       ...payload,
       remarks: undefined,
     });
@@ -52,6 +53,7 @@ describe("Controller: createInventoryController", () => {
       id,
       code: "sample-inventory-1",
       materialId: "mock-material-id",
+      status: "active",
       total: 0,
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
@@ -75,10 +77,11 @@ describe("Controller: createInventoryController", () => {
       updatedAt: now,
       deletedAt: now,
       total: 0,
+      status: "active",
       ...payload,
     };
 
-    InventoryFacade.prototype.create = jest
+    InventoryEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(inventory));
 
@@ -88,7 +91,7 @@ describe("Controller: createInventoryController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(InventoryFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(InventoryEngine.prototype.create).toHaveBeenCalledWith(payload);
 
     const { body } = response;
 
@@ -98,6 +101,7 @@ describe("Controller: createInventoryController", () => {
       materialId: "mock-material-id",
       remarks: "Sample remarks",
       total: 0,
+      status: "active",
       createdAt: nowString,
       updatedAt: nowString,
       deletedAt: nowString,

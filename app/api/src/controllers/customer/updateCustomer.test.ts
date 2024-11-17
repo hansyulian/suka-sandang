@@ -1,5 +1,5 @@
 import { CustomerUpdateAttributes, CustomerAttributes } from "@app/common";
-import { CustomerFacade } from "@app/engine";
+import { CustomerEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -27,7 +27,7 @@ describe("Controller: updateCustomerController", () => {
       updatedAt: new Date(),
       ...payload,
     } as CustomerAttributes;
-    CustomerFacade.prototype.update = jest.fn().mockResolvedValueOnce(customer);
+    CustomerEngine.prototype.update = jest.fn().mockResolvedValueOnce(customer);
     const response = await apiTest
       .withAuthentication()
       .put(`/customer/${id}`)
@@ -35,7 +35,7 @@ describe("Controller: updateCustomerController", () => {
     const { status, body } = response;
     expect(status).toStrictEqual(200);
 
-    expect(CustomerFacade.prototype.update).toHaveBeenCalledWith(id, payload);
+    expect(CustomerEngine.prototype.update).toHaveBeenCalledWith(id, payload);
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Customer 1");
     expect(body.email).toStrictEqual("email@example.com");
@@ -64,7 +64,7 @@ describe("Controller: updateCustomerController", () => {
       updatedAt: new Date(),
       ...payload,
     };
-    CustomerFacade.prototype.update = jest
+    CustomerEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(customer));
     const response = await apiTest
@@ -74,7 +74,7 @@ describe("Controller: updateCustomerController", () => {
     const { body, status } = response;
     expect(status).toStrictEqual(200);
 
-    expect(CustomerFacade.prototype.update).toHaveBeenCalledWith(id, {});
+    expect(CustomerEngine.prototype.update).toHaveBeenCalledWith(id, {});
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Customer 1");
     expect(body.email).toStrictEqual("email@example.com");

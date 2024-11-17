@@ -11,7 +11,7 @@ import { idGenerator } from "~test/utils/idGenerator";
 import { Engine } from "~/Engine";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
 
-describe("SupplierFacade", () => {
+describe("SupplierEngine", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Supplier, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Supplier, "findByPk");

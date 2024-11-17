@@ -8,5 +8,9 @@ export declare global {
       user: User;
       engine: Engine;
     }
+
+    interface RequestContextExtension {
+      engine: Engine;
+    }
   }
 }

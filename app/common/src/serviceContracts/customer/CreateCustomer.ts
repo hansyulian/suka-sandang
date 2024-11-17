@@ -1,13 +1,20 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { modelBase } from "~/base/modelBase";
-import { customerFields } from "~/types";
+import { customerFields, customerStatus } from "~/types";
 
 export const createCustomerContract = apiContractSchema({
   method: "post",
   path: "/customer",
   responseType: "object",
   params: {},
-  body: customerFields,
+  body: {
+    ...customerFields,
+    status: {
+      type: "enum",
+      values: customerStatus,
+      optional: true,
+    },
+  },
   bodyType: "object",
   model: {
     ...modelBase,

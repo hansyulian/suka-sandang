@@ -1,13 +1,13 @@
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 
 export function WithTransaction(
-  target: FacadeBase,
+  target: EngineBase,
   propertyName: string,
   descriptor: PropertyDescriptor
 ) {
   const originalMethod = descriptor.value;
   descriptor.value = async function (...args: any[]) {
-    const self = this as FacadeBase;
+    const self = this as EngineBase;
     if (!self.transactionMutex) {
       self.transactionMutex = true;
       return new Promise(async (resolve, reject) => {

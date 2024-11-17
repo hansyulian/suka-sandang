@@ -3,7 +3,7 @@ import {
   InventoryFlowCreationAttributes,
   inventoryFlowActivity,
 } from "@app/common";
-import { InventoryFlowFacade } from "@app/engine";
+import { InventoryFlowEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -24,7 +24,6 @@ describe("Controller: createInventoryFlowController", () => {
       inventoryId: "mock-inventory-id",
       quantity: 150,
       activity: "procurement",
-      purchaseOrderItemId: "mock-po-item-id",
       remarks: "New inventory flow",
     };
 
@@ -34,11 +33,10 @@ describe("Controller: createInventoryFlowController", () => {
       updatedAt: now,
       deletedAt: now,
       status: "valid",
-      activity: "adjustment",
       ...payload,
     };
 
-    InventoryFlowFacade.prototype.create = jest
+    InventoryFlowEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(mockInventoryFlow));
 
@@ -49,7 +47,7 @@ describe("Controller: createInventoryFlowController", () => {
 
     const { body, status } = response;
     expect(status).toEqual(200);
-    expect(InventoryFlowFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(InventoryFlowEngine.prototype.create).toHaveBeenCalledWith(payload);
 
     checkStrayValues(body);
     expect(body).toEqual({
@@ -57,7 +55,6 @@ describe("Controller: createInventoryFlowController", () => {
       inventoryId: "mock-inventory-id",
       quantity: 150,
       activity: "procurement",
-      purchaseOrderItemId: "mock-po-item-id",
       remarks: "New inventory flow",
       status: "valid",
       createdAt: nowString,

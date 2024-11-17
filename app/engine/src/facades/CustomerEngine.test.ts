@@ -11,7 +11,7 @@ import { Engine } from "~/Engine";
 import { InvalidEmailException } from "~/exceptions/InvalidEmailException";
 import { customerFixtures } from "~test/fixtures/customerFixtures";
 
-describe("CustomerFacade", () => {
+describe("CustomerEngine", () => {
   const engine = new Engine();
   const findAndCountAllSpy = jest.spyOn(Customer, "findAndCountAll");
   const findByPkSpy = jest.spyOn(Customer, "findByPk");

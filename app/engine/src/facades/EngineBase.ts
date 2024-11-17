@@ -1,6 +1,6 @@
 import { Engine } from "~/Engine";
 
-export abstract class FacadeBase {
+export abstract class EngineBase {
   private _core: Engine;
 
   public constructor(parent: Engine) {

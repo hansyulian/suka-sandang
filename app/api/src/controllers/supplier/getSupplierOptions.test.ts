@@ -1,5 +1,5 @@
 import { SupplierAttributes } from "@app/common";
-import { SupplierFacade } from "@app/engine";
+import { SupplierEngine } from "@app/engine";
 import { apiTest } from "~test/utils";
 
 describe("Controller: getSupplierOptionsController", () => {
@@ -20,7 +20,7 @@ describe("Controller: getSupplierOptionsController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    SupplierFacade.prototype.list = jest
+    SupplierEngine.prototype.list = jest
       .fn()
       .mockResolvedValueOnce({ records: [record] });
     const response = await apiTest
@@ -28,7 +28,7 @@ describe("Controller: getSupplierOptionsController", () => {
       .get(`/supplier/options`)
       .send();
 
-    expect(SupplierFacade.prototype.list).toHaveBeenCalledWith(
+    expect(SupplierEngine.prototype.list).toHaveBeenCalledWith(
       { status: "active" },
       {}
     );

@@ -1,5 +1,5 @@
 import { InventoryUpdateAttributes, InventoryAttributes } from "@app/common";
-import { InventoryFacade } from "@app/engine";
+import { InventoryEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -33,7 +33,7 @@ describe("Controller: updateInventoryController", () => {
       status: "active",
     };
 
-    InventoryFacade.prototype.update = jest
+    InventoryEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(inventory));
 
@@ -45,7 +45,7 @@ describe("Controller: updateInventoryController", () => {
     const { status, body } = response;
     expect(status).toStrictEqual(200);
 
-    expect(InventoryFacade.prototype.update).toHaveBeenCalledWith(id, {
+    expect(InventoryEngine.prototype.update).toHaveBeenCalledWith(id, {
       remarks: "Updated remarks",
     });
 
@@ -83,7 +83,7 @@ describe("Controller: updateInventoryController", () => {
       remarks: "empty remarks",
     };
 
-    InventoryFacade.prototype.update = jest
+    InventoryEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(inventory));
 
@@ -95,7 +95,7 @@ describe("Controller: updateInventoryController", () => {
     const { body, status } = response;
     expect(status).toStrictEqual(200);
 
-    expect(InventoryFacade.prototype.update).toHaveBeenCalledWith(id, {});
+    expect(InventoryEngine.prototype.update).toHaveBeenCalledWith(id, {});
 
     checkStrayValues(body);
 

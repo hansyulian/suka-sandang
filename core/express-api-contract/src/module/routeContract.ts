@@ -1,20 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
 import {
-  ApiContractParams,
   ApiContractSchema,
   ArrayResponse,
-  InferMutationContract,
-  InferQueryContract,
-  MutationContractSchema,
   ObjectResponse,
   PaginatedArrayResponse,
   projectSchema,
-  QueryContractSchema,
   SchemaType,
 } from "@hyulian/api-contract";
 
-import { requestContextBuilder } from "./requestContextBuilder";
 import { AtlasRouteContractController } from "./types";
 
 export type RouteContractOptions = {
@@ -27,19 +21,9 @@ export function routeContract<TApiContractSchema extends ApiContractSchema>(
   options: RouteContractOptions = {}
 ) {
   return async (request: Request, response: Response, next: NextFunction) => {
-    type TParams = ApiContractParams<TApiContractSchema>;
-    type TQuery = TApiContractSchema extends QueryContractSchema
-      ? InferQueryContract<TApiContractSchema>["query"]
-      : undefined;
-    type TBody = TApiContractSchema extends MutationContractSchema
-      ? InferMutationContract<TApiContractSchema>["body"]
-      : undefined;
     try {
       // preprocess phase
-      const requestContext = requestContextBuilder<TParams, TQuery, TBody>(
-        request,
-        response
-      );
+      const requestContext = request._atlasContext;
       const functionResponse = await controller(requestContext);
       const responsePreset = response.status(200);
       response.locals = requestContext.locals;

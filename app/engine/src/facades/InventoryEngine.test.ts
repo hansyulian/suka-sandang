@@ -10,7 +10,7 @@ import { supplierFixtures } from "~test/fixtures/supplierFixtures";
 import { Inventory, InventoryFlow } from "~/models";
 import { InventoryFlowSyncAttributes } from "@app/common";
 
-describe("InventoryFacade", () => {
+describe("InventoryEngine", () => {
   const engine = new Engine();
   const testInventoryId = idGenerator.inventory(10);
 

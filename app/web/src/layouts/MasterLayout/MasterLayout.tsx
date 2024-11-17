@@ -136,7 +136,7 @@ type NavIconProps = {
 
 function NavIcon(props: NavIconProps) {
   return (
-    <ThemeIcon variant={props.variant || "white"}>
+    <ThemeIcon variant={props.variant || "transparent"}>
       <Icon name={props.name} />
     </ThemeIcon>
   );

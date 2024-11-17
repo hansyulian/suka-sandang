@@ -3,8 +3,7 @@ import { contractController } from "@hyulian/express-api-contract";
 
 export const createInventoryFlowController = contractController(
   createInventoryFlowContract,
-  async ({ body, locals }) => {
-    const { engine } = locals;
+  async ({ body, engine }) => {
     const { inventoryId, quantity, activity, remarks } = body;
     const result = await engine.inventoryFlow.create({
       inventoryId,

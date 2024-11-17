@@ -1,21 +1,24 @@
 import { Transaction } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
 import {
-  EnumFacade,
-  MaterialFacade,
-  SessionFacade,
-  SupplierFacade,
-  UserFacade,
-  CustomerFacade,
-  InventoryFacade,
+  EnumEngine,
+  MaterialEngine,
+  SessionEngine,
+  SupplierEngine,
+  UserEngine,
+  CustomerEngine,
+  InventoryEngine,
 } from "~/facades";
-import { InventoryFlowFacade } from "~/facades/InventoryFlowFacade";
-import { PurchaseOrderFacade } from "~/facades/PurchaseOrderFacade";
-import { PurchaseOrderItemFacade } from "~/facades/PurchaseOrderItemFacade";
+import { InventoryFlowEngine } from "~/facades/InventoryFlowEngine";
+import { PurchaseOrderEngine } from "~/facades/PurchaseOrderEngine";
+import { PurchaseOrderItemEngine } from "~/facades/PurchaseOrderItemEngine";
 import { DBConfig, setupDatabase } from "~/setupDatabase";
 
 export type EngineOptions = {
   database?: DBConfig;
+};
+export type EngineConstructor = {
+  sequelizeInstance?: Sequelize;
 };
 export type EngineTransactionWrapperCallback<ReturnType> = (
   transaction: Transaction
@@ -25,30 +28,31 @@ export class Engine {
   public transactionMutex: boolean = false;
   public options: EngineOptions;
 
-  public user: UserFacade;
-  public session: SessionFacade;
-  public material: MaterialFacade;
-  public enum: EnumFacade;
-  public supplier: SupplierFacade;
-  public customer: CustomerFacade;
-  public purchaseOrder: PurchaseOrderFacade;
-  public purchaseOrderItem: PurchaseOrderItemFacade;
-  public inventory: InventoryFacade;
-  public inventoryFlow: InventoryFlowFacade;
+  public user: UserEngine;
+  public session: SessionEngine;
+  public material: MaterialEngine;
+  public enum: EnumEngine;
+  public supplier: SupplierEngine;
+  public customer: CustomerEngine;
+  public purchaseOrder: PurchaseOrderEngine;
+  public purchaseOrderItem: PurchaseOrderItemEngine;
+  public inventory: InventoryEngine;
+  public inventoryFlow: InventoryFlowEngine;
 
-  public constructor(options: EngineOptions = {}) {
-    this.options = options;
-    this._sequelize = setupDatabase(options.database);
-    this.user = new UserFacade(this);
-    this.session = new SessionFacade(this);
-    this.material = new MaterialFacade(this);
-    this.enum = new EnumFacade(this);
-    this.supplier = new SupplierFacade(this);
-    this.customer = new CustomerFacade(this);
-    this.purchaseOrder = new PurchaseOrderFacade(this);
-    this.purchaseOrderItem = new PurchaseOrderItemFacade(this);
-    this.inventory = new InventoryFacade(this);
-    this.inventoryFlow = new InventoryFlowFacade(this);
+  public constructor(options: EngineOptions & EngineConstructor = {}) {
+    const { sequelizeInstance, ...rest } = options;
+    this.options = rest;
+    this._sequelize = sequelizeInstance || setupDatabase(options.database);
+    this.user = new UserEngine(this);
+    this.session = new SessionEngine(this);
+    this.material = new MaterialEngine(this);
+    this.enum = new EnumEngine(this);
+    this.supplier = new SupplierEngine(this);
+    this.customer = new CustomerEngine(this);
+    this.purchaseOrder = new PurchaseOrderEngine(this);
+    this.purchaseOrderItem = new PurchaseOrderItemEngine(this);
+    this.inventory = new InventoryEngine(this);
+    this.inventoryFlow = new InventoryFlowEngine(this);
   }
 
   public get sequelize() {

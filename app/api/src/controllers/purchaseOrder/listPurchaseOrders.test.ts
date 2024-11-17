@@ -1,5 +1,6 @@
-import { PurchaseOrderFacade } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { PurchaseOrderEngine } from "@app/engine";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: listPurchaseOrdersController", () => {
@@ -9,7 +10,7 @@ describe("Controller: listPurchaseOrdersController", () => {
   it("should call PurchaseOrder facade list function", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderFacade.prototype.list = jest.fn().mockResolvedValueOnce(
+    PurchaseOrderEngine.prototype.list = jest.fn().mockResolvedValueOnce(
       injectStrayValues({
         records: [
           injectStrayValues({
@@ -55,7 +56,7 @@ describe("Controller: listPurchaseOrdersController", () => {
       .get(`/purchase-order`)
       .send();
 
-    expect(PurchaseOrderFacade.prototype.list).toHaveBeenCalledWith(
+    expect(PurchaseOrderEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -92,7 +93,7 @@ describe("Controller: listPurchaseOrdersController", () => {
   it("should handle queries", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    PurchaseOrderEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -115,7 +116,7 @@ describe("Controller: listPurchaseOrdersController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(PurchaseOrderFacade.prototype.list).toHaveBeenCalledWith(
+    expect(PurchaseOrderEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery(query),
       extractQueryParameters({})
     );
@@ -135,7 +136,7 @@ describe("Controller: listPurchaseOrdersController", () => {
   it("should handle search query", async () => {
     const id = "mock-id";
     const now = new Date();
-    PurchaseOrderFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    PurchaseOrderEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [
         {
           id: id,
@@ -158,7 +159,7 @@ describe("Controller: listPurchaseOrdersController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(PurchaseOrderFacade.prototype.list).toHaveBeenCalledWith(
+    expect(PurchaseOrderEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({
         code: query.search,
       }),

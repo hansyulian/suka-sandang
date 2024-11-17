@@ -1,6 +1,7 @@
 import { CustomerAttributes } from "@app/common";
-import { CustomerFacade } from "@app/engine";
-import { extractQueryParameters, generateStringLikeQuery } from "~/utils";
+import { CustomerEngine } from "@app/engine";
+import { extractQueryParameters } from "~/utils/extractQueryParemeters";
+import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, injectStrayValues } from "~test/utils";
 
 describe("Controller: listCustomersController", () => {
@@ -21,13 +22,13 @@ describe("Controller: listCustomersController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    CustomerFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    CustomerEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [record],
       count: 1,
     });
     const response = await apiTest.withAuthentication().get(`/customer`).send();
 
-    expect(CustomerFacade.prototype.list).toHaveBeenCalledWith(
+    expect(CustomerEngine.prototype.list).toHaveBeenCalledWith(
       {},
       extractQueryParameters({})
     );
@@ -60,7 +61,7 @@ describe("Controller: listCustomersController", () => {
       status: "active",
       updatedAt: new Date(),
     };
-    CustomerFacade.prototype.list = jest.fn().mockResolvedValueOnce({
+    CustomerEngine.prototype.list = jest.fn().mockResolvedValueOnce({
       records: [record],
       count: 1,
     });
@@ -73,7 +74,7 @@ describe("Controller: listCustomersController", () => {
       .query(injectStrayValues(query))
       .send();
 
-    expect(CustomerFacade.prototype.list).toHaveBeenCalledWith(
+    expect(CustomerEngine.prototype.list).toHaveBeenCalledWith(
       generateStringLikeQuery({
         name: query.search,
         address: query.search,

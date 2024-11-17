@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import { middlewareWrapper } from "./middlewareWrapper";
+import { requestContextBuilder } from "~/module/requestContextBuilder";
 
 describe("@hyulian/common.middlewareWrapper", () => {
   it("should wrap middleware correctly for request", async () => {
@@ -10,6 +11,10 @@ describe("@hyulian/common.middlewareWrapper", () => {
     mockRequest.method = "get";
     mockRequest.query = { search: "xyz" };
     mockRequest.params = { id: "123" };
+    (mockRequest as any)._atlasContext = requestContextBuilder(
+      mockRequest,
+      mockResponse
+    );
     const next = jest.fn();
     // Call the function
     const fn = middlewareWrapper(async (context) => {
@@ -32,6 +37,10 @@ describe("@hyulian/common.middlewareWrapper", () => {
     mockRequest.method = "post";
     mockRequest.body = { name: "John" };
     mockRequest.params = { id: "123" };
+    (mockRequest as any)._atlasContext = requestContextBuilder(
+      mockRequest,
+      mockResponse
+    );
 
     // Call the function
     const next = jest.fn();

@@ -2,7 +2,7 @@ import {
   PurchaseOrderCreationAttributes,
   PurchaseOrderAttributes,
 } from "@app/common";
-import { PurchaseOrderFacade } from "@app/engine";
+import { PurchaseOrderEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -31,7 +31,7 @@ describe("Controller: createPurchaseOrderController", () => {
       remarks: "",
       ...payload,
     };
-    PurchaseOrderFacade.prototype.create = jest
+    PurchaseOrderEngine.prototype.create = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(purchaseOrder));
     const response = await apiTest
@@ -39,9 +39,10 @@ describe("Controller: createPurchaseOrderController", () => {
       .post("/purchase-order")
       .send(injectStrayValues(payload));
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderFacade.prototype.create).toHaveBeenCalledWith({
+    expect(PurchaseOrderEngine.prototype.create).toHaveBeenCalledWith({
       ...payload,
-      date: now.toISOString(),
+      date: now,
+      items: undefined,
       remarks: undefined,
       status: undefined,
     });
@@ -60,22 +61,22 @@ describe("Controller: createPurchaseOrderController", () => {
 
   it("should call PurchaseOrder facade create function while passing optional parameter as well", async () => {
     const id = "mock-id";
-    const payload: PurchaseOrderCreationAttributes = {
+    const payload = {
       code: "sample-purchase-order-1",
       date: new Date(),
       supplierId: "mock-supplier-id",
       remarks: "Sample remarks",
+      items: undefined,
     };
-    const PurchaseOrder: PurchaseOrderAttributes = {
+    const PurchaseOrder = {
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
       status: "draft",
       total: 0,
-      remarks: "",
       ...payload,
     };
-    (PurchaseOrderFacade.prototype.create as jest.Mock).mockResolvedValueOnce(
+    (PurchaseOrderEngine.prototype.create as jest.Mock).mockResolvedValueOnce(
       injectStrayValues(PurchaseOrder)
     );
     const response = await apiTest
@@ -84,7 +85,7 @@ describe("Controller: createPurchaseOrderController", () => {
       .send(injectStrayValues(payload));
 
     expect(response.status).toStrictEqual(200);
-    expect(PurchaseOrderFacade.prototype.create).toHaveBeenCalledWith(payload);
+    expect(PurchaseOrderEngine.prototype.create).toHaveBeenCalledWith(payload);
     const { body } = response;
     expect(body.id).toStrictEqual(id);
     expect(body.code).toStrictEqual("sample-purchase-order-1");
@@ -138,7 +139,7 @@ describe("Controller: createPurchaseOrderController", () => {
       {
         type: "invalidType",
         key: "body.date",
-        expected: "dateString",
+        expected: "date",
         actual: "string",
         value: "invalid date",
       },

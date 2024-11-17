@@ -5,7 +5,6 @@ import {
   Group,
   Stack,
   Textarea,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
@@ -34,6 +33,8 @@ import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { getStatusColor } from "~/utils/getStatusColor";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import { useInventoryStatusOptions } from "~/hooks/useInventoryStatusOptions";
+import { generateRandomCodeNumber } from "~/utils/generateRandomCodeNumber";
+import { TextInputE } from "~/components/TextInputE";
 
 const defaultSpan = {};
 
@@ -82,7 +83,7 @@ export default function Page() {
   const { setValues, getInputProps, validate, values } = useForm<InventoryForm>(
     {
       initialValues: {
-        code: `inv-`,
+        code: `inv-${generateRandomCodeNumber()}`,
         materialId: "",
         remarks: "",
       },
@@ -105,7 +106,9 @@ export default function Page() {
     }
     if (selectedMaterial) {
       setValues({
-        code: `inv-${calculateCode(selectedMaterial.code)}-${formatDateCode()}`,
+        code: `inv-${calculateCode(
+          selectedMaterial.code
+        )}-${formatDateCode()}-${generateRandomCodeNumber()}`,
       });
     }
   }, [autoCode, selectedMaterial, setValues]);
@@ -184,10 +187,11 @@ export default function Page() {
       </Group>
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
-          <TextInput
+          <TextInputE
             label="Code"
             disabled={isEditMode}
             required
+            plainDisabled
             {...getInputProps("code")}
             onChange={(event) => {
               setAutoCode(false);
@@ -203,6 +207,7 @@ export default function Page() {
             disabled={isEditMode}
             data={materialSelectOptions}
             searchable
+            plainDisabled
             optionColorExtractor={optionColorExtractor}
             {...getInputProps("materialId")}
           />
@@ -220,17 +225,15 @@ export default function Page() {
           />
         </Grid.Col>
       </Grid>
-      {isEditMode && (
-        <>
-          <Title order={2}>Activities</Title>
+      <>
+        <Title order={2}>Activities</Title>
 
-          <InventoryFlowTable
-            initialData={d?.inventoryFlows || []}
-            onFormsChange={setForms}
-            disabled={inventory?.status !== "active"}
-          />
-        </>
-      )}
+        <InventoryFlowTable
+          initialData={d?.inventoryFlows}
+          onFormsChange={setForms}
+          disabled={inventory?.status !== "active" && isEditMode}
+        />
+      </>
       <Grid>
         <Grid.Col span={{ md: 6 }}></Grid.Col>
         <Grid.Col span={{ md: 3 }}>

@@ -1,0 +1,14 @@
+{
+  "tsImportSorter.configuration.groupRules": [
+    "^react(-dom)?$",
+    "^@angular/",
+    "^vue$",
+    "^node:",
+    {},
+    "^@hyulian/.*",
+    "^@app/.*",
+    "^~/.*",
+    "^[@]",
+    "^[.]"
+  ]
+}

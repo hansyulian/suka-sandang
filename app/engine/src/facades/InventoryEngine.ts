@@ -10,7 +10,7 @@ import { InventoryInvalidStatusException } from "~/exceptions";
 import { InvalidInventoryTotalException } from "~/exceptions/InvalidInventoryTotalException";
 import { InventoryDuplicationException } from "~/exceptions/InventoryDuplicationException";
 import { InventoryNotFoundException } from "~/exceptions/InventoryNotFoundException";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { Material, Inventory, InventoryFlow } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type {
@@ -19,7 +19,7 @@ import type {
 } from "~/types";
 import { isUuid } from "~/utils/isUuid";
 
-export class InventoryFacade extends FacadeBase {
+export class InventoryEngine extends EngineBase {
   @WithTransaction
   async list(
     query: WhereOptions<InventoryAttributes>,

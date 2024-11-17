@@ -1,13 +1,20 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { modelBase } from "~/base/modelBase";
-import { supplierFields } from "~/types";
+import { supplierFields, supplierStatus } from "~/types";
 
 export const createSupplierContract = apiContractSchema({
   method: "post",
   path: "/supplier",
   responseType: "object",
   params: {},
-  body: supplierFields,
+  body: {
+    ...supplierFields,
+    status: {
+      type: "enum",
+      values: supplierStatus,
+      optional: true,
+    },
+  },
   bodyType: "object",
   model: {
     ...modelBase,

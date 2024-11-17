@@ -1,5 +1,5 @@
 import { MaterialUpdateAttributes, MaterialAttributes } from "@app/common";
-import { MaterialFacade } from "@app/engine";
+import { MaterialEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -24,7 +24,7 @@ describe("Controller: updateMaterialController", () => {
       updatedAt: new Date(),
       ...payload,
     } as MaterialAttributes;
-    MaterialFacade.prototype.update = jest
+    MaterialEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(material));
     const response = await apiTest
@@ -34,7 +34,7 @@ describe("Controller: updateMaterialController", () => {
     const { status, body } = response;
     expect(status).toStrictEqual(200);
 
-    expect(MaterialFacade.prototype.update).toHaveBeenCalledWith(id, payload);
+    expect(MaterialEngine.prototype.update).toHaveBeenCalledWith(id, payload);
     expect(body.id).toStrictEqual(id);
     expect(body.name).toStrictEqual("Material 1");
     expect(body.code).toStrictEqual("material-1");
@@ -60,9 +60,12 @@ describe("Controller: updateMaterialController", () => {
       updatedAt: new Date(),
       purchasePrice: 100,
       retailPrice: 110,
+      code: "",
+      name: "",
+      status: "draft",
       ...payload,
-    } as MaterialAttributes;
-    MaterialFacade.prototype.update = jest
+    };
+    MaterialEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(material));
     const response = await apiTest
@@ -72,7 +75,7 @@ describe("Controller: updateMaterialController", () => {
     const { body, status } = response;
     expect(status).toStrictEqual(200);
 
-    expect(MaterialFacade.prototype.update).toHaveBeenCalledWith(id, {
+    expect(MaterialEngine.prototype.update).toHaveBeenCalledWith(id, {
       code: "material-1",
       name: "Material 1",
       status: "active",

@@ -1,4 +1,4 @@
-import { MaterialFacade, MaterialNotFoundException } from "@app/engine";
+import { MaterialEngine, MaterialNotFoundException } from "@app/engine";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 
@@ -7,7 +7,7 @@ describe("Controller: deleteMaterialController", () => {
     await apiTest.testRequireAuthentication().delete("/material/mock-id");
   });
   it("should call material facade delete function", async () => {
-    MaterialFacade.prototype.delete = jest
+    MaterialEngine.prototype.delete = jest
       .fn()
       .mockResolvedValueOnce(undefined);
     const id = "mock-id";
@@ -16,13 +16,13 @@ describe("Controller: deleteMaterialController", () => {
       .delete(`/material/${id}`)
       .send();
 
-    expect(MaterialFacade.prototype.delete).toHaveBeenCalledWith(id);
+    expect(MaterialEngine.prototype.delete).toHaveBeenCalledWith(id);
     const { body } = response;
     expect(body.status).toStrictEqual("success");
   });
   it("should handle not found exception if id not found", async () => {
     const id = "mock-id";
-    MaterialFacade.prototype.delete = jest.fn().mockRejectedValueOnce(
+    MaterialEngine.prototype.delete = jest.fn().mockRejectedValueOnce(
       new MaterialNotFoundException({
         id,
       })
@@ -32,7 +32,7 @@ describe("Controller: deleteMaterialController", () => {
       .delete(`/material/${id}`)
       .send();
 
-    expect(MaterialFacade.prototype.delete).toHaveBeenCalledWith(id);
+    expect(MaterialEngine.prototype.delete).toHaveBeenCalledWith(id);
     expectRejection(response, new MaterialNotFoundException({ id }));
   });
 });

@@ -2,7 +2,7 @@ import {
   PurchaseOrderItemUpdateAttributes,
   PurchaseOrderItemAttributes,
 } from "@app/common";
-import { PurchaseOrderItemFacade } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/engine";
 import {
   apiTest,
   checkStrayValues,
@@ -34,7 +34,7 @@ describe("Controller: updatePurchaseOrderItemController", () => {
       subTotal: 10000,
       ...payload,
     } as PurchaseOrderItemAttributes;
-    PurchaseOrderItemFacade.prototype.update = jest
+    PurchaseOrderItemEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(PurchaseOrderItem));
     const response = await apiTest
@@ -44,7 +44,7 @@ describe("Controller: updatePurchaseOrderItemController", () => {
     const { status, body } = response;
     expect(status).toStrictEqual(200);
 
-    expect(PurchaseOrderItemFacade.prototype.update).toHaveBeenCalledWith(id, {
+    expect(PurchaseOrderItemEngine.prototype.update).toHaveBeenCalledWith(id, {
       ...payload,
     });
     expect(body.id).toStrictEqual(id);
@@ -75,7 +75,7 @@ describe("Controller: updatePurchaseOrderItemController", () => {
       unitPrice: 1000,
       ...payload,
     } as PurchaseOrderItemAttributes;
-    PurchaseOrderItemFacade.prototype.update = jest
+    PurchaseOrderItemEngine.prototype.update = jest
       .fn()
       .mockResolvedValueOnce(injectStrayValues(PurchaseOrderItem));
     const response = await apiTest
@@ -85,7 +85,7 @@ describe("Controller: updatePurchaseOrderItemController", () => {
     const { body, status } = response;
     expect(status).toStrictEqual(200);
 
-    expect(PurchaseOrderItemFacade.prototype.update).toHaveBeenCalledWith(
+    expect(PurchaseOrderItemEngine.prototype.update).toHaveBeenCalledWith(
       id,
       {}
     );

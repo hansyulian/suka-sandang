@@ -7,7 +7,7 @@ import { type WhereOptions } from "sequelize";
 import { InventoryFlowInvalidActivityException } from "~/exceptions/InventoryFlowInvalidActivityException";
 import { InventoryFlowInvalidQuantityException } from "~/exceptions/InventoryFlowInvalidQuantityException";
 import { InventoryFlowNotFoundException } from "~/exceptions/InventoryFlowNotFoundException";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { InventoryFlow, PurchaseOrder, PurchaseOrderItem } from "~/models";
 import { WithTransaction } from "~/modules";
 import type {
@@ -15,7 +15,7 @@ import type {
   SequelizePaginationOptions,
 } from "~/types";
 
-export class InventoryFlowFacade extends FacadeBase {
+export class InventoryFlowEngine extends EngineBase {
   @WithTransaction
   async list(
     query: WhereOptions<InventoryFlowAttributes>,

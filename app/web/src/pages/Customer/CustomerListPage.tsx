@@ -18,7 +18,7 @@ import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 
-export default function CustomerListPage() {
+export default function Page() {
   const query = useSearchQuery("customerList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("customerList", {}, query);
@@ -97,10 +97,11 @@ export default function CustomerListPage() {
               sortManager={sortManager}
               column="status"
               justify="center"
+              w="150"
             >
               Status
             </SortableTableHeader>
-            <Table.Th></Table.Th>
+            <Table.Th w="100"></Table.Th>
           </>
         }
         renderRow={(record) => (
@@ -111,10 +112,10 @@ export default function CustomerListPage() {
             <Table.Td>{record.phone}</Table.Td>
             <Table.Td>{record.address}</Table.Td>
             <Table.Td ta="center">
-              <StatusBadge status={record.status} />
+              <StatusBadge w="100%" status={record.status} />
             </Table.Td>
             <Table.Td>
-              <Group>
+              <Group justify="center">
                 <AppLinkIcon
                   target="customerEdit"
                   params={{ id: record.id }}

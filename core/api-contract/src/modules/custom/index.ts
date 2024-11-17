@@ -1,2 +1,2 @@
-export * from './Brand';
-export * from './DateString';
+export * from "./Brand";
+export * from "./DateString";

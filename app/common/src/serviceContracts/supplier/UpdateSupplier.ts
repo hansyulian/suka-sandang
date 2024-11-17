@@ -1,6 +1,6 @@
 import { apiContractSchema, InferApiContract } from "@hyulian/api-contract";
 import { modelBase } from "~/base/modelBase";
-import { supplierFields } from "~/types";
+import { supplierFields, supplierStatus } from "~/types";
 
 export const updateSupplierContract = apiContractSchema({
   method: "put",
@@ -12,6 +12,12 @@ export const updateSupplierContract = apiContractSchema({
   body: {
     ...supplierFields,
     name: { type: "string", optional: true },
+    code: { type: "string", optional: true },
+    status: {
+      type: "enum",
+      values: supplierStatus,
+      optional: true,
+    },
   },
   bodyType: "object",
   model: {

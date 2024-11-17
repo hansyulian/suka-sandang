@@ -12,10 +12,10 @@ import type {
 } from "@app/common";
 import { isUuid } from "~/utils/isUuid";
 import { MaterialDuplicationException } from "~/exceptions/MaterialDuplicationException";
-import { FacadeBase } from "~/facades/FacadeBase";
+import { EngineBase } from "~/facades/EngineBase";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 
-export class MaterialFacade extends FacadeBase {
+export class MaterialEngine extends EngineBase {
   @WithTransaction
   async list(
     query: WhereOptions<MaterialAttributes>,

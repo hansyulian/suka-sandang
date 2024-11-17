@@ -1,5 +1,5 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
-import { Box, Center, Group, Stack, Table } from "@mantine/core";
+import { Center, Group, Stack, Table } from "@mantine/core";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
 import { IconButton } from "~/components/IconButton";
@@ -22,7 +22,7 @@ import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
 import { formatCurrency } from "~/utils/formatCurrency";
 
-export default function ListPage() {
+export default function Page() {
   const query = useSearchQuery("inventoryList");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
   const updateSearchQuery = useUpdateSearchQuery("inventoryList", {}, query);
@@ -89,19 +89,13 @@ export default function ListPage() {
               sortManager={sortManager}
               column="materialName"
             >
-              Mat. Name
+              Material
             </SortableTableHeader>
-            <SortableTableHeader
-              sortManager={sortManager}
-              column="materialCode"
-            >
-              Mat. Code
-            </SortableTableHeader>
-            <Table.Th>M. Color</Table.Th>
             <SortableTableHeader
               sortManager={sortManager}
               column="status"
               justify="center"
+              w="150"
             >
               Status
             </SortableTableHeader>
@@ -109,40 +103,33 @@ export default function ListPage() {
               sortManager={sortManager}
               column="total"
               justify="flex-end"
+              w="150"
             >
               Total
             </SortableTableHeader>
-            <Table.Th></Table.Th>
+            <Table.Th w="100"></Table.Th>
           </>
         }
         renderRow={(record) => (
           <>
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
-              <Group gap="xs">{record.material.name}</Group>
-            </Table.Td>
-            <Table.Td>
               <Group gap="xs">
-                {record.material.code}
                 <AppLinkIcon
                   target="materialEdit"
                   params={{ idOrCode: record.material.code }}
                   name="openLink"
-                  variant="transparent"
+                  variant="light"
                 />
+                {record.material.name} ({record.material.code})
               </Group>
             </Table.Td>
-            <Table.Td>
-              {record.material.color && (
-                <Box bg={record.material.color} h={20} w="100%" />
-              )}
-            </Table.Td>
             <Table.Td ta="center">
-              <StatusBadge status={record.status} />
+              <StatusBadge status={record.status} w="100%" />
             </Table.Td>
             <Table.Td align="right">{formatCurrency(record.total)}</Table.Td>
             <Table.Td>
-              <Group>
+              <Group justify="center">
                 <AppLinkIcon
                   target="inventoryEdit"
                   params={{ idOrCode: record.code }}

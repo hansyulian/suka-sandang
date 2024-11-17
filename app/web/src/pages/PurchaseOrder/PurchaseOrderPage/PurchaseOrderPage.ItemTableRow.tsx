@@ -1,10 +1,11 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
-import { Table, TextInput, Text } from "@mantine/core";
+import { Table, Text } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { memo, useCallback, useEffect } from "react";
 import { IconButton } from "~/components/IconButton";
 import { NumberInputE } from "~/components/NumberInputE";
 import { SelectColor } from "~/components/SelectColor";
+import { TextInputE } from "~/components/TextInputE";
 import {
   getMaterialApi,
   getMaterialOptionsApi,
@@ -97,24 +98,31 @@ export const PurchaseOrderItemTableRow = memo(function (
           disabled={disabled}
           data={materialSelectOptions}
           searchable
+          plainDisabled
           optionColorExtractor={optionColorExtractor}
           {...getInputProps("materialId")}
         />
       </Table.Td>
       <Table.Td valign="top">
-        <TextInput disabled={disabled} {...form.getInputProps("remarks")} />
+        <TextInputE
+          plainDisabled
+          disabled={disabled}
+          {...form.getInputProps("remarks")}
+        />
       </Table.Td>
-      <Table.Td valign="top">
+      <Table.Td valign="middle" ta="right">
         <NumberInputE
           rightAlign
+          plainDisabled
           disabled={disabled}
           {...form.getInputProps("quantity")}
         />
       </Table.Td>
-      <Table.Td valign="top">
+      <Table.Td valign="middle" ta="right">
         <NumberInputE
           rightAlign
           disabled={disabled}
+          plainDisabled
           {...form.getInputProps("unitPrice")}
         />
       </Table.Td>

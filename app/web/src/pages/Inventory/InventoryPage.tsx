@@ -5,7 +5,6 @@ import {
   Group,
   Stack,
   Textarea,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
@@ -35,6 +34,7 @@ import { getStatusColor } from "~/utils/getStatusColor";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import { useInventoryStatusOptions } from "~/hooks/useInventoryStatusOptions";
 import { generateRandomCodeNumber } from "~/utils/generateRandomCodeNumber";
+import { TextInputE } from "~/components/TextInputE";
 
 const defaultSpan = {};
 
@@ -187,10 +187,11 @@ export default function Page() {
       </Group>
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
-          <TextInput
+          <TextInputE
             label="Code"
             disabled={isEditMode}
             required
+            plainDisabled
             {...getInputProps("code")}
             onChange={(event) => {
               setAutoCode(false);
@@ -206,6 +207,7 @@ export default function Page() {
             disabled={isEditMode}
             data={materialSelectOptions}
             searchable
+            plainDisabled
             optionColorExtractor={optionColorExtractor}
             {...getInputProps("materialId")}
           />

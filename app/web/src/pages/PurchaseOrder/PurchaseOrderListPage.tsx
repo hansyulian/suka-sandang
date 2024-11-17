@@ -125,13 +125,13 @@ export default function Page() {
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
               <Group gap="xs">
-                {record.supplier.name}
                 <AppLinkIcon
                   target="supplierEdit"
                   params={{ id: record.supplier.id }}
                   name="openLink"
-                  variant="transparent"
+                  variant="light"
                 />
+                {record.supplier.name}
               </Group>
             </Table.Td>
             <Table.Td ta="center">{formatDate(record.date)}</Table.Td>

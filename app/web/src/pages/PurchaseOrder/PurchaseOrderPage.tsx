@@ -5,11 +5,9 @@ import {
   Group,
   Stack,
   Textarea,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { DatePickerInput } from "@mantine/dates";
 import { useEffect, useState } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
@@ -34,6 +32,8 @@ import {
   updatePurchaseOrderApi,
 } from "~/config/api/purchaseOrderApi";
 import { generateRandomCodeNumber } from "~/utils/generateRandomCodeNumber";
+import { TextInputE } from "~/components/TextInputE";
+import { DatePickerInputE } from "~/components/DatePickerE";
 
 const defaultSpan = {};
 
@@ -173,10 +173,11 @@ export default function Page() {
       </Group>
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
-          <TextInput
+          <TextInputE
             label="Code"
             disabled={isEditMode}
             required
+            plainDisabled
             {...getInputProps("code")}
             onChange={(event) => {
               setAutoCode(false);
@@ -190,16 +191,18 @@ export default function Page() {
             label="Supplier"
             data={supplierOptions}
             required
+            plainDisabled
             searchable
             onSelectOption={setSelectedSupplier}
             {...getInputProps("supplierId")}
           />
         </Grid.Col>
         <Grid.Col span={defaultSpan}>
-          <DatePickerInput
+          <DatePickerInputE
             disabled={isEditMode}
             label="Date"
             required
+            plainDisabled
             {...getInputProps("date")}
           />
         </Grid.Col>

@@ -1,27 +1,29 @@
 import {
   Box,
-  ComboboxItem,
   DefaultMantineColor,
   Group,
   StyleProp,
+  Text,
 } from "@mantine/core";
 import { useCallback, useMemo } from "react";
+import { ReadOnly } from "~/components/ReadOnly";
 import { SelectE, SelectEProps } from "~/components/SelectE";
 
 export type SelectColorProps<Option extends SelectionOption> = SelectEProps & {
   color?: StyleProp<DefaultMantineColor>;
   optionColorExtractor?: (option: Option) => string | undefined;
+  plainDisabled?: boolean;
 };
 
 type SelectColorRenderOption = {
-  option: ComboboxItem;
+  option: SelectionOption;
   checked?: boolean;
 };
 
 export function SelectColor<Option extends SelectionOption>(
   props: SelectColorProps<Option>
 ) {
-  const { color, optionColorExtractor, data, ...rest } = props;
+  const { plainDisabled, color, optionColorExtractor, data, ...rest } = props;
 
   const colorMap = useMemo(() => {
     if (!data || !optionColorExtractor) {
@@ -47,6 +49,20 @@ export function SelectColor<Option extends SelectionOption>(
     },
     [colorMap]
   );
+
+  if (plainDisabled && props.disabled) {
+    const option = data?.find(
+      (record) => (record as SelectionOption).value === props.value
+    ) as SelectionOption;
+    return (
+      <ReadOnly label={props.label}>
+        <Group align="center">
+          <Box w="20" h="20" bg={colorMap[option?.value]} />
+          <Text c="gray">{option?.label}</Text>
+        </Group>
+      </ReadOnly>
+    );
+  }
 
   return (
     <SelectE

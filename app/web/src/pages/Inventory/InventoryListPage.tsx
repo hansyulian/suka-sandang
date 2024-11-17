@@ -1,9 +1,7 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
-import { Box, Center, Group, Stack, Table } from "@mantine/core";
-import { AppLink } from "~/components/AppLink";
+import { Center, Group, Stack, Table } from "@mantine/core";
 import { AppLinkIcon } from "~/components/AppLinkIcon";
 import { DataTable } from "~/components/DataTable";
-import { Icon } from "~/components/Icon";
 import { IconButton } from "~/components/IconButton";
 import { LinkButton } from "~/components/LinkButton";
 import { PageHeader } from "~/components/PageHeader";
@@ -117,15 +115,13 @@ export default function Page() {
             <Table.Td>{record.code}</Table.Td>
             <Table.Td>
               <Group gap="xs">
-                <LinkButton
+                <AppLinkIcon
                   target="materialEdit"
                   params={{ idOrCode: record.material.code }}
-                  rightSection={<Icon name="openLink" />}
+                  name="openLink"
                   variant="light"
-                >
-                  {record.material.code}
-                </LinkButton>
-                {record.material.name}
+                />
+                {record.material.name} ({record.material.code})
               </Group>
             </Table.Td>
             <Table.Td ta="center">

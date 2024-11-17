@@ -31,5 +31,13 @@ export function generateMockExpressRequest(
   mockResponse.json = jsonFn;
   mockResponse.locals = {};
   const mockNext = jest.fn();
+  mockRequest._atlasContext = {
+    body: mockRequest.body,
+    locals: mockResponse.locals,
+    params: mockRequest.params,
+    query: mockRequest.query,
+    request: mockRequest as any,
+    response: mockResponse as any,
+  };
   return [mockRequest, mockResponse, mockNext];
 }

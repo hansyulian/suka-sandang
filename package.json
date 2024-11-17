@@ -6,8 +6,8 @@
   "scripts": {
     "api": "pnpm --filter ./app/api dev",
     "web": "pnpm --filter ./app/web dev",
-    "migrate": "pnpm --filter ./app/engine migrate",
-    "migrate:reset": "pnpm --filter ./app/engine migrate:reset",
+    "migrate": "pnpm --filter ./app/core migrate",
+    "migrate:reset": "pnpm --filter ./app/core migrate:reset",
     "build": "pnpm --recursive clean && pnpm --recursive build",
     "test": "pnpm --recursive test",
     "integrity-test": "pnpm test",

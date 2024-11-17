@@ -1,5 +1,5 @@
 import { SupplierAttributes } from "@app/common";
-import { SupplierEngine } from "@app/engine";
+import { SupplierEngine } from "@app/core";
 import { apiTest } from "~test/utils";
 
 describe("Controller: getSupplierOptionsController", () => {

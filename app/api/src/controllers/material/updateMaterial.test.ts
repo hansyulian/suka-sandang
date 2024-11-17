@@ -1,5 +1,5 @@
 import { MaterialUpdateAttributes, MaterialAttributes } from "@app/common";
-import { MaterialEngine } from "@app/engine";
+import { MaterialEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

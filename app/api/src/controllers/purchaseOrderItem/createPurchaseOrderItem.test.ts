@@ -2,7 +2,7 @@ import {
   PurchaseOrderItemCreationAttributes,
   PurchaseOrderItemAttributes,
 } from "@app/common";
-import { PurchaseOrderItemEngine } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/core";
 import { dateStringUtil } from "@hyulian/api-contract";
 import {
   apiTest,

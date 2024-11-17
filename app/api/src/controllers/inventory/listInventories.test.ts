@@ -1,4 +1,4 @@
-import { InventoryEngine, Material } from "@app/engine";
+import { InventoryEngine, Material } from "@app/core";
 import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";

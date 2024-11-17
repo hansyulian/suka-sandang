@@ -1,4 +1,4 @@
-import { Engine, setupDatabase } from "@app/engine";
+import { Engine, setupDatabase } from "@app/core";
 import { AtlasParameterizedMiddlewareWrapperFn } from "@hyulian/express-api-contract/dist/types/src/module/types";
 
 export const initializationMiddleware: AtlasParameterizedMiddlewareWrapperFn<

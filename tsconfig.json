@@ -2,25 +2,25 @@
   "extends": "./tsconfig.root.json",
   "references": [
     {
-      "path": "./core/common"
+      "path": "./lib/common"
     },
     {
-      "path": "./core/api-contract"
+      "path": "./lib/api-contract"
     },
     {
-      "path": "./core/api-contract-client"
+      "path": "./lib/api-contract-client"
     },
     {
-      "path": "./core/express-api-contract"
+      "path": "./lib/express-api-contract"
     },
     {
-      "path": "./core/react-api-contract"
+      "path": "./lib/react-api-contract"
     },
     {
       "path": "./app/common"
     },
     {
-      "path": "./app/engine"
+      "path": "./app/core"
     },
     {
       "path": "./app/web"

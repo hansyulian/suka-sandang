@@ -1,5 +1,5 @@
 import { CustomerUpdateAttributes, CustomerAttributes } from "@app/common";
-import { CustomerEngine } from "@app/engine";
+import { CustomerEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

@@ -1,5 +1,5 @@
 import { UserAttributes } from "@app/common";
-import { JwtService } from "@app/engine";
+import { JwtService } from "@app/core";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { appConfig } from "~/config";
 import { authenticationMiddleware } from "~/middlewares/authenticationMiddleware";

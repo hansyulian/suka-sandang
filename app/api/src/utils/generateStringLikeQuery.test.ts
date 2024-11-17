@@ -1,4 +1,4 @@
-import { Op } from "@app/engine";
+import { Op } from "@app/core";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 
 describe("generateStringLikeQuery", () => {

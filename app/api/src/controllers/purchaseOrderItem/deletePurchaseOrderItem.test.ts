@@ -1,7 +1,7 @@
 import {
   PurchaseOrderItemEngine,
   PurchaseOrderItemNotFoundException,
-} from "@app/engine";
+} from "@app/core";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

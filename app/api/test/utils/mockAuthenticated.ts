@@ -1,5 +1,5 @@
 import { UserAttributes } from "@app/common";
-import { JwtService, UserEngine } from "@app/engine";
+import { JwtService, UserEngine } from "@app/core";
 export const mockAuthenticatedUser: UserAttributes = {
   id: "mock-id",
   email: "mock@email.com",

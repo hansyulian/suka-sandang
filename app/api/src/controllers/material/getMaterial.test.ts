@@ -1,4 +1,4 @@
-import { MaterialEngine, MaterialNotFoundException } from "@app/engine";
+import { MaterialEngine, MaterialNotFoundException } from "@app/core";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

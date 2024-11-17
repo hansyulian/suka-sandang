@@ -1,4 +1,4 @@
-import { SessionEngine } from "@app/engine";
+import { SessionEngine } from "@app/core";
 import { appConfig } from "~/config";
 import { apiTest, injectStrayValues, schemaValidationBody } from "~test/utils";
 

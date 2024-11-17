@@ -3,12 +3,12 @@ const path = require("path");
 
 // List of directories to run the nodemon command in
 const folders = [
-  "app/engine",
+  "app/core",
   "app/common",
-  "core/express-api-contract",
-  "core/react-api-contract",
-  "core/api-contract",
-  "core/common",
+  "lib/express-api-contract",
+  "lib/react-api-contract",
+  "lib/api-contract",
+  "lib/common",
 ];
 
 // Array to hold the child processes

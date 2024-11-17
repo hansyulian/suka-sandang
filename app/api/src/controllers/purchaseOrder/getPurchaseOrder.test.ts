@@ -1,7 +1,4 @@
-import {
-  PurchaseOrderEngine,
-  PurchaseOrderNotFoundException,
-} from "@app/engine";
+import { PurchaseOrderEngine, PurchaseOrderNotFoundException } from "@app/core";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

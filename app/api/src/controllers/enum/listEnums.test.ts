@@ -1,4 +1,4 @@
-import { EnumEngine } from "@app/engine";
+import { EnumEngine } from "@app/core";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 
 describe("Controller: listMaterialsController", () => {

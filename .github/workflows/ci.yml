@@ -66,7 +66,7 @@ jobs:
 
       - name: Run tests
         env:
-          DB_USERNAME: testuer
+          DB_USERNAME: testuser
           DB_PASSWORD: testpassword
           DB_DATABASE: testdb
           DB_DIALECT: postgresql

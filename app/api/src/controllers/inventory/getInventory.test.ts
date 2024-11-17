@@ -1,4 +1,4 @@
-import { InventoryEngine, InventoryNotFoundException } from "@app/engine";
+import { InventoryEngine, InventoryNotFoundException } from "@app/core";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

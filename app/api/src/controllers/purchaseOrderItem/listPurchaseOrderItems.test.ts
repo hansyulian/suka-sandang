@@ -1,4 +1,4 @@
-import { PurchaseOrderItemEngine } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/core";
 import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 

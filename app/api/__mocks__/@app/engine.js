@@ -1,5 +1,5 @@
 const { deepMockFunctions } = require("@hyulian/common");
-const actual = jest.requireActual("@app/engine");
+const actual = jest.requireActual("@app/core");
 
 module.exports = {
   ...actual,

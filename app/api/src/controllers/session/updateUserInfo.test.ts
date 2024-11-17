@@ -1,4 +1,4 @@
-import { UserEngine } from "@app/engine";
+import { UserEngine } from "@app/core";
 import { apiTest, checkStrayValues, injectStrayValues } from "~test/utils";
 import { mockAuthenticatedUser } from "~test/utils/mockAuthenticated";
 

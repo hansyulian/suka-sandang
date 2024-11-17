@@ -1,4 +1,4 @@
-import { JwtService } from "@app/engine";
+import { JwtService } from "@app/core";
 import { UnauthorizedException } from "@hyulian/express-api-contract";
 import { AtlasMiddlewareWrapperFn } from "@hyulian/express-api-contract/dist/types/src/module/types";
 import { appConfig } from "~/config";

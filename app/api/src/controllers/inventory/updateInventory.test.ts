@@ -1,5 +1,5 @@
 import { InventoryUpdateAttributes, InventoryAttributes } from "@app/common";
-import { InventoryEngine } from "@app/engine";
+import { InventoryEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

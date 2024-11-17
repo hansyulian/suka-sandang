@@ -3,7 +3,7 @@ import {
   InventoryFlowActivity,
   InventoryFlowStatus,
 } from "@app/common";
-import { InventoryFlowEngine } from "@app/engine";
+import { InventoryFlowEngine } from "@app/core";
 import { apiTest, checkStrayValues } from "~test/utils";
 
 describe("Controller: getInventoryFlowController", () => {

@@ -1,4 +1,4 @@
-import { Op } from "@app/engine";
+import { Op } from "@app/core";
 
 export function generateStringLikeQuery(query: Record<string, unknown>): any {
   const keys = Object.keys(query);

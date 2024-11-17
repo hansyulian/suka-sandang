@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@app/common": "workspace:*",
-    "@app/engine": "workspace:*",
+    "@app/core": "workspace:*",
     "@hyulian/api-contract": "workspace:*",
     "@hyulian/common": "workspace:*",
     "@hyulian/express-api-contract": "workspace:*",

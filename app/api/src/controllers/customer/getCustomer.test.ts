@@ -1,5 +1,5 @@
 import { CustomerAttributes } from "@app/common";
-import { CustomerEngine, CustomerNotFoundException } from "@app/engine";
+import { CustomerEngine, CustomerNotFoundException } from "@app/core";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

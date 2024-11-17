@@ -2,7 +2,7 @@ import {
   PurchaseOrderItemUpdateAttributes,
   PurchaseOrderItemAttributes,
 } from "@app/common";
-import { PurchaseOrderItemEngine } from "@app/engine";
+import { PurchaseOrderItemEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

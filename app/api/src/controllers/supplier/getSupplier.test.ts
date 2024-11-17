@@ -1,5 +1,5 @@
 import { SupplierAttributes } from "@app/common";
-import { SupplierEngine, SupplierNotFoundException } from "@app/engine";
+import { SupplierEngine, SupplierNotFoundException } from "@app/core";
 import { apiTest } from "~test/utils";
 import { expectRejection } from "~test/utils/expectRejection";
 

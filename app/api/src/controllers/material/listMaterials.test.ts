@@ -1,4 +1,4 @@
-import { MaterialEngine } from "@app/engine";
+import { MaterialEngine } from "@app/core";
 import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";
 import { apiTest, injectStrayValues } from "~test/utils";

@@ -1,5 +1,5 @@
 import { SupplierUpdateAttributes, SupplierAttributes } from "@app/common";
-import { SupplierEngine } from "@app/engine";
+import { SupplierEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

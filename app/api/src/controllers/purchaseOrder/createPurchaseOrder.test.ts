@@ -2,7 +2,7 @@ import {
   PurchaseOrderCreationAttributes,
   PurchaseOrderAttributes,
 } from "@app/common";
-import { PurchaseOrderEngine } from "@app/engine";
+import { PurchaseOrderEngine } from "@app/core";
 import {
   apiTest,
   checkStrayValues,

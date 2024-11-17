@@ -1,5 +1,5 @@
 import { listPurchaseOrdersContract } from "@app/common";
-import { Supplier } from "@app/engine";
+import { Supplier } from "@app/core";
 import { contractController } from "@hyulian/express-api-contract";
 import { extractQueryParameters } from "~/utils/extractQueryParemeters";
 import { generateStringLikeQuery } from "~/utils/generateStringLikeQuery";

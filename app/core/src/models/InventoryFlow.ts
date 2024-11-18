@@ -16,7 +16,10 @@ import { SalesOrderItem } from "~/models/SalesOrderItem";
 export class InventoryFlow extends BaseModel<
   InventoryFlowAttributes,
   SequelizeCreationPreset<
-    InventoryFlowCreationAttributes & { purchaseOrderItemId?: string }
+    InventoryFlowCreationAttributes & {
+      purchaseOrderItemId?: string;
+      salesOrderItemId?: string;
+    }
   >
 > {
   @Column

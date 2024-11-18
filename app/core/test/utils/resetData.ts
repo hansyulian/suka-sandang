@@ -8,20 +8,24 @@ import {
   Material,
   PurchaseOrder,
   PurchaseOrderItem,
+  SalesOrder,
+  SalesOrderItem,
   Supplier,
   User,
 } from "~/models";
 
 const models: ModelCtor[] = [
+  InventoryFlow,
+  PurchaseOrderItem,
+  PurchaseOrder,
+  SalesOrderItem,
+  SalesOrder,
+  Inventory,
   Enum,
   Material,
   Customer,
-  PurchaseOrder,
-  PurchaseOrderItem,
   Supplier,
   User,
-  Inventory,
-  InventoryFlow,
 ];
 const config: TruncateOptions = {
   force: true,

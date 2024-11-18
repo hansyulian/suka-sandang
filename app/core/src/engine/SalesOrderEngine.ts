@@ -1,8 +1,8 @@
 import type {
-  PurchaseOrderAttributes,
-  PurchaseOrderCreationAttributes,
-  PurchaseOrderItemSyncAttributes,
-  PurchaseOrderUpdateAttributes,
+  SalesOrderAttributes,
+  SalesOrderCreationAttributes,
+  SalesOrderItemSyncAttributes,
+  SalesOrderUpdateAttributes,
 } from "@app/common";
 import {
   compareArray,
@@ -12,39 +12,41 @@ import {
   sum,
 } from "@hyulian/common";
 import { Op, type WhereOptions } from "sequelize";
-import { MaterialNotFoundException } from "~/exceptions";
+import {
+  MaterialNotFoundException,
+  SalesOrderDuplicationException,
+  SalesOrderInvalidStatusException,
+  SalesOrderNotFoundException,
+} from "~/exceptions";
 import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
-import { PurchaseOrderDuplicationException } from "~/exceptions/PurchaseOrderDuplicationException";
-import { PurchaseOrderInvalidStatusException } from "~/exceptions/PurchaseOrderInvalidStatusException";
-import { PurchaseOrderNotFoundException } from "~/exceptions/PurchaseOrderNotFoundException";
 import { EngineBase } from "~/engine/EngineBase";
 import {
   Inventory,
   InventoryFlow,
   Material,
-  PurchaseOrder,
-  PurchaseOrderItem,
-  Supplier,
+  SalesOrder,
+  SalesOrderItem,
+  Customer,
 } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
 import { uuid } from "~/utils";
 import { isUuid } from "~/utils/isUuid";
 
-export class PurchaseOrderEngine extends EngineBase {
+export class SalesOrderEngine extends EngineBase {
   @WithTransaction
   async list(
-    query: WhereOptions<PurchaseOrderAttributes>,
+    query: WhereOptions<SalesOrderAttributes>,
     options: SequelizePaginationOptions
   ) {
-    const result = await PurchaseOrder.findAndCountAll({
+    const result = await SalesOrder.findAndCountAll({
       where: {
         ...query,
       },
       ...options,
       include: [
         {
-          model: Supplier,
+          model: Customer,
         },
       ],
     });
@@ -56,71 +58,71 @@ export class PurchaseOrderEngine extends EngineBase {
 
   @WithTransaction
   async findById(id: string) {
-    const record = await PurchaseOrder.findByPk(id, {
+    const record = await SalesOrder.findByPk(id, {
       paranoid: false,
       include: [
         {
-          model: Supplier,
+          model: Customer,
         },
         {
-          model: PurchaseOrderItem,
+          model: SalesOrderItem,
         },
       ],
     });
     if (!record) {
-      throw new PurchaseOrderNotFoundException({ id });
+      throw new SalesOrderNotFoundException({ id });
     }
     return record;
   }
 
   @WithTransaction
   async findByIdOrCode(idOrCode: string) {
-    const where: WhereOptions<PurchaseOrderAttributes> = isUuid(idOrCode)
+    const where: WhereOptions<SalesOrderAttributes> = isUuid(idOrCode)
       ? { id: idOrCode }
       : { code: idOrCode };
-    const result = await PurchaseOrder.findOne({
+    const result = await SalesOrder.findOne({
       where,
       paranoid: false,
       include: [
         {
-          model: Supplier,
+          model: Customer,
         },
         {
-          model: PurchaseOrderItem,
+          model: SalesOrderItem,
         },
       ],
     });
     if (!result) {
-      throw new PurchaseOrderNotFoundException({ idOrCode });
+      throw new SalesOrderNotFoundException({ idOrCode });
     }
     return result;
   }
 
   @WithTransaction
   async create(
-    data: PurchaseOrderCreationAttributes & {
-      items?: PurchaseOrderItemSyncAttributes[];
+    data: SalesOrderCreationAttributes & {
+      items?: SalesOrderItemSyncAttributes[];
     }
   ) {
-    const { code, date, supplierId, remarks, status, items } = data;
-    const recordByCode = await PurchaseOrder.findOne({
+    const { code, date, customerId, remarks, status, items } = data;
+    const recordByCode = await SalesOrder.findOne({
       where: { code },
       paranoid: true,
     });
     if (recordByCode) {
-      throw new PurchaseOrderDuplicationException({ code });
+      throw new SalesOrderDuplicationException({ code });
     }
-    const record = await PurchaseOrder.create({
+    const record = await SalesOrder.create({
       code,
       date,
-      supplierId,
+      customerId,
       status,
       remarks,
     });
     if (items) {
       await this.sync(record.id, items);
     }
-    if (status === "completed") {
+    if (status && ["processing", "completed"].includes(status)) {
       await this.createInventory(record.id);
     }
     return this.findById(record.id);
@@ -129,8 +131,8 @@ export class PurchaseOrderEngine extends EngineBase {
   @WithTransaction
   async update(
     id: string,
-    data: PurchaseOrderUpdateAttributes & {
-      items?: PurchaseOrderItemSyncAttributes[];
+    data: SalesOrderUpdateAttributes & {
+      items?: SalesOrderItemSyncAttributes[];
     }
   ) {
     const { date, remarks, status, items } = data;
@@ -146,13 +148,13 @@ export class PurchaseOrderEngine extends EngineBase {
           status,
           remarks,
         });
-        if (status === "completed") {
+        if (status && ["completed", "processing"].includes(status)) {
           await this.createInventory(id);
         }
         break;
       case "processing":
         if (status === "draft") {
-          throw new PurchaseOrderInvalidStatusException(
+          throw new SalesOrderInvalidStatusException(
             "processing",
             record.status
           );
@@ -161,15 +163,12 @@ export class PurchaseOrderEngine extends EngineBase {
           status,
           remarks,
         });
-        if (status === "completed") {
-          await this.createInventory(id);
-        }
         break;
       case "deleted":
       case "cancelled":
       case "completed":
         if (status && status !== record.status) {
-          throw new PurchaseOrderInvalidStatusException(status, record.status);
+          throw new SalesOrderInvalidStatusException(status, record.status);
         }
         await record.update({
           remarks,
@@ -183,7 +182,7 @@ export class PurchaseOrderEngine extends EngineBase {
   async delete(id: string) {
     const record = await this.findById(id);
     if (record.status !== "draft") {
-      throw new PurchaseOrderInvalidStatusException("draft", record.status);
+      throw new SalesOrderInvalidStatusException("draft", record.status);
     }
     await record.destroy();
   }
@@ -192,7 +191,7 @@ export class PurchaseOrderEngine extends EngineBase {
   async recalculateTotal(id: string) {
     const record = await this.findById(id);
     const total = sum(
-      record.purchaseOrderItems,
+      record.salesOrderItems,
       (item) => item.quantity * item.unitPrice
     );
     await record.update({
@@ -201,7 +200,7 @@ export class PurchaseOrderEngine extends EngineBase {
   }
 
   @WithTransaction
-  async sync(id: string, records: PurchaseOrderItemSyncAttributes[]) {
+  async sync(id: string, records: SalesOrderItemSyncAttributes[]) {
     const record = await this.findById(id);
     const materialIds = filterDuplicates(
       records.map((record) => record.materialId)
@@ -230,9 +229,9 @@ export class PurchaseOrderEngine extends EngineBase {
         inactiveMaterial.status
       );
     }
-    const items = await PurchaseOrderItem.findAll({
+    const items = await SalesOrderItem.findAll({
       where: {
-        purchaseOrderId: record.id,
+        salesOrderId: record.id,
       },
     });
     const compareResult = compareArray(
@@ -247,8 +246,8 @@ export class PurchaseOrderEngine extends EngineBase {
     for (const rightOnly of compareResult.rightOnly) {
       const { materialId, quantity, remarks, unitPrice } = rightOnly;
       promises.push(
-        PurchaseOrderItem.create({
-          purchaseOrderId: record.id,
+        SalesOrderItem.create({
+          salesOrderId: record.id,
           materialId,
           quantity,
           remarks,
@@ -274,12 +273,12 @@ export class PurchaseOrderEngine extends EngineBase {
   @WithTransaction
   async createInventory(id: string) {
     const record = await this.findById(id);
-    if (record.status !== "completed") {
-      throw new PurchaseOrderInvalidStatusException("completed", record.status);
+    if (!["completed", "processing"].includes(record.status)) {
+      throw new SalesOrderInvalidStatusException("processing", record.status);
     }
-    const purchaseOrderItems = await PurchaseOrderItem.findAll({
+    const salesOrderItems = await SalesOrderItem.findAll({
       where: {
-        purchaseOrderId: id,
+        salesOrderId: id,
       },
       include: [
         {
@@ -288,34 +287,34 @@ export class PurchaseOrderEngine extends EngineBase {
       ],
     });
     const promises = [];
-    for (const purchaseOrderItem of purchaseOrderItems) {
+    for (const salesOrderItem of salesOrderItems) {
       if (
-        purchaseOrderItem.inventoryFlows &&
-        purchaseOrderItem.inventoryFlows.length === 0
+        salesOrderItem.inventoryFlows &&
+        salesOrderItem.inventoryFlows.length === 0
       ) {
         promises.push(
           createInventory(
-            purchaseOrderItem.id,
+            salesOrderItem.id,
             record.code,
-            purchaseOrderItem.materialId,
-            purchaseOrderItem.quantity
+            salesOrderItem.materialId,
+            salesOrderItem.quantity
           )
         );
       }
     }
 
     async function createInventory(
-      purchaseOrderItemId: string,
-      purchaseOrderCode: string,
+      salesOrderItemId: string,
+      salesOrderCode: string,
       materialId: string,
       quantity: number
     ) {
       const id = uuid();
       const randomNumber = generateRandomNumber(
         0,
-        purchaseOrderItems.length * 100
+        salesOrderItems.length * 100
       );
-      const code = `inv-${purchaseOrderCode}-${randomNumber}`;
+      const code = `inv-${salesOrderCode}-${randomNumber}`;
       await Inventory.create({
         id,
         code,
@@ -324,10 +323,10 @@ export class PurchaseOrderEngine extends EngineBase {
         total: quantity,
       }),
         await InventoryFlow.create({
-          activity: "procurement",
+          activity: "sales",
           inventoryId: id,
-          quantity,
-          purchaseOrderItemId,
+          quantity: -quantity,
+          salesOrderItemId,
           remarks: "",
         });
     }

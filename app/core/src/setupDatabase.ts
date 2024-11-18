@@ -11,6 +11,8 @@ import {
   PurchaseOrderItem,
   Inventory,
   InventoryFlow,
+  SalesOrder,
+  SalesOrderItem,
 } from "~/models";
 import { PurchaseOrder } from "~/models/PurchaseOrder";
 
@@ -44,15 +46,17 @@ export function setupDatabase(
     storage: dbConfig.storage,
     logging,
     models: [
-      User,
-      Enum,
-      Material,
-      Supplier,
       Customer,
-      PurchaseOrder,
-      PurchaseOrderItem,
+      Enum,
       Inventory,
       InventoryFlow,
+      Material,
+      PurchaseOrder,
+      PurchaseOrderItem,
+      SalesOrder,
+      SalesOrderItem,
+      Supplier,
+      User,
     ],
     ...sequelizeOptions,
   };

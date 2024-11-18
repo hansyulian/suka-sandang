@@ -114,18 +114,24 @@ describe("PurchaseOrderEngine", () => {
 
   describe("create", () => {
     let syncMock: jest.SpyInstance;
+    let createInventoryMock: jest.SpyInstance;
     beforeAll(() => {
       syncMock = jest
         .spyOn(engine.purchaseOrder, "sync")
         .mockImplementation(() => Promise.resolve());
+      createInventoryMock = jest
+        .spyOn(engine.purchaseOrder, "createInventory")
+        .mockImplementation(() => Promise.resolve());
     });
     beforeEach(async () => {
       syncMock.mockClear();
+      createInventoryMock.mockClear();
       await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     afterAll(() => {
       syncMock.mockRestore();
+      createInventoryMock.mockRestore();
     });
     it("should create a new purchase order", async () => {
       const data: PurchaseOrderCreationAttributes = {
@@ -140,6 +146,7 @@ describe("PurchaseOrderEngine", () => {
       expect(result.code).toBe(data.code);
       expect(result.total).toBe(0);
       expect(syncMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryMock).toHaveBeenCalledTimes(0);
     });
     it("should create a new purchase order and call sync if items are defined", async () => {
       const code = "PO-100";
@@ -156,6 +163,24 @@ describe("PurchaseOrderEngine", () => {
       expect(result.total).toBe(0);
       expect(syncMock).toHaveBeenCalledTimes(1);
       expect(syncMock).toHaveBeenCalledWith(result.id, []);
+      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+    });
+
+    it("should create a new purchase order and call createInventory if status is completed and above", async () => {
+      const code = "PO-100";
+      const result = await engine.purchaseOrder.create({
+        code,
+        date: new Date(),
+        supplierId: idGenerator.supplier(0),
+        remarks: "Test Purchase Order",
+        status: "completed",
+        items: [],
+      });
+      expect(result).toBeDefined();
+      expect(result.code).toBe(code);
+      expect(result.total).toBe(0);
+      expect(createInventoryMock).toHaveBeenCalledTimes(1);
+      expect(createInventoryMock).toHaveBeenCalledWith(result.id);
     });
 
     it("should throw PurchaseOrderDuplicationException for duplicate code", async () => {
@@ -174,19 +199,25 @@ describe("PurchaseOrderEngine", () => {
 
   describe("update", () => {
     let syncMock: jest.SpyInstance;
+    let createInventoryMock: jest.SpyInstance;
     beforeAll(() => {
       syncMock = jest
         .spyOn(engine.purchaseOrder, "sync")
+        .mockImplementation(() => Promise.resolve());
+      createInventoryMock = jest
+        .spyOn(engine.purchaseOrder, "createInventory")
         .mockImplementation(() => Promise.resolve());
     });
 
     beforeEach(async () => {
       syncMock.mockClear();
+      createInventoryMock.mockClear();
       await resetData([PurchaseOrderItem, PurchaseOrder]);
       await purchaseOrderFixtures();
     });
     afterAll(() => {
       syncMock.mockRestore();
+      createInventoryMock.mockRestore();
     });
     it("should update an existing purchase order", async () => {
       const id = idGenerator.purchaseOrder(0);
@@ -205,6 +236,7 @@ describe("PurchaseOrderEngine", () => {
       expect(result.supplierId).toStrictEqual(idGenerator.supplier(0));
       expect(result.total).toStrictEqual(0);
       expect(syncMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryMock).toHaveBeenCalledTimes(0);
     });
     it("should update an existing purchase order and call sync if items are defined", async () => {
       const id = idGenerator.purchaseOrder(0);
@@ -225,6 +257,29 @@ describe("PurchaseOrderEngine", () => {
       expect(result.total).toStrictEqual(0);
       expect(syncMock).toHaveBeenCalledTimes(1);
       expect(syncMock).toHaveBeenCalledWith(id, []);
+      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+    });
+    it("should update an existing purchase order and call createInventory if become completed", async () => {
+      const id = idGenerator.purchaseOrder(0);
+      const data = {
+        date: new Date(),
+        remarks: "Updated remarks",
+        status: "completed",
+        code: "updated code",
+        total: 1234,
+        supplierId: idGenerator.supplier(50),
+        items: [],
+      }; // add extra to check if other properties get updated or not
+      const result = await engine.purchaseOrder.update(id, data as any);
+      expect(result).toBeDefined();
+      expect(result.remarks).toBe(data.remarks);
+      expect(result.code).toStrictEqual("PO-0");
+      expect(result.supplierId).toStrictEqual(idGenerator.supplier(0));
+      expect(result.total).toStrictEqual(0);
+      expect(syncMock).toHaveBeenCalledTimes(1);
+      expect(syncMock).toHaveBeenCalledWith(id, []);
+      expect(createInventoryMock).toHaveBeenCalledTimes(1);
+      expect(createInventoryMock).toHaveBeenCalledWith(id);
     });
 
     it("should only able to update remarks and status to completed on processing purchase order", async () => {

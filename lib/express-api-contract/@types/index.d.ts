@@ -18,6 +18,6 @@ declare namespace Atlas {
 
 declare namespace Express {
   export interface Request {
-    _atlasContext: Atlas.RequestContext<any, any, any>;
+    _atlasContext: RequestContext<any, any, any>;
   }
 }

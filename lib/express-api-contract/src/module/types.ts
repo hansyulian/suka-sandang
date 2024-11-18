@@ -12,6 +12,7 @@ import {
 import { HttpRequestMethods } from "@hyulian/common";
 
 import { CustomErrorType } from "~/module/expressErrorHandler";
+import { RequestContext } from "~/module/requestContextBuilder";
 
 export type ExpressFn = (
   req: Request,
@@ -51,9 +52,7 @@ export type AtlasMiddlewareWrapperFn<
   TParams extends {} = any,
   TQuery extends {} | undefined = any,
   TBody extends {} | undefined = any
-> = (
-  context: Atlas.RequestContext<TParams, TQuery, TBody>
-) => Promise<void> | void;
+> = (context: RequestContext<TParams, TQuery, TBody>) => Promise<void> | void;
 export type AtlasParameterizedMiddlewareWrapperFn<T extends any[]> = (
   ...args: T
 ) => AtlasMiddlewareWrapperFn;
@@ -84,7 +83,7 @@ export type ApiContractResponseLite<
 export type AtlasRouteContractController<
   TApiContractSchema extends ApiContractSchema
 > = (
-  request: Atlas.RequestContext<
+  request: RequestContext<
     ApiContractParams<TApiContractSchema>,
     ApiContractQuery<TApiContractSchema>,
     ApiContractBody<TApiContractSchema>

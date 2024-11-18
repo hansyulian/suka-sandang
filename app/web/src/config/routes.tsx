@@ -2,7 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { lazy, LazyExoticComponent, ReactNode } from "react";
-import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
+import { customerRoutes } from "~/config/routes/customerRoutes";
+import { inventoryRoutes } from "~/config/routes/inventoryRoutes";
+import { materialRoutes } from "~/config/routes/materialRoutes";
+import { purchaseOrderRoutes } from "~/config/routes/purchaseOrderRoutes";
+import { sessionRoutes } from "~/config/routes/sessionRoutes";
+import { supplierRoutes } from "~/config/routes/supplierRoutes";
 
 export type CustomRouteWithValidateSearch = {
   path: string;
@@ -51,106 +56,12 @@ export const routes = lockRoutes({
     path: "/",
     element: lazy(() => import("~/pages/Index/LandingPage")),
   },
-  login: {
-    path: "/login",
-    element: lazy(() => import("~/pages/Session/LoginPage")),
-    validateQuery: (query) => {
-      return {
-        redirect: query.redirect as string,
-      };
-    },
-  },
-  materialList: {
-    path: "/material",
-    element: lazy(() => import("~/pages/Material/MaterialListPage")),
-    validateQuery: (query) => {
-      return {
-        search: query.search as string,
-        ...extractPaginationQuery(query),
-      };
-    },
-  },
-  materialAdd: {
-    path: "/material/add",
-    element: lazy(() => import("~/pages/Material/MaterialPage")),
-  },
-  materialEdit: {
-    path: "/material/:idOrCode",
-    element: lazy(() => import("~/pages/Material/MaterialPage")),
-  },
-  supplierList: {
-    path: "/supplier",
-    element: lazy(() => import("~/pages/Supplier/SupplierListPage")),
-    validateQuery: (query) => {
-      return {
-        search: query.search as string,
-        ...extractPaginationQuery(query),
-      };
-    },
-  },
-  supplierAdd: {
-    path: "/supplier/add",
-    element: lazy(() => import("~/pages/Supplier/SupplierPage")),
-  },
-  supplierEdit: {
-    path: "/supplier/:id",
-    element: lazy(() => import("~/pages/Supplier/SupplierPage")),
-  },
-  customerList: {
-    path: "/customer",
-    element: lazy(() => import("~/pages/Customer/CustomerListPage")),
-    validateQuery: (query) => {
-      return {
-        search: query.search as string,
-        ...extractPaginationQuery(query),
-      };
-    },
-  },
-  customerAdd: {
-    path: "/customer/add",
-    element: lazy(() => import("~/pages/Customer/CustomerPage")),
-  },
-  customerEdit: {
-    path: "/customer/:id",
-    element: lazy(() => import("~/pages/Customer/CustomerPage")),
-  },
-  purchaseOrderList: {
-    path: "/purchase-order",
-    element: lazy(() => import("~/pages/PurchaseOrder/PurchaseOrderListPage")),
-    validateQuery: (query) => {
-      return {
-        search: query.search as string,
-        ...extractPaginationQuery(query),
-      };
-    },
-  },
-  purchaseOrderAdd: {
-    path: "/purchase-order/add",
-    element: lazy(() => import("~/pages/PurchaseOrder/PurchaseOrderPage")),
-  },
-  purchaseOrderEdit: {
-    path: "/purchase-order/:idOrCode",
-    element: lazy(() => import("~/pages/PurchaseOrder/PurchaseOrderPage")),
-  },
-
-  inventoryList: {
-    path: "/inventory",
-    element: lazy(() => import("~/pages/Inventory/InventoryListPage")),
-    validateQuery: (query) => {
-      return {
-        search: query.search as string,
-        ...extractPaginationQuery(query),
-      };
-    },
-  },
-  inventoryAdd: {
-    path: "/inventory/add",
-    element: lazy(() => import("~/pages/Inventory/InventoryPage")),
-  },
-  inventoryEdit: {
-    path: "/inventory/:idOrCode",
-    element: lazy(() => import("~/pages/Inventory/InventoryPage")),
-  },
+  ...sessionRoutes,
+  ...materialRoutes,
+  ...supplierRoutes,
+  ...customerRoutes,
+  ...purchaseOrderRoutes,
+  ...inventoryRoutes,
 } as const);
 export type Routes = typeof routes;
 export type RouteNames = keyof typeof routes;

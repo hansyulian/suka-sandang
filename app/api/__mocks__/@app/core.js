@@ -4,8 +4,6 @@ const actual = jest.requireActual("@app/core");
 module.exports = {
   ...actual,
   JwtService: deepMockFunctions(actual.JwtService),
-  UserEngine: mockClass(actual.UserEngine),
-  MaterialEngine: mockClass(actual.MaterialEngine),
 };
 
 function mockClass(cls) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { lazy, LazyExoticComponent, ReactNode } from "react";
@@ -29,15 +30,20 @@ function lockRoutes<
   return routes;
 }
 type ExtractRouteParams<T extends string> =
-  // If T contains a segment with a parameter (e.g., ':id') and more segments after it
+  // If T contains a segment with a parameter and more segments after it
   T extends `${infer _Start}:${infer Param}/${infer Rest}`
-    ? // Extract the parameter from the segment and recursively extract params from the rest
-      { [K in Param | keyof ExtractRouteParams<Rest>]: string }
-    : // If T contains only a single segment with a parameter (e.g., ':id')
+    ? // Handle optional marker '?'
+      Param extends `${infer Key}?`
+      ? { [K in Key]?: string } & ExtractRouteParams<`/${Rest}`>
+      : { [K in Param]: string } & ExtractRouteParams<`/${Rest}`>
+    : // If T contains only a single segment with a parameter
     T extends `${infer _Start}:${infer Param}`
-    ? { [K in Param]: string }
+    ? // Handle optional marker '?'
+      Param extends `${infer Key}?`
+      ? { [K in Key]?: string }
+      : { [K in Param]: string }
     : // If T contains no parameters
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      // eslint-disable-next-line @typescript-eslint/no-empty-interface
       {};
 
 export const routes = lockRoutes({

@@ -4,6 +4,7 @@ import {
   InventoryStatus,
   MaterialStatus,
   PurchaseOrderStatus,
+  SalesOrderStatus,
   SupplierStatus,
 } from "@app/common";
 
@@ -28,6 +29,14 @@ export const supplierStatusLabels: Record<SupplierStatus, string> = {
 };
 
 export const purchaseOrderStatusLabels: Record<PurchaseOrderStatus, string> = {
+  draft: "Draft",
+  deleted: "Deleted",
+  cancelled: "Cancelled",
+  completed: "Completed",
+  processing: "Processing",
+};
+
+export const salesOrderStatusLabels: Record<SalesOrderStatus, string> = {
   draft: "Draft",
   deleted: "Deleted",
   cancelled: "Cancelled",

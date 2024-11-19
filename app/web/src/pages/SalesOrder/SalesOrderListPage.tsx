@@ -122,8 +122,8 @@ export default function Page() {
             <Table.Td>
               <Group gap="xs">
                 <AppLinkIcon
-                  target="customerEdit"
-                  params={{ id: record.customer.id }}
+                  target="customer"
+                  params={{ param: record.customer.id }}
                   name="openLink"
                   variant="light"
                 />

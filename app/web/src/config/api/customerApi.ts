@@ -4,6 +4,7 @@ import {
   createCustomerContract,
   updateCustomerContract,
   deleteCustomerContract,
+  getCustomerOptionsContract,
 } from "@app/common";
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
@@ -41,4 +42,9 @@ export const deleteCustomerApi = apiClient.registerMutationContract(
     message: "Deleting customer",
     successMessage: "Customer deleted!",
   })
+);
+
+export const getCustomerOptionsApi = apiClient.registerQueryContract(
+  getCustomerOptionsContract,
+  queryKeyFn.option(queryKeys.customer)
 );

@@ -1,0 +1,136 @@
+import { ContractResponseModel } from "@hyulian/react-api-contract";
+import { Table, Text } from "@mantine/core";
+import { useForm, UseFormReturnType } from "@mantine/form";
+import { memo, useCallback, useEffect } from "react";
+import { IconButton } from "~/components/IconButton";
+import { NumberInputE } from "~/components/NumberInputE";
+import { SelectColor } from "~/components/SelectColor";
+import { TextInputE } from "~/components/TextInputE";
+import {
+  getMaterialApi,
+  getMaterialOptionsApi,
+} from "~/config/api/materialApi";
+import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
+import { SalesOrderItemForm } from "~/types";
+import { formatCurrency } from "~/utils/formatCurrency";
+import { formValidations } from "~/utils/formValidations";
+
+export type SalesOrderItemTableRowProps = {
+  initialData?: SalesOrderItemForm;
+  disabled?: boolean;
+  onDelete: (index: number) => void;
+  onFormChange: (
+    index: number,
+    form: UseFormReturnType<SalesOrderItemForm>
+  ) => void;
+  index: number;
+};
+
+export const SalesOrderItemTableRow = memo(function (
+  props: SalesOrderItemTableRowProps
+) {
+  const { initialData, disabled, onFormChange, index, onDelete } = props;
+  const materialSelectOptions = useMaterialSelectOptions("name-code");
+
+  const form = useForm<SalesOrderItemForm>({
+    initialValues: {
+      materialId: "",
+      quantity: 0,
+      unitPrice: 0,
+      remarks: "",
+      ...initialData,
+    },
+    validateInputOnBlur: true,
+    validate: {
+      materialId: formValidations({ required: true }),
+      quantity: formValidations({ required: true }),
+      unitPrice: formValidations({ required: true }),
+    },
+  });
+  const { setValues, values, getInputProps } = form;
+
+  const { data: selectedMaterial } = getMaterialApi.useRequest(
+    { idOrCode: values.materialId },
+    {},
+    {
+      enabled: !!values.materialId,
+    }
+  );
+  const optionColorExtractor = useCallback(
+    (
+      record: SelectionOption<
+        string,
+        ContractResponseModel<typeof getMaterialOptionsApi>
+      >
+    ) => record.data?.color,
+    []
+  );
+
+  useEffect(() => {
+    if (!selectedMaterial) {
+      return;
+    }
+    if (initialData?.materialId === selectedMaterial?.id) {
+      return;
+    }
+    setValues({
+      unitPrice: selectedMaterial.retailPrice || 0,
+    });
+  }, [initialData?.materialId, selectedMaterial, setValues]);
+
+  useEffect(() => {
+    if (initialData) {
+      setValues(initialData);
+    }
+  }, [initialData, setValues]);
+
+  useEffect(() => {
+    onFormChange(index, form);
+  }, [index, onFormChange, form]);
+
+  return (
+    <Table.Tr>
+      <Table.Td valign="top">
+        <SelectColor
+          flex={1}
+          color={selectedMaterial?.color}
+          disabled={disabled}
+          data={materialSelectOptions}
+          searchable
+          plainDisabled
+          optionColorExtractor={optionColorExtractor}
+          {...getInputProps("materialId")}
+        />
+      </Table.Td>
+      <Table.Td valign="top">
+        <TextInputE
+          plainDisabled
+          disabled={disabled}
+          {...form.getInputProps("remarks")}
+        />
+      </Table.Td>
+      <Table.Td valign="middle" ta="right">
+        <NumberInputE
+          rightAlign
+          plainDisabled
+          disabled={disabled}
+          {...form.getInputProps("quantity")}
+        />
+      </Table.Td>
+      <Table.Td valign="middle" ta="right">
+        <NumberInputE
+          rightAlign
+          disabled={disabled}
+          plainDisabled
+          {...form.getInputProps("unitPrice")}
+        />
+      </Table.Td>
+      <Table.Td valign="middle" ta="right">
+        <Text>{formatCurrency(values.quantity * values.unitPrice)}</Text>
+      </Table.Td>
+      <Table.Td ta="center">
+        <IconButton name="delete" color="red" onClick={() => onDelete(index)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+});

@@ -3,6 +3,7 @@ import {
   InventoryFlowActivity,
   MaterialStatus,
   PurchaseOrderStatus,
+  SalesOrderStatus,
   SupplierStatus,
 } from "@app/common";
 
@@ -60,4 +61,19 @@ export type InventoryFlowForm = {
   quantity: number;
   remarks?: string;
   activity: InventoryFlowActivity;
+};
+
+export type SalesOrderForm = {
+  date: Date;
+  customerId: string;
+  remarks?: string;
+  code: string;
+  status: SalesOrderStatus;
+};
+
+export type SalesOrderItemForm = {
+  materialId: string;
+  quantity: number;
+  unitPrice: number;
+  remarks?: string;
 };

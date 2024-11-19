@@ -85,6 +85,12 @@ export function MasterLayout(props: MasterLayoutProps) {
           defaultOpened
         >
           <NavMenu
+            leftSection={<NavIcon name="salesOrder" />}
+            target="salesOrderList"
+            params={{}}
+            label="Sales Order"
+          />
+          <NavMenu
             leftSection={<NavIcon name="purchaseOrder" />}
             target="purchaseOrderList"
             params={{}}

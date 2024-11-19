@@ -6,6 +6,7 @@ import { customerRoutes } from "~/config/routes/customerRoutes";
 import { inventoryRoutes } from "~/config/routes/inventoryRoutes";
 import { materialRoutes } from "~/config/routes/materialRoutes";
 import { purchaseOrderRoutes } from "~/config/routes/purchaseOrderRoutes";
+import { salesOrderRoutes } from "~/config/routes/salesOrderRoutes";
 import { sessionRoutes } from "~/config/routes/sessionRoutes";
 import { supplierRoutes } from "~/config/routes/supplierRoutes";
 
@@ -61,6 +62,7 @@ export const routes = lockRoutes({
   ...supplierRoutes,
   ...customerRoutes,
   ...purchaseOrderRoutes,
+  ...salesOrderRoutes,
   ...inventoryRoutes,
 } as const);
 export type Routes = typeof routes;

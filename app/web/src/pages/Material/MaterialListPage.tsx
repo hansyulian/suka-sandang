@@ -80,7 +80,12 @@ export default function Page() {
           onClear={onClear}
           clearable
         />
-        <LinkButton iconName="add" target="material" params={{ param: "add" }}>
+        <LinkButton
+          iconName="add"
+          target="material"
+          params={{ param: "add" }}
+          query={query}
+        >
           Add
         </LinkButton>
       </PageHeader>
@@ -140,6 +145,7 @@ export default function Page() {
                 <AppLinkIcon
                   target="material"
                   params={{ param: record.code }}
+                  query={query}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton

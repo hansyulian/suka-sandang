@@ -133,6 +133,7 @@ export default function Page() {
                 <AppLinkIcon
                   target="customer"
                   params={{ param: record.id }}
+                  query={query}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton

@@ -11,7 +11,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -61,7 +60,6 @@ export function MaterialListFormModal(props: MaterialListFormModalProps) {
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateMaterialApi.useRequest({ id: data?.id ?? "" });
 
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<MaterialForm>({
@@ -124,10 +122,6 @@ export function MaterialListFormModal(props: MaterialListFormModalProps) {
     }
   }, [autoCode, setValues, values.name]);
 
-  const onCancel = () => {
-    navigate("material", {});
-  };
-
   if (isLoading) {
     return <LoadingState />;
   }
@@ -136,84 +130,89 @@ export function MaterialListFormModal(props: MaterialListFormModalProps) {
   }
 
   return (
-    <Modal opened={isVisible} withCloseButton onClose={onClose} size="lg">
-      <Stack>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
         <Group>
-          <Title>
+          <Title order={3}>
             {isEditMode ? `Material: ${data?.name}` : "New Material"}
           </Title>
           {isDeleted && <Badge color="red">Deleted</Badge>}
         </Group>
-        <Grid mb="lg">
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Name" required {...getInputProps("name")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput
-              label="Code"
-              required
-              {...getInputProps("code")}
-              onChange={(e) => {
-                setAutoCode(false);
-                return getInputProps("code").onChange(e);
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <NumberInputE
-              label="Purchase Price"
-              hideControls
-              rightAlign
-              {...getInputProps("purchasePrice")}
-            />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <NumberInputE
-              label="Retail Price"
-              hideControls
-              rightAlign
-              {...getInputProps("retailPrice")}
-            />
-          </Grid.Col>
-          <Grid.Col>
-            <SegmentedControlInput
-              label="Status"
-              data={materialStatusOptions}
-              color={getStatusColor(values.status)}
-              {...getInputProps("status")}
-            />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <Stack>
-              <TextInput label="Color" {...getInputProps("color")} />
-              <ColorPicker format="hex" fullWidth {...getInputProps("color")} />
-            </Stack>
-          </Grid.Col>
-        </Grid>
-        <Grid>
-          <Grid.Col span={{ md: 6 }}></Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={save}
-              fullWidth
-              leftSection={<Icon name="save" />}
-              loading={isActing}
-            >
-              Save
-            </Button>
-          </Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={onCancel}
-              color="red"
-              fullWidth
-              leftSection={<Icon name="close" />}
-            >
-              Cancel
-            </Button>
-          </Grid.Col>
-        </Grid>
-      </Stack>
+      }
+    >
+      <Grid mb="lg">
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Name" required {...getInputProps("name")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput
+            label="Code"
+            required
+            {...getInputProps("code")}
+            onChange={(e) => {
+              setAutoCode(false);
+              return getInputProps("code").onChange(e);
+            }}
+          />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <NumberInputE
+            label="Purchase Price"
+            hideControls
+            rightAlign
+            {...getInputProps("purchasePrice")}
+          />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <NumberInputE
+            label="Retail Price"
+            hideControls
+            rightAlign
+            {...getInputProps("retailPrice")}
+          />
+        </Grid.Col>
+        <Grid.Col>
+          <SegmentedControlInput
+            label="Status"
+            data={materialStatusOptions}
+            color={getStatusColor(values.status)}
+            {...getInputProps("status")}
+          />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Stack>
+            <TextInput label="Color" {...getInputProps("color")} />
+            <ColorPicker format="hex" fullWidth {...getInputProps("color")} />
+          </Stack>
+        </Grid.Col>
+      </Grid>
+      <Grid>
+        <Grid.Col span={{ md: 6 }}></Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={save}
+            fullWidth
+            leftSection={<Icon name="save" />}
+            loading={isActing}
+          >
+            Save
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={onClose}
+            color="red"
+            fullWidth
+            leftSection={<Icon name="close" />}
+          >
+            Cancel
+          </Button>
+        </Grid.Col>
+      </Grid>
     </Modal>
   );
 }

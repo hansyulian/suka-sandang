@@ -4,7 +4,6 @@ import {
   Grid,
   Group,
   Modal,
-  Stack,
   Textarea,
   TextInput,
   Title,
@@ -22,7 +21,6 @@ import {
 } from "~/config/api/customerApi";
 import { useCustomerStatusOptions } from "~/hooks/useCustomerStatusOptions";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
-import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { CustomerForm } from "~/types";
@@ -57,7 +55,6 @@ export function CustomerListFormModal(props: CustomerListFormModalProps) {
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateCustomerApi.useRequest({ id: data?.id ?? "" });
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<CustomerForm>({
@@ -107,9 +104,6 @@ export function CustomerListFormModal(props: CustomerListFormModalProps) {
       });
     }
   }, [data, setValues]);
-  const onCancel = () => {
-    navigate("customer", {});
-  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -118,66 +112,71 @@ export function CustomerListFormModal(props: CustomerListFormModalProps) {
     return <ErrorState error={error} />;
   }
   return (
-    <Modal opened={isVisible} withCloseButton onClose={onClose} size="lg">
-      <Stack>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
         <Group>
-          <Title>
+          <Title order={3}>
             {isEditMode ? `Customer: ${data?.name}` : "New Customer"}
           </Title>
           {isDeleted && <Badge color="red">Deleted</Badge>}
         </Group>
-        <Grid mb="lg">
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Name" required {...getInputProps("name")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Identity" {...getInputProps("identity")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Email" {...getInputProps("email")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Phone" {...getInputProps("phone")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <Textarea rows={5} label="Address" {...getInputProps("address")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
-          </Grid.Col>
-          <Grid.Col>
-            <SegmentedControlInput
-              label="Status"
-              data={customerStatusOptions}
-              color={getStatusColor(values.status)}
-              {...getInputProps("status")}
-            />
-          </Grid.Col>
-        </Grid>
-        <Grid>
-          <Grid.Col span={{ md: 6 }}></Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={save}
-              fullWidth
-              leftSection={<Icon name="save" />}
-              loading={isActing}
-            >
-              Save
-            </Button>
-          </Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={onCancel}
-              color="red"
-              fullWidth
-              leftSection={<Icon name="close" />}
-            >
-              Cancel
-            </Button>
-          </Grid.Col>
-        </Grid>
-      </Stack>
+      }
+    >
+      <Grid mb="lg">
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Name" required {...getInputProps("name")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Identity" {...getInputProps("identity")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Email" {...getInputProps("email")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Phone" {...getInputProps("phone")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Textarea rows={5} label="Address" {...getInputProps("address")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
+        </Grid.Col>
+        <Grid.Col>
+          <SegmentedControlInput
+            label="Status"
+            data={customerStatusOptions}
+            color={getStatusColor(values.status)}
+            {...getInputProps("status")}
+          />
+        </Grid.Col>
+      </Grid>
+      <Grid>
+        <Grid.Col span={{ md: 6 }}></Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={save}
+            fullWidth
+            leftSection={<Icon name="save" />}
+            loading={isActing}
+          >
+            Save
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={onClose}
+            color="red"
+            fullWidth
+            leftSection={<Icon name="close" />}
+          >
+            Cancel
+          </Button>
+        </Grid.Col>
+      </Grid>
     </Modal>
   );
 }

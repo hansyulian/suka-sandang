@@ -4,14 +4,12 @@ import {
   Grid,
   Group,
   Modal,
-  Stack,
   Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -57,7 +55,6 @@ export function SupplierListFormModal(props: SupplierListFormModalProps) {
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateSupplierApi.useRequest({ id: data?.id ?? "" });
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<SupplierForm>({
@@ -108,9 +105,6 @@ export function SupplierListFormModal(props: SupplierListFormModalProps) {
       });
     }
   }, [data, setValues]);
-  const onCancel = () => {
-    navigate("supplierList", {});
-  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -119,66 +113,71 @@ export function SupplierListFormModal(props: SupplierListFormModalProps) {
     return <ErrorState error={error} />;
   }
   return (
-    <Modal opened={isVisible} withCloseButton onClose={onClose} size="lg">
-      <Stack>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
         <Group>
           <Title>
             {isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}
           </Title>
           {isDeleted && <Badge color="red">Deleted</Badge>}
         </Group>
-        <Grid mb="lg">
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Name" required {...getInputProps("name")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Identity" {...getInputProps("identity")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Email" {...getInputProps("email")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <TextInput label="Phone" {...getInputProps("phone")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <Textarea rows={5} label="Address" {...getInputProps("address")} />
-          </Grid.Col>
-          <Grid.Col span={defaultSpan}>
-            <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
-          </Grid.Col>
-          <Grid.Col>
-            <SegmentedControlInput
-              label="Status"
-              data={supplierStatusOptions}
-              color={getStatusColor(values.status)}
-              {...getInputProps("status")}
-            />
-          </Grid.Col>
-        </Grid>
-        <Grid>
-          <Grid.Col span={{ md: 6 }}></Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={save}
-              fullWidth
-              leftSection={<Icon name="save" />}
-              loading={isActing}
-            >
-              Save
-            </Button>
-          </Grid.Col>
-          <Grid.Col span={{ md: 3 }}>
-            <Button
-              onClick={onCancel}
-              color="red"
-              fullWidth
-              leftSection={<Icon name="close" />}
-            >
-              Cancel
-            </Button>
-          </Grid.Col>
-        </Grid>
-      </Stack>
+      }
+    >
+      <Grid mb="lg">
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Name" required {...getInputProps("name")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Identity" {...getInputProps("identity")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Email" {...getInputProps("email")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <TextInput label="Phone" {...getInputProps("phone")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Textarea rows={5} label="Address" {...getInputProps("address")} />
+        </Grid.Col>
+        <Grid.Col span={defaultSpan}>
+          <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
+        </Grid.Col>
+        <Grid.Col>
+          <SegmentedControlInput
+            label="Status"
+            data={supplierStatusOptions}
+            color={getStatusColor(values.status)}
+            {...getInputProps("status")}
+          />
+        </Grid.Col>
+      </Grid>
+      <Grid>
+        <Grid.Col span={{ md: 6 }}></Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={save}
+            fullWidth
+            leftSection={<Icon name="save" />}
+            loading={isActing}
+          >
+            Save
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={{ md: 3 }}>
+          <Button
+            onClick={onClose}
+            color="red"
+            fullWidth
+            leftSection={<Icon name="close" />}
+          >
+            Cancel
+          </Button>
+        </Grid.Col>
+      </Grid>
     </Modal>
   );
 }

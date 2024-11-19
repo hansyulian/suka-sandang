@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { RequireAuth } from "~/components/RequireAuth";
-import { CustomRoute, routes } from "~/config/routes";
+import { routes } from "~/config/routes";
+import { CustomRoute } from "~/config/routes/baseRoute";
 import { MasterLayout } from "~/layouts";
 import { SessionLayout } from "~/layouts/SessionLayout";
 
@@ -23,15 +24,9 @@ export const router = createBrowserRouter([
         element: <MasterLayout />,
         children: mapRoutes([
           routes.landing,
-          routes.materialList,
-          routes.materialAdd,
-          routes.materialEdit,
-          routes.supplierList,
-          routes.supplierAdd,
-          routes.supplierEdit,
-          routes.customerList,
-          routes.customerAdd,
-          routes.customerEdit,
+          routes.material,
+          routes.supplier,
+          routes.customer,
           routes.purchaseOrderList,
           routes.purchaseOrderAdd,
           routes.purchaseOrderEdit,

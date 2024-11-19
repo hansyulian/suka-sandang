@@ -12,24 +12,30 @@ import { TextBox } from "~/components/TextBox";
 import { deleteCustomerApi, listCustomerApi } from "~/config/api/customerApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
+import { useNavigate } from "~/hooks/useNavigate";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
+import { useParams } from "~/hooks/useParams";
 import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { CustomerListFormModal } from "~/pages/Customer/CustomerListPage/CustomerListFormModal";
 
 export default function Page() {
-  const query = useSearchQuery("customerList");
+  const query = useSearchQuery("customer");
+  const { param } = useParams("customer");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
-  const updateSearchQuery = useUpdateSearchQuery("customerList", {}, query);
+  const updateSearchQuery = useUpdateSearchQuery("customer", {}, query);
   const confirmationDialog = useConfirmationDialog();
   const invalidateQuery = useInvalidateQuery();
+  const navigate = useNavigate();
   const paginationManager = usePaginationManager(query, {
     onChange: updateSearchQuery,
   });
   const sortManager = useSortManager(query, {
     onChange: updateSearchQuery,
   });
+  const isFormModalVisible = !!param;
 
   const { data } = listCustomerApi.useRequest({}, query);
   const updateSearch = () => {
@@ -56,6 +62,9 @@ export default function Page() {
       },
     });
   };
+  const closeFormModal = () => {
+    navigate("customer", {}, query);
+  };
 
   return (
     <Stack>
@@ -69,7 +78,12 @@ export default function Page() {
           onClear={onClear}
           clearable
         />
-        <LinkButton iconName="add" target="customerAdd" params={{}}>
+        <LinkButton
+          iconName="add"
+          target="customer"
+          params={{ param: "add" }}
+          query={query}
+        >
           Add
         </LinkButton>
       </PageHeader>
@@ -117,8 +131,9 @@ export default function Page() {
             <Table.Td>
               <Group justify="center">
                 <AppLinkIcon
-                  target="customerEdit"
-                  params={{ id: record.id }}
+                  target="customer"
+                  params={{ param: record.id }}
+                  query={query}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton
@@ -137,6 +152,10 @@ export default function Page() {
           paginationManager={paginationManager}
         ></PaginationController>
       </Center>
+      <CustomerListFormModal
+        isVisible={isFormModalVisible}
+        onClose={closeFormModal}
+      />
     </Stack>
   );
 }

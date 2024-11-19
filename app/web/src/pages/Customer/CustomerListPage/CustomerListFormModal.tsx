@@ -3,7 +3,7 @@ import {
   Button,
   Grid,
   Group,
-  Stack,
+  Modal,
   Textarea,
   TextInput,
   Title,
@@ -13,26 +13,31 @@ import { useEffect } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
-import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
-import { useNavigate } from "~/hooks/useNavigate";
-import { useParams } from "~/hooks/useParams";
-import { usePersistable } from "~/hooks/usePersistable";
-import { formValidations } from "~/utils/formValidations";
-import { CustomerForm } from "~/types";
-import { getStatusColor } from "~/utils/getStatusColor";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
-import { useCustomerStatusOptions } from "~/hooks/useCustomerStatusOptions";
 import {
   createCustomerApi,
   getCustomerApi,
   updateCustomerApi,
 } from "~/config/api/customerApi";
+import { useCustomerStatusOptions } from "~/hooks/useCustomerStatusOptions";
+import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
+import { useParams } from "~/hooks/useParams";
+import { usePersistable } from "~/hooks/usePersistable";
+import { CustomerForm } from "~/types";
+import { formValidations } from "~/utils/formValidations";
+import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
+export type CustomerListFormModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+};
 
-export default function Page() {
-  const { id } = useParams("customerEdit");
-  const isEditMode = id !== undefined;
+export function CustomerListFormModal(props: CustomerListFormModalProps) {
+  const { isVisible, onClose } = props;
+  const { param } = useParams("customer");
+  const isEditMode = !!param && param !== "add";
+  const id = isEditMode ? param : undefined;
   const customerStatusOptions = useCustomerStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
     createCustomerApi.useRequest();
@@ -41,7 +46,7 @@ export default function Page() {
     error,
     isLoading,
   } = getCustomerApi.useRequest(
-    { id },
+    { id: id ?? "" },
     {},
     {
       enabled: isEditMode,
@@ -50,7 +55,6 @@ export default function Page() {
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateCustomerApi.useRequest({ id: data?.id ?? "" });
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<CustomerForm>({
@@ -71,12 +75,13 @@ export default function Page() {
   const handleCreate = async () => {
     await create(values);
     await invalidateQuery("customer");
-    navigate("customerList", {});
+    onClose();
   };
 
   const handleUpdate = async () => {
     await update(values);
     await invalidateQuery("customer");
+    onClose();
   };
 
   const save = () => {
@@ -99,9 +104,6 @@ export default function Page() {
       });
     }
   }, [data, setValues]);
-  const onCancel = () => {
-    navigate("customerList", {});
-  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -109,13 +111,21 @@ export default function Page() {
   if (error) {
     return <ErrorState error={error} />;
   }
-
   return (
-    <Stack>
-      <Group>
-        <Title>{isEditMode ? `Customer: ${data?.name}` : "New Customer"}</Title>
-        {isDeleted && <Badge color="red">Deleted</Badge>}
-      </Group>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
+        <Group>
+          <Title order={3}>
+            {isEditMode ? `Customer: ${data?.name}` : "New Customer"}
+          </Title>
+          {isDeleted && <Badge color="red">Deleted</Badge>}
+        </Group>
+      }
+    >
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
           <TextInput label="Name" required {...getInputProps("name")} />
@@ -158,7 +168,7 @@ export default function Page() {
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <Button
-            onClick={onCancel}
+            onClick={onClose}
             color="red"
             fullWidth
             leftSection={<Icon name="close" />}
@@ -167,6 +177,6 @@ export default function Page() {
           </Button>
         </Grid.Col>
       </Grid>
-    </Stack>
+    </Modal>
   );
 }

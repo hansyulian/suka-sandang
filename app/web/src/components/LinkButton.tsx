@@ -20,6 +20,6 @@ export function LinkButton<RouteName extends RouteNames>(
       target={target}
       leftSection={iconName ? <Icon name={iconName} /> : null}
       {...rest}
-    ></Button>
+    />
   );
 }

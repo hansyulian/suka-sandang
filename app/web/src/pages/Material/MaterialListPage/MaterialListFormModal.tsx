@@ -4,37 +4,43 @@ import {
   ColorPicker,
   Grid,
   Group,
+  Modal,
   Stack,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
-import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
-import { useNavigate } from "~/hooks/useNavigate";
-import { useParams } from "~/hooks/useParams";
-import { usePersistable } from "~/hooks/usePersistable";
-import { MaterialForm } from "~/types/forms";
-import { formValidations } from "~/utils/formValidations";
-import { calculateCode } from "~/utils/calculateCode";
-import { useMaterialStatusOptions } from "~/hooks/useMaterialStatusOptions";
-import { getStatusColor } from "~/utils/getStatusColor";
+import { NumberInputE } from "~/components/NumberInputE";
 import { SegmentedControlInput } from "~/components/SegmentedControlInput";
 import {
   createMaterialApi,
   getMaterialApi,
   updateMaterialApi,
 } from "~/config/api/materialApi";
-import { NumberInputE } from "~/components/NumberInputE";
+import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
+import { useMaterialStatusOptions } from "~/hooks/useMaterialStatusOptions";
+import { useParams } from "~/hooks/useParams";
+import { usePersistable } from "~/hooks/usePersistable";
+import { MaterialForm } from "~/types";
+import { calculateCode } from "~/utils/calculateCode";
+import { formValidations } from "~/utils/formValidations";
+import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
+export type MaterialListFormModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+};
 
-export default function Page() {
-  const { idOrCode } = useParams("materialEdit");
-  const isEditMode = idOrCode !== undefined;
+export function MaterialListFormModal(props: MaterialListFormModalProps) {
+  const { isVisible, onClose } = props;
+  const { param } = useParams("material");
+  const isEditMode = !!param && param !== "add";
+  const idOrCode = isEditMode ? param : undefined;
   const [autoCode, setAutoCode] = useState(!isEditMode);
   const materialStatusOptions = useMaterialStatusOptions();
   const { mutateAsync: create, isPending: isCreatePending } =
@@ -44,7 +50,7 @@ export default function Page() {
     error,
     isLoading,
   } = getMaterialApi.useRequest(
-    { idOrCode },
+    { idOrCode: idOrCode ?? "" },
     {},
     {
       enabled: isEditMode,
@@ -54,7 +60,6 @@ export default function Page() {
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateMaterialApi.useRequest({ id: data?.id ?? "" });
 
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<MaterialForm>({
@@ -75,12 +80,13 @@ export default function Page() {
   const handleCreate = async () => {
     await create(values);
     await invalidateQuery("material");
-    navigate("materialList", {});
+    onClose();
   };
 
   const handleUpdate = async () => {
     await update(values);
     await invalidateQuery("material");
+    onClose();
   };
 
   const save = () => {
@@ -116,10 +122,6 @@ export default function Page() {
     }
   }, [autoCode, setValues, values.name]);
 
-  const onCancel = () => {
-    navigate("materialList", {});
-  };
-
   if (isLoading) {
     return <LoadingState />;
   }
@@ -128,11 +130,20 @@ export default function Page() {
   }
 
   return (
-    <Stack>
-      <Group>
-        <Title>{isEditMode ? `Material: ${data?.name}` : "New Material"}</Title>
-        {isDeleted && <Badge color="red">Deleted</Badge>}
-      </Group>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
+        <Group>
+          <Title order={3}>
+            {isEditMode ? `Material: ${data?.name}` : "New Material"}
+          </Title>
+          {isDeleted && <Badge color="red">Deleted</Badge>}
+        </Group>
+      }
+    >
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
           <TextInput label="Name" required {...getInputProps("name")} />
@@ -193,7 +204,7 @@ export default function Page() {
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <Button
-            onClick={onCancel}
+            onClick={onClose}
             color="red"
             fullWidth
             leftSection={<Icon name="close" />}
@@ -202,6 +213,6 @@ export default function Page() {
           </Button>
         </Grid.Col>
       </Grid>
-    </Stack>
+    </Modal>
   );
 }

@@ -3,7 +3,7 @@ import {
   Button,
   Grid,
   Group,
-  Stack,
+  Modal,
   Textarea,
   TextInput,
   Title,
@@ -20,20 +20,25 @@ import {
   updateSupplierApi,
 } from "~/config/api/supplierApi";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
-import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { useSupplierStatusOptions } from "~/hooks/useSupplierStatusOptions";
-import { SupplierForm } from "~/types/forms";
+import { SupplierForm } from "~/types";
 import { formValidations } from "~/utils/formValidations";
 import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
+export type SupplierListFormModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+};
 
-export default function Page() {
-  const { id } = useParams("supplierEdit");
+export function SupplierListFormModal(props: SupplierListFormModalProps) {
+  const { isVisible, onClose } = props;
+  const { param } = useParams("supplier");
+  const isEditMode = !!param && param !== "add";
+  const id = isEditMode ? param : undefined;
   const supplierStatusOptions = useSupplierStatusOptions();
-  const isEditMode = id !== undefined;
   const { mutateAsync: create, isPending: isCreatePending } =
     createSupplierApi.useRequest();
   const {
@@ -41,7 +46,7 @@ export default function Page() {
     error,
     isLoading,
   } = getSupplierApi.useRequest(
-    { id },
+    { id: id ?? "" },
     {},
     {
       enabled: isEditMode,
@@ -50,7 +55,6 @@ export default function Page() {
   const data = usePersistable(d);
   const { mutateAsync: update, isPending: isUpdatePending } =
     updateSupplierApi.useRequest({ id: data?.id ?? "" });
-  const navigate = useNavigate();
   const invalidateQuery = useInvalidateQuery();
   const isDeleted = !!data?.deletedAt;
   const { setValues, getInputProps, validate, values } = useForm<SupplierForm>({
@@ -72,12 +76,13 @@ export default function Page() {
   const handleCreate = async () => {
     await create(values);
     await invalidateQuery("supplier");
-    navigate("supplierList", {});
+    onClose();
   };
 
   const handleUpdate = async () => {
     await update(values);
     await invalidateQuery("supplier");
+    onClose();
   };
 
   const save = () => {
@@ -100,9 +105,6 @@ export default function Page() {
       });
     }
   }, [data, setValues]);
-  const onCancel = () => {
-    navigate("supplierList", {});
-  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -110,13 +112,21 @@ export default function Page() {
   if (error) {
     return <ErrorState error={error} />;
   }
-
   return (
-    <Stack>
-      <Group>
-        <Title>{isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}</Title>
-        {isDeleted && <Badge color="red">Deleted</Badge>}
-      </Group>
+    <Modal
+      opened={isVisible}
+      withCloseButton
+      onClose={onClose}
+      size="lg"
+      title={
+        <Group>
+          <Title>
+            {isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}
+          </Title>
+          {isDeleted && <Badge color="red">Deleted</Badge>}
+        </Group>
+      }
+    >
       <Grid mb="lg">
         <Grid.Col span={defaultSpan}>
           <TextInput label="Name" required {...getInputProps("name")} />
@@ -159,7 +169,7 @@ export default function Page() {
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <Button
-            onClick={onCancel}
+            onClick={onClose}
             color="red"
             fullWidth
             leftSection={<Icon name="close" />}
@@ -168,6 +178,6 @@ export default function Page() {
           </Button>
         </Grid.Col>
       </Grid>
-    </Stack>
+    </Modal>
   );
 }

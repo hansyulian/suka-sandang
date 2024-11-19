@@ -3,6 +3,7 @@ import {
   Button,
   Grid,
   Group,
+  Modal,
   Stack,
   Textarea,
   TextInput,
@@ -10,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ErrorState } from "~/components/ErrorState";
 import { Icon } from "~/components/Icon";
 import { LoadingState } from "~/components/LoadingState";
@@ -20,20 +22,25 @@ import {
   updateSupplierApi,
 } from "~/config/api/supplierApi";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
-import { useNavigate } from "~/hooks/useNavigate";
 import { useParams } from "~/hooks/useParams";
 import { usePersistable } from "~/hooks/usePersistable";
 import { useSupplierStatusOptions } from "~/hooks/useSupplierStatusOptions";
-import { SupplierForm } from "~/types/forms";
+import { SupplierForm } from "~/types";
 import { formValidations } from "~/utils/formValidations";
 import { getStatusColor } from "~/utils/getStatusColor";
 
 const defaultSpan = {};
+export type SupplierListFormModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+};
 
-export default function Page() {
-  const { id } = useParams("supplierEdit");
+export function SupplierListFormModal(props: SupplierListFormModalProps) {
+  const { isVisible, onClose } = props;
+  const { param } = useParams("supplier");
+  const isEditMode = !!param && param !== "add";
+  const id = isEditMode ? param : undefined;
   const supplierStatusOptions = useSupplierStatusOptions();
-  const isEditMode = id !== undefined;
   const { mutateAsync: create, isPending: isCreatePending } =
     createSupplierApi.useRequest();
   const {
@@ -41,7 +48,7 @@ export default function Page() {
     error,
     isLoading,
   } = getSupplierApi.useRequest(
-    { id },
+    { id: id ?? "" },
     {},
     {
       enabled: isEditMode,
@@ -72,12 +79,13 @@ export default function Page() {
   const handleCreate = async () => {
     await create(values);
     await invalidateQuery("supplier");
-    navigate("supplierList", {});
+    onClose();
   };
 
   const handleUpdate = async () => {
     await update(values);
     await invalidateQuery("supplier");
+    onClose();
   };
 
   const save = () => {
@@ -110,64 +118,67 @@ export default function Page() {
   if (error) {
     return <ErrorState error={error} />;
   }
-
   return (
-    <Stack>
-      <Group>
-        <Title>{isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}</Title>
-        {isDeleted && <Badge color="red">Deleted</Badge>}
-      </Group>
-      <Grid mb="lg">
-        <Grid.Col span={defaultSpan}>
-          <TextInput label="Name" required {...getInputProps("name")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <TextInput label="Identity" {...getInputProps("identity")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <TextInput label="Email" {...getInputProps("email")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <TextInput label="Phone" {...getInputProps("phone")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <Textarea rows={5} label="Address" {...getInputProps("address")} />
-        </Grid.Col>
-        <Grid.Col span={defaultSpan}>
-          <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
-        </Grid.Col>
-        <Grid.Col>
-          <SegmentedControlInput
-            label="Status"
-            data={supplierStatusOptions}
-            color={getStatusColor(values.status)}
-            {...getInputProps("status")}
-          />
-        </Grid.Col>
-      </Grid>
-      <Grid>
-        <Grid.Col span={{ md: 6 }}></Grid.Col>
-        <Grid.Col span={{ md: 3 }}>
-          <Button
-            onClick={save}
-            fullWidth
-            leftSection={<Icon name="save" />}
-            loading={isActing}
-          >
-            Save
-          </Button>
-        </Grid.Col>
-        <Grid.Col span={{ md: 3 }}>
-          <Button
-            onClick={onCancel}
-            color="red"
-            fullWidth
-            leftSection={<Icon name="close" />}
-          >
-            Cancel
-          </Button>
-        </Grid.Col>
-      </Grid>
-    </Stack>
+    <Modal opened={isVisible} withCloseButton onClose={onClose} size="lg">
+      <Stack>
+        <Group>
+          <Title>
+            {isEditMode ? `Supplier: ${data?.name}` : "New Supplier"}
+          </Title>
+          {isDeleted && <Badge color="red">Deleted</Badge>}
+        </Group>
+        <Grid mb="lg">
+          <Grid.Col span={defaultSpan}>
+            <TextInput label="Name" required {...getInputProps("name")} />
+          </Grid.Col>
+          <Grid.Col span={defaultSpan}>
+            <TextInput label="Identity" {...getInputProps("identity")} />
+          </Grid.Col>
+          <Grid.Col span={defaultSpan}>
+            <TextInput label="Email" {...getInputProps("email")} />
+          </Grid.Col>
+          <Grid.Col span={defaultSpan}>
+            <TextInput label="Phone" {...getInputProps("phone")} />
+          </Grid.Col>
+          <Grid.Col span={defaultSpan}>
+            <Textarea rows={5} label="Address" {...getInputProps("address")} />
+          </Grid.Col>
+          <Grid.Col span={defaultSpan}>
+            <Textarea rows={5} label="Remarks" {...getInputProps("remarks")} />
+          </Grid.Col>
+          <Grid.Col>
+            <SegmentedControlInput
+              label="Status"
+              data={supplierStatusOptions}
+              color={getStatusColor(values.status)}
+              {...getInputProps("status")}
+            />
+          </Grid.Col>
+        </Grid>
+        <Grid>
+          <Grid.Col span={{ md: 6 }}></Grid.Col>
+          <Grid.Col span={{ md: 3 }}>
+            <Button
+              onClick={save}
+              fullWidth
+              leftSection={<Icon name="save" />}
+              loading={isActing}
+            >
+              Save
+            </Button>
+          </Grid.Col>
+          <Grid.Col span={{ md: 3 }}>
+            <Button
+              onClick={onCancel}
+              color="red"
+              fullWidth
+              leftSection={<Icon name="close" />}
+            >
+              Cancel
+            </Button>
+          </Grid.Col>
+        </Grid>
+      </Stack>
+    </Modal>
   );
 }

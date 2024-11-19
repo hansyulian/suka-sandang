@@ -110,13 +110,13 @@ export function MasterLayout(props: MasterLayoutProps) {
           />
           <NavMenu
             leftSection={<NavIcon name="supplier" />}
-            target="supplierList"
+            target="supplier"
             params={{}}
             label="Suppliers"
           />
           <NavMenu
             leftSection={<NavIcon name="customer" />}
-            target="customerList"
+            target="customer"
             params={{}}
             label="Customers"
           />

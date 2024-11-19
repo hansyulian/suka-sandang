@@ -3,8 +3,8 @@ import { lockRoutes } from "~/config/routes/baseRoute";
 import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
 
 export const supplierRoutes = lockRoutes({
-  supplierList: {
-    path: "/supplier",
+  supplier: {
+    path: "/supplier/:param?",
     element: lazy(() => import("~/pages/Supplier/SupplierListPage")),
     validateQuery: (query) => {
       return {
@@ -12,13 +12,5 @@ export const supplierRoutes = lockRoutes({
         ...extractPaginationQuery(query),
       };
     },
-  },
-  supplierAdd: {
-    path: "/supplier/add",
-    element: lazy(() => import("~/pages/Supplier/SupplierPage")),
-  },
-  supplierEdit: {
-    path: "/supplier/:id",
-    element: lazy(() => import("~/pages/Supplier/SupplierPage")),
   },
 } as const);

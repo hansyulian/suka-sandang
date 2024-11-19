@@ -12,16 +12,21 @@ import { TextBox } from "~/components/TextBox";
 import { deleteSupplierApi, listSupplierApi } from "~/config/api/supplierApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
+import { useNavigate } from "~/hooks/useNavigate";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
+import { useParams } from "~/hooks/useParams";
 import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { SupplierListFormModal } from "~/pages/Supplier/SupplierListPage/SupplierListFormModal";
 
 export default function Page() {
-  const query = useSearchQuery("supplierList");
+  const query = useSearchQuery("supplier");
+  const { param } = useParams("supplier");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
-  const updateSearchQuery = useUpdateSearchQuery("supplierList", {}, query);
+  const updateSearchQuery = useUpdateSearchQuery("supplier", {}, query);
+  const navigate = useNavigate();
   const confirmationDialog = useConfirmationDialog();
   const invalidateQuery = useInvalidateQuery();
   const paginationManager = usePaginationManager(query, {
@@ -30,6 +35,7 @@ export default function Page() {
   const sortManager = useSortManager(query, {
     onChange: updateSearchQuery,
   });
+  const isFormModalVisible = !!param;
 
   const { data } = listSupplierApi.useRequest({}, query);
   const updateSearch = () => {
@@ -56,6 +62,9 @@ export default function Page() {
       },
     });
   };
+  const closeFormModal = () => {
+    navigate("supplier", {}, query);
+  };
 
   return (
     <Stack>
@@ -69,7 +78,7 @@ export default function Page() {
           onClear={onClear}
           clearable
         />
-        <LinkButton iconName="add" target="supplierAdd" params={{}}>
+        <LinkButton iconName="add" target="supplier" params={{ param: "add" }}>
           Add
         </LinkButton>
       </PageHeader>
@@ -117,8 +126,8 @@ export default function Page() {
             <Table.Td>
               <Group justify="center">
                 <AppLinkIcon
-                  target="supplierEdit"
-                  params={{ id: record.id }}
+                  target="supplier"
+                  params={{ param: record.id }}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton
@@ -137,6 +146,10 @@ export default function Page() {
           paginationManager={paginationManager}
         ></PaginationController>
       </Center>
+      <SupplierListFormModal
+        isVisible={isFormModalVisible}
+        onClose={closeFormModal}
+      />
     </Stack>
   );
 }

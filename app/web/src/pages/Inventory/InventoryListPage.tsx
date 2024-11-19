@@ -116,8 +116,8 @@ export default function Page() {
             <Table.Td>
               <Group gap="xs">
                 <AppLinkIcon
-                  target="materialEdit"
-                  params={{ idOrCode: record.material.code }}
+                  target="material"
+                  params={{ param: record.material.code }}
                   name="openLink"
                   variant="light"
                 />

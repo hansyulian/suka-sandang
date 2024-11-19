@@ -61,6 +61,17 @@ describe("replacePathParams", () => {
     // Expect the path to still have the :id param
     expect(result).toBe("/users/undefined");
   });
+  it("should empty the optional param if no params are provided", () => {
+    (extractPathParams as ReturnType<typeof vi.fn>).mockReturnValue(["id"]);
+
+    const path = "/users/:id?";
+    const params = {}; // No params provided
+
+    const result = replacePathParams(path, params);
+
+    // Expect the path to still have the :id param
+    expect(result).toBe("/users/");
+  });
 
   it("should return the original path if there are no path params", () => {
     (extractPathParams as ReturnType<typeof vi.fn>).mockReturnValue([]);

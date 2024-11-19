@@ -3,8 +3,8 @@ import { lockRoutes } from "~/config/routes/baseRoute";
 import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
 
 export const customerRoutes = lockRoutes({
-  customerList: {
-    path: "/customer",
+  customer: {
+    path: "/customer/:param?",
     element: lazy(() => import("~/pages/Customer/CustomerListPage")),
     validateQuery: (query) => {
       return {
@@ -12,13 +12,5 @@ export const customerRoutes = lockRoutes({
         ...extractPaginationQuery(query),
       };
     },
-  },
-  customerAdd: {
-    path: "/customer/add",
-    element: lazy(() => import("~/pages/Customer/CustomerPage")),
-  },
-  customerEdit: {
-    path: "/customer/:id",
-    element: lazy(() => import("~/pages/Customer/CustomerPage")),
   },
 } as const);

@@ -12,25 +12,32 @@ import { TextBox } from "~/components/TextBox";
 import { deleteMaterialApi, listMaterialApi } from "~/config/api/materialApi";
 import { useConfirmationDialog } from "~/hooks/useConfirmationDialog";
 import { useInvalidateQuery } from "~/hooks/useInvalidateQuery";
+import { useNavigate } from "~/hooks/useNavigate";
 import { usePaginationManager } from "~/hooks/usePaginationManager";
+import { useParams } from "~/hooks/useParams";
 import { useReactiveState } from "~/hooks/useReactiveState";
 import { useSearchQuery } from "~/hooks/useSearchQuery";
 import { useSortManager } from "~/hooks/useSortManager";
 import { useUpdateSearchQuery } from "~/hooks/useUpdateSearchQuery";
+import { MaterialListFormModal } from "~/pages/Material/MaterialListPage/MaterialListFormModal";
 import { formatCurrency } from "~/utils/formatCurrency";
 
 export default function Page() {
-  const query = useSearchQuery("materialList");
+  const query = useSearchQuery("material");
+  const { param } = useParams("material");
   const [searchText, setSearchText] = useReactiveState(query.search || "");
-  const updateSearchQuery = useUpdateSearchQuery("materialList", {}, query);
+  const updateSearchQuery = useUpdateSearchQuery("material", {}, query);
   const confirmationDialog = useConfirmationDialog();
   const invalidateQuery = useInvalidateQuery();
+  const navigate = useNavigate();
   const paginationManager = usePaginationManager(query, {
     onChange: updateSearchQuery,
   });
   const sortManager = useSortManager(query, {
     onChange: updateSearchQuery,
   });
+
+  const isFormModalVisible = !!param;
 
   const { data } = listMaterialApi.useRequest({}, query);
   const updateSearch = () => {
@@ -57,6 +64,9 @@ export default function Page() {
       },
     });
   };
+  const closeFormModal = () => {
+    navigate("material", {}, query);
+  };
 
   return (
     <Stack>
@@ -70,7 +80,12 @@ export default function Page() {
           onClear={onClear}
           clearable
         />
-        <LinkButton iconName="add" target="materialAdd" params={{}}>
+        <LinkButton
+          iconName="add"
+          target="material"
+          params={{ param: "add" }}
+          query={query}
+        >
           Add
         </LinkButton>
       </PageHeader>
@@ -128,8 +143,9 @@ export default function Page() {
             <Table.Td>
               <Group justify="center">
                 <AppLinkIcon
-                  target="materialEdit"
-                  params={{ idOrCode: record.code }}
+                  target="material"
+                  params={{ param: record.code }}
+                  query={query}
                   name="edit"
                 ></AppLinkIcon>
                 <IconButton
@@ -146,8 +162,12 @@ export default function Page() {
         <PaginationController
           info={data?.info}
           paginationManager={paginationManager}
-        ></PaginationController>
+        />
       </Center>
+      <MaterialListFormModal
+        isVisible={isFormModalVisible}
+        onClose={closeFormModal}
+      />
     </Stack>
   );
 }

@@ -104,7 +104,7 @@ export function MasterLayout(props: MasterLayoutProps) {
         >
           <NavMenu
             leftSection={<NavIcon name="material" />}
-            target="materialList"
+            target="material"
             params={{}}
             label="Materials"
           />

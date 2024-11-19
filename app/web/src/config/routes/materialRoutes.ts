@@ -3,8 +3,8 @@ import { lockRoutes } from "~/config/routes/baseRoute";
 import { extractPaginationQuery } from "~/utils/extractPaginationQuery";
 
 export const materialRoutes = lockRoutes({
-  materialList: {
-    path: "/material",
+  material: {
+    path: "/material/:param?",
     element: lazy(() => import("~/pages/Material/MaterialListPage")),
     validateQuery: (query) => {
       return {
@@ -12,13 +12,5 @@ export const materialRoutes = lockRoutes({
         ...extractPaginationQuery(query),
       };
     },
-  },
-  materialAdd: {
-    path: "/material/add",
-    element: lazy(() => import("~/pages/Material/MaterialPage")),
-  },
-  materialEdit: {
-    path: "/material/:idOrCode",
-    element: lazy(() => import("~/pages/Material/MaterialPage")),
   },
 } as const);

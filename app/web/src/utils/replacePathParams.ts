@@ -7,7 +7,9 @@ export function replacePathParams(
   const pathParams = extractPathParams(path);
   let result = path;
   for (const param of pathParams) {
-    result = result.replace(`:${param}`, `${params[param]}`);
+    result = result
+      .replace(`:${param}?`, `${params[param] ?? ""}`)
+      .replace(`:${param}`, `${params[param]}`);
   }
   return result;
 }

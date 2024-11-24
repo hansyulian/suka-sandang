@@ -19,5 +19,5 @@ export function DatePickerInputE(props: DatePickerInputEProps) {
     );
   }
 
-  return <DatePickerInput {...(rest as any)} />;
+  return <DatePickerInput valueFormat="DD MMMM YYYY" {...(rest as any)} />;
 }

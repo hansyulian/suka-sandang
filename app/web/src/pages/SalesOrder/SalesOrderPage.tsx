@@ -74,7 +74,7 @@ export default function Page() {
   const { setValues, getInputProps, validate, values } =
     useForm<SalesOrderForm>({
       initialValues: {
-        code: `po-${formatDateCode()}-${generateRandomCodeNumber()}`,
+        code: `so-${formatDateCode()}-${generateRandomCodeNumber()}`,
         date: new Date(),
         status: "draft",
         customerId: "",
@@ -93,7 +93,7 @@ export default function Page() {
     }
     if (selectedCustomer) {
       setValues({
-        code: `po-${calculateCode(
+        code: `so-${calculateCode(
           selectedCustomer.label
         )}-${formatDateCode()}-${generateRandomCodeNumber()}`,
       });

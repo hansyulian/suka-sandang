@@ -4,34 +4,27 @@ import type {
   SalesOrderItemSyncAttributes,
   SalesOrderUpdateAttributes,
 } from "@app/common";
-import {
-  compareArray,
-  filterDuplicates,
-  generateRandomNumber,
-  max,
-  sum,
-} from "@hyulian/common";
+import { compareArray, filterDuplicates, sum } from "@hyulian/common";
 import { Op, type WhereOptions } from "sequelize";
 import {
-  MaterialNotFoundException,
+  InventoryInvalidStatusException,
+  InventoryNotFoundException,
   SalesOrderDuplicationException,
   SalesOrderInvalidStatusException,
   SalesOrderNotFoundException,
 } from "~/exceptions";
-import { MaterialInvalidStatusException } from "~/exceptions/MaterialInvalidStatusException";
 import { EngineBase } from "~/engine/EngineBase";
 import {
   Inventory,
-  InventoryFlow,
-  Material,
   SalesOrder,
   SalesOrderItem,
   Customer,
+  InventoryFlow,
 } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
-import { uuid } from "~/utils";
 import { isUuid } from "~/utils/isUuid";
+import { InventoryInsufficientQuantityException } from "~/exceptions/InventoryInsufficientQuantityException";
 
 export class SalesOrderEngine extends EngineBase {
   @WithTransaction
@@ -123,7 +116,7 @@ export class SalesOrderEngine extends EngineBase {
       await this.sync(record.id, items);
     }
     if (status && ["processing", "completed"].includes(status)) {
-      await this.createInventory(record.id);
+      await this.createInventoryFlow(record.id);
     }
     return this.findById(record.id);
   }
@@ -149,7 +142,7 @@ export class SalesOrderEngine extends EngineBase {
           remarks,
         });
         if (status && ["completed", "processing"].includes(status)) {
-          await this.createInventory(id);
+          await this.createInventoryFlow(id);
         }
         break;
       case "processing":
@@ -202,31 +195,31 @@ export class SalesOrderEngine extends EngineBase {
   @WithTransaction
   async sync(id: string, records: SalesOrderItemSyncAttributes[]) {
     const record = await this.findById(id);
-    const materialIds = filterDuplicates(
-      records.map((record) => record.materialId)
+    const inventoryIds = filterDuplicates(
+      records.map((record) => record.inventoryId)
     );
-    const foundMaterials = await Material.findAll({
+    const foundInventory = await Inventory.findAll({
       where: {
         id: {
-          [Op.in]: materialIds,
+          [Op.in]: inventoryIds,
         },
       },
     });
-    if (foundMaterials.length !== materialIds.length) {
-      const foundMaterialIds = foundMaterials.map((record) => record.id);
-      throw new MaterialNotFoundException({
-        ids: materialIds.filter(
-          (materialId) => !foundMaterialIds.includes(materialId)
+    if (foundInventory.length !== inventoryIds.length) {
+      const foundinventoryIds = foundInventory.map((record) => record.id);
+      throw new InventoryNotFoundException({
+        ids: inventoryIds.filter(
+          (inventoryId) => !foundinventoryIds.includes(inventoryId)
         ),
       });
     }
-    const inactiveMaterial = foundMaterials.find(
+    const inactiveInventory = foundInventory.find(
       (record) => record.status !== "active"
     );
-    if (inactiveMaterial) {
-      throw new MaterialInvalidStatusException(
+    if (inactiveInventory) {
+      throw new InventoryInvalidStatusException(
         "active",
-        inactiveMaterial.status
+        inactiveInventory.status
       );
     }
     const items = await SalesOrderItem.findAll({
@@ -244,11 +237,11 @@ export class SalesOrderEngine extends EngineBase {
       promises.push(leftOnly.destroy());
     }
     for (const rightOnly of compareResult.rightOnly) {
-      const { materialId, quantity, remarks, unitPrice } = rightOnly;
+      const { inventoryId, quantity, remarks, unitPrice } = rightOnly;
       promises.push(
         SalesOrderItem.create({
           salesOrderId: record.id,
-          materialId,
+          inventoryId,
           quantity,
           remarks,
           unitPrice,
@@ -256,10 +249,10 @@ export class SalesOrderEngine extends EngineBase {
       );
     }
     for (const itemUpdate of compareResult.both) {
-      const { materialId, quantity, unitPrice, remarks } = itemUpdate.right;
+      const { inventoryId, quantity, unitPrice, remarks } = itemUpdate.right;
       promises.push(
         itemUpdate.left.update({
-          materialId,
+          inventoryId,
           quantity,
           unitPrice,
           remarks,
@@ -271,10 +264,10 @@ export class SalesOrderEngine extends EngineBase {
   }
 
   @WithTransaction
-  async createInventory(id: string) {
+  async createInventoryFlow(id: string) {
     const record = await this.findById(id);
-    if (!["completed", "processing"].includes(record.status)) {
-      throw new SalesOrderInvalidStatusException("processing", record.status);
+    if (!["processing", "completed"].includes(record.status)) {
+      throw new SalesOrderInvalidStatusException("completed", record.status);
     }
     const salesOrderItems = await SalesOrderItem.findAll({
       where: {
@@ -282,7 +275,7 @@ export class SalesOrderEngine extends EngineBase {
       },
       include: [
         {
-          model: InventoryFlow,
+          model: Inventory,
         },
       ],
     });
@@ -292,45 +285,22 @@ export class SalesOrderEngine extends EngineBase {
         salesOrderItem.inventoryFlows &&
         salesOrderItem.inventoryFlows.length === 0
       ) {
-        promises.push(
-          createInventory(
-            salesOrderItem.id,
-            record.code,
-            salesOrderItem.materialId,
-            salesOrderItem.quantity
-          )
-        );
+        promises.push(createInventoryFlow(salesOrderItem));
       }
     }
-
-    async function createInventory(
-      salesOrderItemId: string,
-      salesOrderCode: string,
-      materialId: string,
-      quantity: number
-    ) {
-      const id = uuid();
-      const randomNumber = generateRandomNumber(
-        0,
-        salesOrderItems.length * 100
-      );
-      const code = `inv-${salesOrderCode}-${randomNumber}`;
-      await Inventory.create({
-        id,
-        code,
-        materialId,
-        remarks: "",
-        total: quantity,
-      }),
-        await InventoryFlow.create({
-          activity: "sales",
-          inventoryId: id,
-          quantity: -quantity,
-          salesOrderItemId,
-          remarks: "",
-        });
-    }
-
     await Promise.all(promises);
+    async function createInventoryFlow(salesOrderItem: SalesOrderItem) {
+      const { id, inventoryId, quantity, inventory } = salesOrderItem;
+      if (inventory.total < quantity) {
+        throw new InventoryInsufficientQuantityException(inventory, quantity);
+      }
+      await InventoryFlow.create({
+        activity: "sales",
+        inventoryId,
+        quantity: -quantity,
+        salesOrderItemId: id,
+      });
+      await inventory.recalculateTotal();
+    }
   }
 }

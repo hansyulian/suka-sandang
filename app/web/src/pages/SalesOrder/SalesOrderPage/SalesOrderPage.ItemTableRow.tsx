@@ -7,10 +7,10 @@ import { NumberInputE } from "~/components/NumberInputE";
 import { SelectColor } from "~/components/SelectColor";
 import { TextInputE } from "~/components/TextInputE";
 import {
-  getMaterialApi,
-  getMaterialOptionsApi,
-} from "~/config/api/materialApi";
-import { useMaterialSelectOptions } from "~/hooks/useMaterialSelectOptions";
+  getInventoryApi,
+  getInventoryOptionsApi,
+} from "~/config/api/inventoryApi";
+import { useInventorySelectOptions } from "~/hooks/useInventorySelectOptions";
 import { SalesOrderItemForm } from "~/types";
 import { formatCurrency } from "~/utils/formatCurrency";
 import { formValidations } from "~/utils/formValidations";
@@ -30,11 +30,11 @@ export const SalesOrderItemTableRow = memo(function (
   props: SalesOrderItemTableRowProps
 ) {
   const { initialData, disabled, onFormChange, index, onDelete } = props;
-  const materialSelectOptions = useMaterialSelectOptions("name-code");
+  const inventorySelectOptions = useInventorySelectOptions("name-code");
 
   const form = useForm<SalesOrderItemForm>({
     initialValues: {
-      materialId: "",
+      inventoryId: "",
       quantity: 0,
       unitPrice: 0,
       remarks: "",
@@ -42,27 +42,24 @@ export const SalesOrderItemTableRow = memo(function (
     },
     validateInputOnBlur: true,
     validate: {
-      materialId: formValidations({ required: true }),
+      inventoryId: formValidations({ required: true }),
       quantity: formValidations({ required: true }),
       unitPrice: formValidations({ required: true }),
     },
   });
   const { setValues, values, getInputProps } = form;
-
-  const { data: selectedMaterial } = getMaterialApi.useRequest(
-    { idOrCode: values.materialId },
-    {},
-    {
-      enabled: !!values.materialId,
-    }
+  const { data: selectedInventory } = getInventoryApi.useRequest(
+    { idOrCode: form.values.inventoryId },
+    {}
   );
+  const selectedMaterial = selectedInventory?.material;
   const optionColorExtractor = useCallback(
     (
       record: SelectionOption<
         string,
-        ContractResponseModel<typeof getMaterialOptionsApi>
+        ContractResponseModel<typeof getInventoryOptionsApi>
       >
-    ) => record.data?.color,
+    ) => record.data?.material.color,
     []
   );
 
@@ -70,13 +67,18 @@ export const SalesOrderItemTableRow = memo(function (
     if (!selectedMaterial) {
       return;
     }
-    if (initialData?.materialId === selectedMaterial?.id) {
+    if (initialData?.inventoryId === selectedInventory?.id) {
       return;
     }
     setValues({
       unitPrice: selectedMaterial.retailPrice || 0,
     });
-  }, [initialData?.materialId, selectedMaterial, setValues]);
+  }, [
+    initialData?.inventoryId,
+    selectedInventory,
+    selectedMaterial,
+    setValues,
+  ]);
 
   useEffect(() => {
     if (initialData) {
@@ -95,11 +97,11 @@ export const SalesOrderItemTableRow = memo(function (
           flex={1}
           color={selectedMaterial?.color}
           disabled={disabled}
-          data={materialSelectOptions}
+          data={inventorySelectOptions}
           searchable
           plainDisabled
           optionColorExtractor={optionColorExtractor}
-          {...getInputProps("materialId")}
+          {...getInputProps("inventoryId")}
         />
       </Table.Td>
       <Table.Td valign="top">
@@ -109,15 +111,16 @@ export const SalesOrderItemTableRow = memo(function (
           {...form.getInputProps("remarks")}
         />
       </Table.Td>
-      <Table.Td valign="middle" ta="right">
+      <Table.Td valign="top" ta="right">
         <NumberInputE
           rightAlign
           plainDisabled
           disabled={disabled}
+          max={selectedInventory?.total || 0}
           {...form.getInputProps("quantity")}
         />
       </Table.Td>
-      <Table.Td valign="middle" ta="right">
+      <Table.Td valign="top" ta="right">
         <NumberInputE
           rightAlign
           disabled={disabled}
@@ -125,7 +128,7 @@ export const SalesOrderItemTableRow = memo(function (
           {...form.getInputProps("unitPrice")}
         />
       </Table.Td>
-      <Table.Td valign="middle" ta="right">
+      <Table.Td valign="top" ta="right">
         <Text>{formatCurrency(values.quantity * values.unitPrice)}</Text>
       </Table.Td>
       <Table.Td ta="center">

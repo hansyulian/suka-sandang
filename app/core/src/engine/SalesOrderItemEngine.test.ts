@@ -2,7 +2,7 @@ import { Engine } from "~/CoreEngine";
 import { idGenerator } from "~test/utils/idGenerator";
 import { resetData } from "~test/utils/resetData";
 import { salesOrderFixtures } from "~test/fixtures/salesOrderFixtures";
-import { materialFixtures } from "~test/fixtures/materialFixtures";
+import { inventoryFixtures } from "~test/fixtures/inventoryFixtures";
 import { customerFixtures } from "~test/fixtures/customerFixtures";
 import { SalesOrder, SalesOrderItem } from "~/models";
 import {
@@ -10,7 +10,7 @@ import {
   SalesOrderItemUpdateAttributes,
 } from "@app/common";
 import {
-  MaterialInvalidStatusException,
+  InventoryInvalidStatusException,
   SalesOrderInvalidStatusException,
   SalesOrderItemNotFoundException,
 } from "~/exceptions";
@@ -19,11 +19,11 @@ describe("SalesOrderItemEngine", () => {
   const engine = new Engine();
   const draftSalesOrderId = idGenerator.salesOrder(0);
   const completedSalesOrderId = idGenerator.salesOrder(1);
-  const draftMaterial = idGenerator.material(10);
+  const draftInventory = idGenerator.inventory(10);
 
   beforeAll(async () => {
     await resetData();
-    await materialFixtures();
+    await inventoryFixtures();
     await customerFixtures();
   });
 
@@ -60,7 +60,7 @@ describe("SalesOrderItemEngine", () => {
     it("should create a new sales order item", async () => {
       const newItem: SalesOrderItemCreationAttributes = {
         salesOrderId: draftSalesOrderId,
-        materialId: idGenerator.material(1),
+        inventoryId: idGenerator.inventory(1),
         quantity: 10,
         unitPrice: 150,
         remarks: "New Item",
@@ -69,7 +69,7 @@ describe("SalesOrderItemEngine", () => {
       const createdItem = await engine.salesOrderItem.create(newItem);
 
       expect(createdItem).toHaveProperty("id");
-      expect(createdItem.materialId).toStrictEqual(newItem.materialId);
+      expect(createdItem.inventoryId).toStrictEqual(newItem.inventoryId);
       expect(createdItem.quantity).toStrictEqual(newItem.quantity);
       expect(createdItem.unitPrice).toStrictEqual(newItem.unitPrice);
       expect(createdItem.remarks).toStrictEqual(newItem.remarks);
@@ -82,7 +82,7 @@ describe("SalesOrderItemEngine", () => {
     it("should throw SalesOrderInvalidStatusException for non-draft sales order", async () => {
       const newItem: SalesOrderItemCreationAttributes = {
         salesOrderId: completedSalesOrderId,
-        materialId: idGenerator.material(1),
+        inventoryId: idGenerator.inventory(1),
         quantity: 10,
         unitPrice: 150,
         remarks: "Invalid Item",
@@ -93,17 +93,17 @@ describe("SalesOrderItemEngine", () => {
       );
     });
 
-    it("should throw MaterialInvalidStatusException for inactive materials", async () => {
+    it("should throw InventoryInvalidStatusException for inactive inventorys", async () => {
       const newItem: SalesOrderItemCreationAttributes = {
         salesOrderId: draftSalesOrderId,
-        materialId: draftMaterial, // Assuming this material is inactive
+        inventoryId: draftInventory, // Assuming this inventory is inactive
         quantity: 10,
         unitPrice: 150,
-        remarks: "Invalid Material",
+        remarks: "Invalid Inventory",
       };
 
       await expect(engine.salesOrderItem.create(newItem)).rejects.toThrow(
-        MaterialInvalidStatusException
+        InventoryInvalidStatusException
       );
     });
   });
@@ -116,7 +116,7 @@ describe("SalesOrderItemEngine", () => {
     it("should update an existing sales order item", async () => {
       const existingItemId = idGenerator.salesOrderItem(0, 0); // Assuming this item exists
       const updateData: SalesOrderItemUpdateAttributes = {
-        materialId: idGenerator.material(2),
+        inventoryId: idGenerator.inventory(2),
         quantity: 20,
         unitPrice: 300,
         remarks: "Updated Item",
@@ -127,16 +127,16 @@ describe("SalesOrderItemEngine", () => {
         updateData
       );
 
-      expect(updatedItem.materialId).toStrictEqual(updateData.materialId);
+      expect(updatedItem.inventoryId).toStrictEqual(updateData.inventoryId);
       expect(updatedItem.quantity).toStrictEqual(updateData.quantity);
       expect(updatedItem.unitPrice).toStrictEqual(updateData.unitPrice);
       expect(updatedItem.remarks).toStrictEqual(updateData.remarks);
     });
 
-    it("should throw MaterialInvalidStatusException for inactive materials on update", async () => {
+    it("should throw InventoryInvalidStatusException for inactive inventorys on update", async () => {
       const existingItemId = idGenerator.salesOrderItem(0, 0); // Assuming this item exists
       const updateData: SalesOrderItemUpdateAttributes = {
-        materialId: draftMaterial, // Assuming this material is inactive
+        inventoryId: draftInventory, // Assuming this inventory is inactive
         quantity: 10,
         unitPrice: 150,
         remarks: "Invalid Update",
@@ -144,14 +144,14 @@ describe("SalesOrderItemEngine", () => {
 
       await expect(
         engine.salesOrderItem.update(existingItemId, updateData)
-      ).rejects.toThrow(MaterialInvalidStatusException);
+      ).rejects.toThrow(InventoryInvalidStatusException);
     });
 
     it("should throw SalesOrderItemNotFoundException for non-existent item", async () => {
       const nonExistentId = idGenerator.salesOrderItem(999, 999);
 
       const updateData: SalesOrderItemUpdateAttributes = {
-        materialId: idGenerator.material(1),
+        inventoryId: idGenerator.inventory(1),
         quantity: 5,
         unitPrice: 200,
         remarks: "Test non-existent item",

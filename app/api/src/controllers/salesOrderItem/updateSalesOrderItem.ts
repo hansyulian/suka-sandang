@@ -5,9 +5,9 @@ export const updateSalesOrderItemController = contractController(
   updateSalesOrderItemContract,
   async ({ params, body, engine }) => {
     const { id } = params;
-    const { remarks, materialId, quantity, unitPrice } = body;
+    const { remarks, inventoryId, quantity, unitPrice } = body;
     const result = await engine.salesOrderItem.update(id, {
-      materialId,
+      inventoryId,
       quantity,
       unitPrice,
       remarks,

@@ -38,7 +38,7 @@ export const SalesOrderItemTable = memo(function (
     setRecords([
       ...records,
       {
-        materialId: "",
+        inventoryId: "",
         quantity: 0,
         unitPrice: 0,
       },

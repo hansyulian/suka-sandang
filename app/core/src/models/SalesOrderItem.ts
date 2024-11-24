@@ -12,6 +12,7 @@ import {
   Table,
 } from "sequelize-typescript";
 import { BaseModel } from "~/models/BaseModel";
+import { Inventory } from "~/models/Inventory";
 import { InventoryFlow } from "~/models/InventoryFlow";
 import { Material } from "~/models/Material";
 import { SalesOrder } from "~/models/SalesOrder";
@@ -33,9 +34,9 @@ export class SalesOrderItem extends BaseModel<
   @Column
   declare salesOrderId: string;
 
-  @ForeignKey(() => Material)
+  @ForeignKey(() => Inventory)
   @Column
-  declare materialId: string;
+  declare inventoryId: string;
 
   @Column
   declare subTotal: number;
@@ -46,8 +47,8 @@ export class SalesOrderItem extends BaseModel<
   @BelongsTo(() => SalesOrder, "salesOrderId")
   declare salesOrder: SalesOrder;
 
-  @BelongsTo(() => Material)
-  declare material: Material;
+  @BelongsTo(() => Inventory)
+  declare inventory: Inventory;
 
   @HasMany(() => InventoryFlow, "salesOrderItemId")
   declare inventoryFlows: InventoryFlow[];

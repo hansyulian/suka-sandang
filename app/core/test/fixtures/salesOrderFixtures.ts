@@ -22,7 +22,7 @@ export async function salesOrderFixtures() {
       promises.push(
         SalesOrderItem.create({
           id: idGenerator.salesOrderItem(j, i),
-          materialId: idGenerator.material(j),
+          inventoryId: idGenerator.inventory(j),
           salesOrderId: idGenerator.salesOrder(i),
           quantity: 20,
           unitPrice: 50,

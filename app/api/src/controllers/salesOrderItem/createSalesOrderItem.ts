@@ -4,9 +4,9 @@ import { contractController } from "@hyulian/express-api-contract";
 export const createSalesOrderItemController = contractController(
   createSalesOrderItemContract,
   async ({ body, engine }) => {
-    const { materialId, salesOrderId, quantity, unitPrice, remarks } = body;
+    const { inventoryId, salesOrderId, quantity, unitPrice, remarks } = body;
     const result = await engine.salesOrderItem.create({
-      materialId,
+      inventoryId,
       salesOrderId,
       quantity,
       unitPrice,

@@ -25,11 +25,11 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
-      materialId: {
+      inventoryId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "Materials",
+          model: "Inventories",
           key: "id",
         },
         onUpdate: "CASCADE",

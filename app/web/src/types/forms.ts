@@ -72,7 +72,7 @@ export type SalesOrderForm = {
 };
 
 export type SalesOrderItemForm = {
-  materialId: string;
+  inventoryId: string;
   quantity: number;
   unitPrice: number;
   remarks?: string;

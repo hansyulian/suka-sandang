@@ -104,24 +104,24 @@ describe("SalesOrderEngine", () => {
 
   describe("create", () => {
     let syncMock: jest.SpyInstance;
-    let createInventoryMock: jest.SpyInstance;
+    let createInventoryFlowMock: jest.SpyInstance;
     beforeAll(() => {
       syncMock = jest
         .spyOn(engine.salesOrder, "sync")
         .mockImplementation(() => Promise.resolve());
-      createInventoryMock = jest
-        .spyOn(engine.salesOrder, "createInventory")
+      createInventoryFlowMock = jest
+        .spyOn(engine.salesOrder, "createInventoryFlow")
         .mockImplementation(() => Promise.resolve());
     });
     beforeEach(async () => {
       syncMock.mockClear();
-      createInventoryMock.mockClear();
+      createInventoryFlowMock.mockClear();
       await resetData([SalesOrderItem, SalesOrder]);
       await salesOrderFixtures();
     });
     afterAll(() => {
       syncMock.mockRestore();
-      createInventoryMock.mockRestore();
+      createInventoryFlowMock.mockRestore();
     });
     it("should create a new sales order", async () => {
       const data: SalesOrderCreationAttributes = {
@@ -136,7 +136,7 @@ describe("SalesOrderEngine", () => {
       expect(result.code).toBe(data.code);
       expect(result.total).toBe(0);
       expect(syncMock).toHaveBeenCalledTimes(0);
-      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(0);
     });
     it("should create a new sales order and call sync if items are defined", async () => {
       const code = "PO-100";
@@ -153,7 +153,7 @@ describe("SalesOrderEngine", () => {
       expect(result.total).toBe(0);
       expect(syncMock).toHaveBeenCalledTimes(1);
       expect(syncMock).toHaveBeenCalledWith(result.id, []);
-      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(0);
     });
 
     it("should create a new sales order and call createInventory if status is processing and above", async () => {
@@ -169,8 +169,8 @@ describe("SalesOrderEngine", () => {
       expect(result).toBeDefined();
       expect(result.code).toBe(code);
       expect(result.total).toBe(0);
-      expect(createInventoryMock).toHaveBeenCalledTimes(1);
-      expect(createInventoryMock).toHaveBeenCalledWith(result.id);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(1);
+      expect(createInventoryFlowMock).toHaveBeenCalledWith(result.id);
     });
 
     it("should throw SalesOrderDuplicationException for duplicate code", async () => {
@@ -189,25 +189,25 @@ describe("SalesOrderEngine", () => {
 
   describe("update", () => {
     let syncMock: jest.SpyInstance;
-    let createInventoryMock: jest.SpyInstance;
+    let createInventoryFlowMock: jest.SpyInstance;
     beforeAll(() => {
       syncMock = jest
         .spyOn(engine.salesOrder, "sync")
         .mockImplementation(() => Promise.resolve());
-      createInventoryMock = jest
-        .spyOn(engine.salesOrder, "createInventory")
+      createInventoryFlowMock = jest
+        .spyOn(engine.salesOrder, "createInventoryFlow")
         .mockImplementation(() => Promise.resolve());
     });
 
     beforeEach(async () => {
       syncMock.mockClear();
-      createInventoryMock.mockClear();
+      createInventoryFlowMock.mockClear();
       await resetData([SalesOrderItem, SalesOrder]);
       await salesOrderFixtures();
     });
     afterAll(() => {
       syncMock.mockRestore();
-      createInventoryMock.mockRestore();
+      createInventoryFlowMock.mockRestore();
     });
     it("should update an existing sales order", async () => {
       const id = idGenerator.salesOrder(0);
@@ -226,7 +226,7 @@ describe("SalesOrderEngine", () => {
       expect(result.customerId).toStrictEqual(idGenerator.customer(0));
       expect(result.total).toStrictEqual(0);
       expect(syncMock).toHaveBeenCalledTimes(0);
-      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(0);
     });
     it("should update an existing sales order and call sync if items are defined", async () => {
       const id = idGenerator.salesOrder(0);
@@ -247,7 +247,7 @@ describe("SalesOrderEngine", () => {
       expect(result.total).toStrictEqual(0);
       expect(syncMock).toHaveBeenCalledTimes(1);
       expect(syncMock).toHaveBeenCalledWith(id, []);
-      expect(createInventoryMock).toHaveBeenCalledTimes(0);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(0);
     });
     it("should update an existing sales order and call createInventory if become processing", async () => {
       const id = idGenerator.salesOrder(0);
@@ -268,8 +268,8 @@ describe("SalesOrderEngine", () => {
       expect(result.total).toStrictEqual(0);
       expect(syncMock).toHaveBeenCalledTimes(1);
       expect(syncMock).toHaveBeenCalledWith(id, []);
-      expect(createInventoryMock).toHaveBeenCalledTimes(1);
-      expect(createInventoryMock).toHaveBeenCalledWith(id);
+      expect(createInventoryFlowMock).toHaveBeenCalledTimes(1);
+      expect(createInventoryFlowMock).toHaveBeenCalledWith(id);
     });
 
     it("should only able to update remarks and status to completed on processing sales order", async () => {
@@ -440,13 +440,13 @@ describe("SalesOrderEngine", () => {
     it("should add new items and update total correctly", async () => {
       const newItems: SalesOrderItemSyncAttributes[] = [
         {
-          materialId: idGenerator.material(1),
+          inventoryId: idGenerator.inventory(1),
           quantity: 10,
           unitPrice: 100,
           remarks: "New Item 1",
         },
         {
-          materialId: idGenerator.material(2),
+          inventoryId: idGenerator.inventory(2),
           quantity: 5,
           unitPrice: 200,
           remarks: "New Item 2",
@@ -462,7 +462,7 @@ describe("SalesOrderEngine", () => {
       expect(updatedOrder?.salesOrderItems).toHaveLength(2);
 
       const itemIds =
-        updatedOrder?.salesOrderItems.map((item) => item.materialId) || [];
+        updatedOrder?.salesOrderItems.map((item) => item.inventoryId) || [];
       expect(itemIds[0]).toStrictEqual(idGenerator.material(1));
       expect(itemIds[1]).toStrictEqual(idGenerator.material(2));
     });
@@ -471,7 +471,7 @@ describe("SalesOrderEngine", () => {
       const existingItems: SalesOrderItemSyncAttributes[] = [
         {
           id: idGenerator.salesOrderItem(0, 0),
-          materialId: idGenerator.material(1),
+          inventoryId: idGenerator.inventory(1),
           quantity: 20,
           unitPrice: 150,
           remarks: "Updated Item",
@@ -491,7 +491,7 @@ describe("SalesOrderEngine", () => {
     it("should throw MaterialNotFoundException if any item has an invalid material ID", async () => {
       const invalidItems: SalesOrderItemSyncAttributes[] = [
         {
-          materialId: "000000000000-0000-0000-000000000000",
+          inventoryId: "000000000000-0000-0000-000000000000",
           quantity: 5,
           unitPrice: 100,
           remarks: "Invalid Item",
@@ -524,7 +524,7 @@ describe("SalesOrderEngine", () => {
     });
 
     it("should create inventory and inventory flows when the sales order is completed", async () => {
-      await engine.salesOrder.createInventory(completedSalesOrderId);
+      await engine.salesOrder.createInventoryFlow(completedSalesOrderId);
       const salesOrderItems = await SalesOrderItem.findAll({
         where: {
           salesOrderId: completedSalesOrderId,
@@ -550,7 +550,7 @@ describe("SalesOrderEngine", () => {
 
     it("should throw SalesOrderInvalidStatusException if the sales order status is not completed", async () => {
       const id = draftSalesOrderId;
-      await expect(engine.salesOrder.createInventory(id)).rejects.toThrow(
+      await expect(engine.salesOrder.createInventoryFlow(id)).rejects.toThrow(
         SalesOrderInvalidStatusException
       );
     });

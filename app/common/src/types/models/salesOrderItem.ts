@@ -3,7 +3,7 @@ import { BaseAttributes } from "~/types/models/base";
 
 export const salesOrderItemFields = apiContractModelSchema({
   salesOrderId: { type: "string" },
-  materialId: { type: "string" },
+  inventoryId: { type: "string" },
   quantity: { type: "number" },
   unitPrice: { type: "number" },
   subTotal: { type: "number" },
@@ -12,20 +12,20 @@ export const salesOrderItemFields = apiContractModelSchema({
 export const salesOrderItemCreateFields = apiContractModelSchema({
   id: { type: "string", optional: true },
   salesOrderId: { type: "string" },
-  materialId: { type: "string" },
+  inventoryId: { type: "string" },
   quantity: { type: "number" },
   unitPrice: { type: "number" },
   remarks: { type: "string", optional: true },
 });
 export const salesOrderItemUpdateFields = apiContractModelSchema({
-  materialId: { type: "string", optional: true },
+  inventoryId: { type: "string", optional: true },
   quantity: { type: "number", optional: true },
   unitPrice: { type: "number", optional: true },
   remarks: { type: "string", optional: true },
 });
 export const salesOrderItemSyncFields = apiContractModelSchema({
   id: { type: "string", optional: true },
-  materialId: { type: "string" },
+  inventoryId: { type: "string" },
   quantity: { type: "number" },
   unitPrice: { type: "number" },
   remarks: { type: "string", optional: true },

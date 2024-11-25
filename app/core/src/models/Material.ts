@@ -4,15 +4,18 @@ import type {
   MaterialStatus,
 } from "@app/common";
 import { Column, HasMany, Table } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { Inventory } from "~/models/Inventory";
+
+export type MaterialSequelizeCreationAttributes =
+  SequelizeCreationPreset<MaterialCreationAttributes>;
 
 @Table({
   paranoid: true,
 })
 export class Material extends BaseModel<
   MaterialAttributes,
-  MaterialCreationAttributes
+  MaterialSequelizeCreationAttributes
 > {
   @Column
   declare name: string;

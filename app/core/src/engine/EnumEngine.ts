@@ -1,6 +1,6 @@
 import { FindAllResult } from "~/types";
 import { EngineBase } from "~/engine/EngineBase";
-import { Enum } from "~/models/Enum";
+import { Enum, EnumSequelizeCreationAttributes } from "~/models/Enum";
 import type { EnumCreationAttributes } from "@app/common";
 import { filterDuplicates, indexArray } from "@hyulian/common";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
@@ -50,12 +50,15 @@ export class EnumEngine extends EngineBase {
       records,
       "value"
     ); // undefined = not deleted, with value = to be deleted
-    const valuesToBeCreated = [];
+    const bulkCreateAttributes: EnumSequelizeCreationAttributes[] = [];
     for (const enumPayload of cleanedEnums) {
       if (recordsIndex[enumPayload.value]) {
         recordsIndex[enumPayload.value] = undefined;
       } else if (!recordsIndex[enumPayload.value]) {
-        valuesToBeCreated.push(enumPayload);
+        bulkCreateAttributes.push({
+          group,
+          ...enumPayload,
+        });
       }
     }
     const promises = [];
@@ -63,19 +66,9 @@ export class EnumEngine extends EngineBase {
     // deleting
     for (const entry of Object.entries(recordsIndex)) {
       if (entry[1] !== undefined) {
-        promises.push(entry[1].destroy());
+        await promises.push(entry[1].destroy());
       }
     }
-    // creates new
-    for (const enumPayload of valuesToBeCreated) {
-      promises.push(
-        Enum.create({
-          group,
-          value: enumPayload.value,
-          label: enumPayload.label,
-        })
-      );
-    }
-    await Promise.all(promises);
+    await Enum.bulkCreate(bulkCreateAttributes);
   }
 }

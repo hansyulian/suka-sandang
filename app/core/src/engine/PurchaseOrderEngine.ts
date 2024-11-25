@@ -21,9 +21,13 @@ import { EngineBase } from "~/engine/EngineBase";
 import {
   Inventory,
   InventoryFlow,
+  InventoryFlowSequelizeCreationAttributes,
+  InventorySequelizeCreationAttributes,
   Material,
   PurchaseOrder,
   PurchaseOrderItem,
+  PurchaseOrderItemSequelizeCreationAttributes,
+  PurchaseOrderSequelizeCreationAttributes,
   Supplier,
 } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
@@ -237,34 +241,31 @@ export class PurchaseOrderEngine extends EngineBase {
       records,
       (left, right) => left.id === right.id
     );
-    const promises = [];
     for (const leftOnly of compareResult.leftOnly) {
-      promises.push(leftOnly.destroy());
+      await leftOnly.destroy();
     }
+    const bulkCreate: PurchaseOrderItemSequelizeCreationAttributes[] = [];
     for (const rightOnly of compareResult.rightOnly) {
       const { materialId, quantity, remarks, unitPrice } = rightOnly;
-      promises.push(
-        PurchaseOrderItem.create({
-          purchaseOrderId: record.id,
-          materialId,
-          quantity,
-          remarks,
-          unitPrice,
-        })
-      );
+      bulkCreate.push({
+        purchaseOrderId: record.id,
+        materialId,
+        quantity,
+        remarks,
+        unitPrice,
+      });
     }
+    await PurchaseOrderItem.bulkCreate(bulkCreate);
     for (const itemUpdate of compareResult.both) {
       const { materialId, quantity, unitPrice, remarks } = itemUpdate.right;
-      promises.push(
-        itemUpdate.left.update({
-          materialId,
-          quantity,
-          unitPrice,
-          remarks,
-        })
-      );
+
+      await itemUpdate.left.update({
+        materialId,
+        quantity,
+        unitPrice,
+        remarks,
+      });
     }
-    await Promise.all(promises);
     await this.recalculateTotal(id);
   }
 
@@ -284,19 +285,19 @@ export class PurchaseOrderEngine extends EngineBase {
         },
       ],
     });
-    const promises = [];
+    const inventoryBulkCreate: InventorySequelizeCreationAttributes[] = [];
+    const inventoryFlowBulkCreate: InventoryFlowSequelizeCreationAttributes[] =
+      [];
     for (const purchaseOrderItem of purchaseOrderItems) {
       if (
         purchaseOrderItem.inventoryFlows &&
         purchaseOrderItem.inventoryFlows.length === 0
       ) {
-        promises.push(
-          createInventory(
-            purchaseOrderItem.id,
-            record.code,
-            purchaseOrderItem.materialId,
-            purchaseOrderItem.quantity
-          )
+        createInventory(
+          purchaseOrderItem.id,
+          record.code,
+          purchaseOrderItem.materialId,
+          purchaseOrderItem.quantity
         );
       }
     }
@@ -313,22 +314,22 @@ export class PurchaseOrderEngine extends EngineBase {
         purchaseOrderItems.length * 100
       );
       const code = `inv-${purchaseOrderCode}-${randomNumber}`;
-      await Inventory.create({
+      inventoryBulkCreate.push({
         id,
         code,
         materialId,
         remarks: "",
         total: quantity,
-      }),
-        await InventoryFlow.create({
-          activity: "procurement",
-          inventoryId: id,
-          quantity,
-          purchaseOrderItemId,
-          remarks: "",
-        });
+      });
+      inventoryFlowBulkCreate.push({
+        activity: "procurement",
+        inventoryId: id,
+        quantity,
+        purchaseOrderItemId,
+        remarks: "",
+      });
     }
-
-    await Promise.all(promises);
+    await Inventory.bulkCreate(inventoryBulkCreate);
+    await InventoryFlow.bulkCreate(inventoryFlowBulkCreate);
   }
 }

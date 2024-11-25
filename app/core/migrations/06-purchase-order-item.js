@@ -46,6 +46,7 @@ module.exports = {
       subTotal: {
         type: Sequelize.FLOAT,
         allowNull: false,
+        defaultValue: 0,
       },
       remarks: {
         type: Sequelize.STRING,

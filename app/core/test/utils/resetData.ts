@@ -29,5 +29,7 @@ const config: TruncateOptions = {
 };
 
 export async function resetData(truncateModels: ModelCtor[] = models) {
-  await Promise.all(truncateModels.map((model) => model.truncate(config)));
+  for (const model of truncateModels) {
+    await model.truncate(config);
+  }
 }

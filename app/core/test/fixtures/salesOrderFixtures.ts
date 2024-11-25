@@ -1,41 +1,39 @@
 import { SalesOrderStatus } from "@app/common";
-import { SalesOrder, SalesOrderItem } from "~/models";
+import {
+  SalesOrder,
+  SalesOrderItem,
+  SalesOrderItemSequelizeCreationAttributes,
+  SalesOrderSequelizeCreationAttributes,
+} from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
 
 export async function salesOrderFixtures() {
-  const promises = [];
+  const salesOrderParams: SalesOrderSequelizeCreationAttributes[] = [];
+  const salesOrderItemParams: SalesOrderItemSequelizeCreationAttributes[] = [];
   const now = new Date();
   for (let i = 0; i < 50; i += 1) {
-    promises.push(
-      SalesOrder.create({
-        id: idGenerator.salesOrder(i),
-        code: `PO-${i}`,
-        date: now,
-        customerId: idGenerator.customer(i % 5),
-        status: ["draft", "completed", "processing", "cancelled"][
-          i % 4
-        ] as SalesOrderStatus,
-        remarks: `remarks ${i}`,
-      })
-    );
+    salesOrderParams.push({
+      id: idGenerator.salesOrder(i),
+      code: `PO-${i}`,
+      date: now,
+      customerId: idGenerator.customer(i % 5),
+      status: ["draft", "completed", "processing", "cancelled"][
+        i % 4
+      ] as SalesOrderStatus,
+      remarks: `remarks ${i}`,
+    });
     for (let j = 0; j < 5; j += 1) {
-      promises.push(
-        SalesOrderItem.create({
-          id: idGenerator.salesOrderItem(j, i),
-          inventoryId: idGenerator.inventory(j),
-          salesOrderId: idGenerator.salesOrder(i),
-          quantity: 20,
-          unitPrice: 50,
-        })
-      );
+      salesOrderItemParams.push({
+        id: idGenerator.salesOrderItem(j, i),
+        inventoryId: idGenerator.inventory(j),
+        salesOrderId: idGenerator.salesOrder(i),
+        quantity: 20,
+        unitPrice: 50,
+      });
     }
   }
-
-  try {
-    await Promise.all(promises);
-  } catch (err) {
-    console.log(err);
-  }
+  await SalesOrder.bulkCreate(salesOrderParams);
+  await SalesOrderItem.bulkCreate(salesOrderItemParams);
   const deletedSalesOrder = await SalesOrder.create({
     id: idGenerator.salesOrder(50),
     code: `PO-51`,

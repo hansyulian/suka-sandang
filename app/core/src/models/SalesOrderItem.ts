@@ -11,18 +11,20 @@ import {
   HasMany,
   Table,
 } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { Inventory } from "~/models/Inventory";
 import { InventoryFlow } from "~/models/InventoryFlow";
-import { Material } from "~/models/Material";
 import { SalesOrder } from "~/models/SalesOrder";
+
+export type SalesOrderItemSequelizeCreationAttributes =
+  SequelizeCreationPreset<SalesOrderItemCreationAttributes>;
 
 @Table({
   paranoid: false,
 })
 export class SalesOrderItem extends BaseModel<
   SalesOrderItemAttributes,
-  SalesOrderItemCreationAttributes
+  SalesOrderItemSequelizeCreationAttributes
 > {
   @Column
   declare quantity: number;

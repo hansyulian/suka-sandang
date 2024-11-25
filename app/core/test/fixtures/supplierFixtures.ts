@@ -1,15 +1,10 @@
-import { Supplier } from "~/models";
+import { Supplier, SupplierSequelizeCreationAttributes } from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
 
 export async function supplierFixtures() {
-  const promises = [];
+  const params: SupplierSequelizeCreationAttributes[] = [];
   for (let i = 0; i < 50; i += 1) {
-    promises.push(
-      Supplier.create({
-        id: idGenerator.supplier(i),
-        name: `Test Supplier ${i}`,
-      })
-    );
+    params.push({ id: idGenerator.supplier(i), name: `Test Supplier ${i}` });
   }
-  await Promise.all(promises);
+  await Supplier.bulkCreate(params);
 }

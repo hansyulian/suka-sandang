@@ -4,14 +4,17 @@ import type {
   CustomerStatus,
 } from "@app/common";
 import { Column, Table } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
+
+export type CustomerSequelizeCreationAttributes =
+  SequelizeCreationPreset<CustomerCreationAttributes>;
 
 @Table({
   paranoid: true,
 })
 export class Customer extends BaseModel<
   CustomerAttributes,
-  CustomerCreationAttributes
+  CustomerSequelizeCreationAttributes
 > {
   @Column
   declare name: string;

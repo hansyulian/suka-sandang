@@ -15,12 +15,15 @@ import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { InventoryFlow } from "~/models/InventoryFlow";
 import { Material } from "~/models/Material";
 
+export type InventorySequelizeCreationAttributes = SequelizeCreationPreset<
+  InventoryCreationAttributes & { total?: number }
+>;
 @Table({
   paranoid: true,
 })
 export class Inventory extends BaseModel<
   InventoryAttributes,
-  SequelizeCreationPreset<InventoryCreationAttributes> & { total?: number }
+  InventorySequelizeCreationAttributes
 > {
   @Column
   declare code: string;

@@ -1,20 +1,18 @@
-import { MaterialStatus } from "@app/common";
 import { pad } from "@hyulian/common";
-import { Material } from "~/models";
+import { Material, MaterialSequelizeCreationAttributes } from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
 
 export async function materialFixtures() {
-  const promises = [];
+  const params: MaterialSequelizeCreationAttributes[] = [];
   for (let i = 0; i < 50; i += 1) {
-    promises.push(
-      Material.create({
-        id: idGenerator.material(i),
-        code: `material-${pad(i, 2, { char: "0" })}`,
-        name: `Material ${pad(i, 2, { char: "0" })}`,
-        status: i % 10 === 0 ? "draft" : "active",
-      })
-    );
+    params.push({
+      id: idGenerator.material(i),
+      code: `material-${pad(i, 2, { char: "0" })}`,
+      name: `Material ${pad(i, 2, { char: "0" })}`,
+      status: i % 10 === 0 ? "draft" : "active",
+    });
   }
+  await Material.bulkCreate(params);
   const material = await Material.create({
     id: idGenerator.material(100),
     code: "deleted-material-test",
@@ -22,5 +20,4 @@ export async function materialFixtures() {
     status: "deleted",
   });
   await material.destroy();
-  await Promise.all(promises);
 }

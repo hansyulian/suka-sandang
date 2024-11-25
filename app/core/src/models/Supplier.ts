@@ -4,14 +4,16 @@ import type {
   SupplierStatus,
 } from "@app/common";
 import { Column, Table } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 
+export type SupplierSequelizeCreationAttributes =
+  SequelizeCreationPreset<SupplierCreationAttributes>;
 @Table({
   paranoid: true,
 })
 export class Supplier extends BaseModel<
   SupplierAttributes,
-  SupplierCreationAttributes
+  SupplierSequelizeCreationAttributes
 > {
   @Column
   declare name: string;

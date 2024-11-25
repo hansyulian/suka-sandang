@@ -33,9 +33,7 @@ const config: TruncateOptions = {
 };
 
 export async function resetData(truncateModels: ModelCtor[] = models) {
-  for (const truncateModel of truncateModels) {
-    truncateModel.truncate(config);
+  for (const model of truncateModels) {
+    await model.truncate(config);
   }
-  // this has causes database connection issue, maybe because of too many connection
-  // await Promise.all(truncateModels.map((model) => model.truncate(config)));
 }

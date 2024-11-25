@@ -10,16 +10,19 @@ import {
   HasMany,
   Table,
 } from "sequelize-typescript";
-import { BaseModel } from "~/models/BaseModel";
+import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { PurchaseOrderItem } from "~/models/PurchaseOrderItem";
 import { Supplier } from "~/models/Supplier";
+
+export type PurchaseOrderSequelizeCreationAttributes =
+  SequelizeCreationPreset<PurchaseOrderCreationAttributes>;
 
 @Table({
   paranoid: true,
 })
 export class PurchaseOrder extends BaseModel<
   PurchaseOrderAttributes,
-  Omit<PurchaseOrderCreationAttributes, "items">
+  PurchaseOrderSequelizeCreationAttributes
 > {
   @Column
   declare date: Date;

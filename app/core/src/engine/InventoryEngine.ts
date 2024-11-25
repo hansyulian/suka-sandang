@@ -11,7 +11,13 @@ import { InvalidInventoryTotalException } from "~/exceptions/InvalidInventoryTot
 import { InventoryDuplicationException } from "~/exceptions/InventoryDuplicationException";
 import { InventoryNotFoundException } from "~/exceptions/InventoryNotFoundException";
 import { EngineBase } from "~/engine/EngineBase";
-import { Material, Inventory, InventoryFlow } from "~/models";
+import {
+  Material,
+  Inventory,
+  InventoryFlow,
+  InventorySequelizeCreationAttributes,
+  InventoryFlowSequelizeCreationAttributes,
+} from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type {
   SequelizeIncludeOptions,
@@ -141,23 +147,23 @@ export class InventoryEngine extends EngineBase {
     );
     for (const record of compareResult.leftOnly) {
       if (InventoryFlow.updatableActivities.includes(record.activity)) {
-        promises.push(record.destroy());
+        await record.destroy();
       }
     }
+    const bulkCreateAttributes: InventoryFlowSequelizeCreationAttributes[] = [];
     for (const record of compareResult.rightOnly) {
       const { activity, quantity, remarks } = record;
       if (InventoryFlow.updatableActivities.includes(activity)) {
-        promises.push(
-          InventoryFlow.create({
-            activity,
-            inventoryId: id,
-            quantity,
-            id: record.id,
-            remarks,
-          })
-        );
+        bulkCreateAttributes.push({
+          activity,
+          inventoryId: id,
+          quantity,
+          id: record.id,
+          remarks,
+        });
       }
     }
+    await InventoryFlow.bulkCreate(bulkCreateAttributes);
     for (const record of compareResult.both) {
       const { activity } = record.left;
       const { quantity, remarks } = record.right;
@@ -170,9 +176,8 @@ export class InventoryEngine extends EngineBase {
         }
       }
       record.left.remarks = remarks;
-      promises.push(record.left.save());
+      await record.left.save();
     }
-    await Promise.all(promises);
     const newTotal = await record.recalculateTotal(true);
     if (newTotal < 0) {
       throw new InvalidInventoryTotalException({ total: newTotal });

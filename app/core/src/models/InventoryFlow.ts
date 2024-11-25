@@ -10,17 +10,15 @@ import { Inventory } from "~/models/Inventory";
 import { PurchaseOrderItem } from "~/models/PurchaseOrderItem";
 import { SalesOrderItem } from "~/models/SalesOrderItem";
 
+export type InventoryFlowSequelizeCreationAttributes = SequelizeCreationPreset<
+  InventoryFlowCreationAttributes & { purchaseOrderItemId?: string }
+>;
 @Table({
   paranoid: false,
 })
 export class InventoryFlow extends BaseModel<
   InventoryFlowAttributes,
-  SequelizeCreationPreset<
-    InventoryFlowCreationAttributes & {
-      purchaseOrderItemId?: string;
-      salesOrderItemId?: string;
-    }
-  >
+  InventoryFlowSequelizeCreationAttributes
 > {
   @Column
   declare quantity: number;

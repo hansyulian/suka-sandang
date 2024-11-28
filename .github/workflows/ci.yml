@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - feature/*
+      - chore/*
+      - fix/*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22" # Use the Node.js version your project needs
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 -U testuser && break || sleep 5
+          done
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run tests
+        env:
+          DB_USERNAME: testuser
+          DB_PASSWORD: testpassword
+          DB_DATABASE: testdb
+          DB_DIALECT: postgresql
+          DB_PORT: 5432
+        run: pnpm test

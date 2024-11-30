@@ -94,7 +94,7 @@ describe("InventoryEngine", () => {
 
     it("should throw InventoryDuplicationException for duplicate code", async () => {
       const data = {
-        code: "inventory-po0-0",
+        code: "inventory-0",
         materialId: idGenerator.material(0),
         remarks: "Duplicate Test Inventory",
       };

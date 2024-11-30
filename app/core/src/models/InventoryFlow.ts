@@ -11,7 +11,10 @@ import { PurchaseOrderItem } from "~/models/PurchaseOrderItem";
 import { SalesOrderItem } from "~/models/SalesOrderItem";
 
 export type InventoryFlowSequelizeCreationAttributes = SequelizeCreationPreset<
-  InventoryFlowCreationAttributes & { purchaseOrderItemId?: string }
+  InventoryFlowCreationAttributes & {
+    purchaseOrderItemId?: string;
+    salesOrderItemId?: string;
+  }
 >;
 @Table({
   paranoid: false,

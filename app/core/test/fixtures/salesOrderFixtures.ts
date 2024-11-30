@@ -1,15 +1,17 @@
-import { SalesOrderStatus } from "@app/common";
 import {
-  SalesOrder,
-  SalesOrderItem,
-  SalesOrderItemSequelizeCreationAttributes,
-  SalesOrderSequelizeCreationAttributes,
-} from "~/models";
+  CreateOmit,
+  SalesOrderAttributes,
+  SalesOrderCreationAttributes,
+  SalesOrderItemAttributes,
+  SalesOrderItemCreationAttributes,
+  SalesOrderStatus,
+} from "@app/common";
+import { SalesOrder, SalesOrderItem } from "~/models";
 import { idGenerator } from "~test/utils/idGenerator";
 
 export async function salesOrderFixtures() {
-  const salesOrderParams: SalesOrderSequelizeCreationAttributes[] = [];
-  const salesOrderItemParams: SalesOrderItemSequelizeCreationAttributes[] = [];
+  const salesOrderParams: SalesOrderCreationAttributes[] = [];
+  const salesOrderItemParams: SalesOrderItemCreationAttributes[] = [];
   const now = new Date();
   for (let i = 0; i < 50; i += 1) {
     salesOrderParams.push({
@@ -27,13 +29,15 @@ export async function salesOrderFixtures() {
         id: idGenerator.salesOrderItem(j, i),
         inventoryId: idGenerator.inventory(j),
         salesOrderId: idGenerator.salesOrder(i),
-        quantity: 20,
+        quantity: 10,
         unitPrice: 50,
       });
     }
   }
-  await SalesOrder.bulkCreate(salesOrderParams);
-  await SalesOrderItem.bulkCreate(salesOrderItemParams);
+  await SalesOrder.bulkCreate(salesOrderParams, { individualHooks: true });
+  await SalesOrderItem.bulkCreate(salesOrderItemParams, {
+    individualHooks: true,
+  });
   const deletedSalesOrder = await SalesOrder.create({
     id: idGenerator.salesOrder(50),
     code: `PO-51`,

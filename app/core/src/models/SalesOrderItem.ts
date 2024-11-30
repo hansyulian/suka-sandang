@@ -18,7 +18,10 @@ import { SalesOrder } from "~/models/SalesOrder";
 
 export type SalesOrderItemSequelizeCreationAttributes =
   SequelizeCreationPreset<SalesOrderItemCreationAttributes>;
-
+export type SalesOrderItemSequelizeBulkCreationAttributes =
+  SequelizeCreationPreset<SalesOrderItemCreationAttributes> & {
+    subTotal: number;
+  };
 @Table({
   paranoid: false,
 })

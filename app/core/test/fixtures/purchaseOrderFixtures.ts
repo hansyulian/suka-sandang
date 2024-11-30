@@ -35,8 +35,12 @@ export async function purchaseOrderFixtures() {
     }
   }
 
-  await PurchaseOrder.bulkCreate(purchaseOrderParams);
-  await PurchaseOrderItem.bulkCreate(purchaseOrderItemParams);
+  await PurchaseOrder.bulkCreate(purchaseOrderParams, {
+    individualHooks: true,
+  });
+  await PurchaseOrderItem.bulkCreate(purchaseOrderItemParams, {
+    individualHooks: true,
+  });
   const deletedPurchaseOrder = await PurchaseOrder.create({
     id: idGenerator.purchaseOrder(50),
     code: `PO-51`,

@@ -9,37 +9,31 @@ import { idGenerator } from "~test/utils/idGenerator";
 export async function inventoryFixtures() {
   const inventoryParams: InventorySequelizeCreationAttributes[] = [];
   for (let i = 0; i < 50; i += 1) {
-    for (let j = 0; j < 5; j += 1) {
-      const inventoryIdOffset = i * 5 + j;
-      inventoryParams.push({
-        id: idGenerator.inventory(inventoryIdOffset),
-        code: `inventory-po${i}-${j}`,
-        materialId: idGenerator.material(j),
-        total: inventoryIdOffset === 1 ? 14 : 19,
-      });
-    }
+    inventoryParams.push({
+      id: idGenerator.inventory(i),
+      code: `inventory-${i}`,
+      materialId: idGenerator.material(i),
+      total: i === 1 ? 14 : 19,
+      status: i === 20 ? "finished" : "active",
+    });
   }
-  await Inventory.bulkCreate(inventoryParams);
+  await Inventory.bulkCreate(inventoryParams, { individualHooks: true });
   const inventoryFlowParams: InventoryFlowSequelizeCreationAttributes[] = [];
   for (let i = 0; i < 50; i += 1) {
-    for (let j = 0; j < 5; j += 1) {
-      const inventoryIdOffset = i * 5 + j;
-      inventoryFlowParams.push({
-        id: idGenerator.inventoryFlow(0, inventoryIdOffset),
-        inventoryId: idGenerator.inventory(inventoryIdOffset),
-        quantity: 20,
-        activity: "procurement",
-        purchaseOrderItemId: idGenerator.purchaseOrderItem(j, i),
-        remarks: `remarks-${i}-${j}`,
-      });
-      inventoryFlowParams.push({
-        id: idGenerator.inventoryFlow(1, inventoryIdOffset),
-        inventoryId: idGenerator.inventory(inventoryIdOffset),
-        quantity: -1,
-        activity: "adjustment",
-        remarks: `adjustment-${i}-${j}`,
-      });
-    }
+    inventoryFlowParams.push({
+      id: idGenerator.inventoryFlow(0, i),
+      inventoryId: idGenerator.inventory(i),
+      quantity: 20,
+      activity: "procurement",
+      remarks: `remarks-${i}`,
+    });
+    inventoryFlowParams.push({
+      id: idGenerator.inventoryFlow(1, i),
+      inventoryId: idGenerator.inventory(i),
+      quantity: -1,
+      activity: "adjustment",
+      remarks: `adjustment-${i}`,
+    });
   }
   inventoryFlowParams.push({
     id: idGenerator.inventoryFlow(2, 0),
@@ -48,5 +42,7 @@ export async function inventoryFixtures() {
     activity: "adjustment",
     remarks: "adjustment due to damage",
   });
-  await InventoryFlow.bulkCreate(inventoryFlowParams);
+  await InventoryFlow.bulkCreate(inventoryFlowParams, {
+    individualHooks: true,
+  });
 }

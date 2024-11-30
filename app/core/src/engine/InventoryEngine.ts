@@ -163,7 +163,9 @@ export class InventoryEngine extends EngineBase {
         });
       }
     }
-    await InventoryFlow.bulkCreate(bulkCreateAttributes);
+    await InventoryFlow.bulkCreate(bulkCreateAttributes, {
+      individualHooks: true,
+    });
     for (const record of compareResult.both) {
       const { activity } = record.left;
       const { quantity, remarks } = record.right;

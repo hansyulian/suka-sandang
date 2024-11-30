@@ -14,7 +14,9 @@ import {
   SalesOrderUpdateAttributes,
 } from "@app/common";
 import { Inventory, InventoryFlow, SalesOrder, SalesOrderItem } from "~/models";
-import { MaterialNotFoundException } from "~/exceptions";
+import { InventoryNotFoundException } from "~/exceptions";
+import { inventoryFixtures } from "~test/fixtures/inventoryFixtures";
+import { InventoryInsufficientQuantityException } from "~/exceptions/InventoryInsufficientQuantityException";
 
 describe("SalesOrderEngine", () => {
   const engine = new Engine();
@@ -29,7 +31,8 @@ describe("SalesOrderEngine", () => {
 
   describe("list", () => {
     beforeAll(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     it("should return a list of sales orders", async () => {
@@ -56,7 +59,8 @@ describe("SalesOrderEngine", () => {
 
   describe("findById", () => {
     beforeAll(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     it("should return a sales order by id", async () => {
@@ -76,7 +80,8 @@ describe("SalesOrderEngine", () => {
   });
   describe("findByIdOrCode", () => {
     beforeAll(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     it("should return a sales order by id", async () => {
@@ -116,7 +121,8 @@ describe("SalesOrderEngine", () => {
     beforeEach(async () => {
       syncMock.mockClear();
       createInventoryFlowMock.mockClear();
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     afterAll(() => {
@@ -202,7 +208,8 @@ describe("SalesOrderEngine", () => {
     beforeEach(async () => {
       syncMock.mockClear();
       createInventoryFlowMock.mockClear();
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     afterAll(() => {
@@ -406,7 +413,8 @@ describe("SalesOrderEngine", () => {
 
   describe("delete", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     it("should delete a sales order", async () => {
@@ -433,7 +441,8 @@ describe("SalesOrderEngine", () => {
 
   describe("sync", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
 
@@ -463,8 +472,8 @@ describe("SalesOrderEngine", () => {
 
       const itemIds =
         updatedOrder?.salesOrderItems.map((item) => item.inventoryId) || [];
-      expect(itemIds[0]).toStrictEqual(idGenerator.material(1));
-      expect(itemIds[1]).toStrictEqual(idGenerator.material(2));
+      expect(itemIds[0]).toStrictEqual(idGenerator.inventory(1));
+      expect(itemIds[1]).toStrictEqual(idGenerator.inventory(2));
     });
 
     it("should update existing items without duplication", async () => {
@@ -472,7 +481,7 @@ describe("SalesOrderEngine", () => {
         {
           id: idGenerator.salesOrderItem(0, 0),
           inventoryId: idGenerator.inventory(1),
-          quantity: 20,
+          quantity: 10,
           unitPrice: 150,
           remarks: "Updated Item",
         },
@@ -484,11 +493,30 @@ describe("SalesOrderEngine", () => {
         include: [SalesOrderItem],
       });
       expect(updatedOrder?.salesOrderItems).toHaveLength(1);
-      expect(updatedOrder?.salesOrderItems[0].quantity).toBe(20);
+      expect(updatedOrder?.salesOrderItems[0].quantity).toBe(10);
       expect(updatedOrder?.salesOrderItems[0].unitPrice).toBe(150);
     });
+    it("should throw insufficient inventory if trying to update beyond current inventory availability", async () => {
+      const existingItems: SalesOrderItemSyncAttributes[] = [
+        {
+          id: idGenerator.salesOrderItem(0, 0),
+          inventoryId: idGenerator.inventory(1),
+          quantity: 20,
+          unitPrice: 150,
+          remarks: "Updated Item",
+        },
+      ];
 
-    it("should throw MaterialNotFoundException if any item has an invalid material ID", async () => {
+      await expect(
+        engine.salesOrder.sync(draftSalesOrderId, existingItems)
+      ).rejects.toThrow(InventoryInsufficientQuantityException);
+      const updatedOrder = await SalesOrder.findByPk(draftSalesOrderId, {
+        include: [SalesOrderItem],
+      });
+      expect(updatedOrder?.salesOrderItems.length).toStrictEqual(5);
+    });
+
+    it("should throw InventoryNotFoundException if any item has an invalid inventory ID", async () => {
       const invalidItems: SalesOrderItemSyncAttributes[] = [
         {
           inventoryId: "000000000000-0000-0000-000000000000",
@@ -499,13 +527,14 @@ describe("SalesOrderEngine", () => {
       ];
       await expect(
         engine.salesOrder.sync(draftSalesOrderId, invalidItems)
-      ).rejects.toThrow(MaterialNotFoundException);
+      ).rejects.toThrow(InventoryNotFoundException);
     });
   });
 
   describe("recalculateTotal", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
     it("should correctly calculate and update the total of a sales order", async () => {
@@ -513,13 +542,14 @@ describe("SalesOrderEngine", () => {
       await engine.salesOrder.recalculateTotal(id);
       const updatedOrder = await SalesOrder.findByPk(id);
 
-      expect(updatedOrder?.total).toStrictEqual(5000);
+      expect(updatedOrder?.total).toStrictEqual(2500);
     });
   });
 
   describe("createInventory", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData([Inventory, SalesOrderItem, SalesOrder]);
+      await inventoryFixtures();
       await salesOrderFixtures();
     });
 
@@ -532,11 +562,9 @@ describe("SalesOrderEngine", () => {
         include: [
           {
             model: InventoryFlow,
-            include: [
-              {
-                model: Inventory,
-              },
-            ],
+          },
+          {
+            model: Inventory,
           },
         ],
       });

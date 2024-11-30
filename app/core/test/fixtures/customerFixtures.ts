@@ -10,5 +10,5 @@ export async function customerFixtures() {
       name: `Test Customer ${i}`,
     });
   }
-  await Customer.bulkCreate(params);
+  await Customer.bulkCreate(params, { individualHooks: true });
 }

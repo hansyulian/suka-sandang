@@ -23,5 +23,5 @@ export async function enumFixtures() {
       label: `group-2-label-${i}`,
     });
   }
-  await Enum.bulkCreate(params);
+  await Enum.bulkCreate(params, { individualHooks: true });
 }

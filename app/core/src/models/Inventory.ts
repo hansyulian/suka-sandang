@@ -16,7 +16,7 @@ import { InventoryFlow } from "~/models/InventoryFlow";
 import { Material } from "~/models/Material";
 
 export type InventorySequelizeCreationAttributes = SequelizeCreationPreset<
-  InventoryCreationAttributes & { total?: number }
+  InventoryCreationAttributes & { total?: number; status?: InventoryStatus }
 >;
 @Table({
   paranoid: true,

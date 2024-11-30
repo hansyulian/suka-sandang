@@ -10,6 +10,8 @@ export type CreateOmit<
   K extends keyof Omit<T, keyof BaseAttributes> = never
 > = Omit<T, keyof BaseAttributes | K> & {
   id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 // UpdateOmit reuses CreateOmit and additionally omits "id"

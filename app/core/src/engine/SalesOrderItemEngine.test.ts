@@ -4,7 +4,6 @@ import { resetData } from "~test/utils/resetData";
 import { salesOrderFixtures } from "~test/fixtures/salesOrderFixtures";
 import { inventoryFixtures } from "~test/fixtures/inventoryFixtures";
 import { customerFixtures } from "~test/fixtures/customerFixtures";
-import { SalesOrder, SalesOrderItem } from "~/models";
 import {
   SalesOrderItemCreationAttributes,
   SalesOrderItemUpdateAttributes,
@@ -14,22 +13,20 @@ import {
   SalesOrderInvalidStatusException,
   SalesOrderItemNotFoundException,
 } from "~/exceptions";
+import { materialFixtures } from "~test/fixtures/materialFixtures";
 
 describe("SalesOrderItemEngine", () => {
   const engine = new Engine();
   const draftSalesOrderId = idGenerator.salesOrder(0);
   const completedSalesOrderId = idGenerator.salesOrder(1);
-  const draftInventory = idGenerator.inventory(10);
-
-  beforeAll(async () => {
-    await resetData();
-    await inventoryFixtures();
-    await customerFixtures();
-  });
+  const finishedInventory = idGenerator.inventory(20);
 
   describe("list", () => {
     beforeAll(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData();
+      await materialFixtures();
+      await inventoryFixtures();
+      await customerFixtures();
       await salesOrderFixtures();
     });
     it("should return a list of sales order items", async () => {
@@ -54,7 +51,10 @@ describe("SalesOrderItemEngine", () => {
 
   describe("create", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData();
+      await materialFixtures();
+      await inventoryFixtures();
+      await customerFixtures();
       await salesOrderFixtures();
     });
     it("should create a new sales order item", async () => {
@@ -75,7 +75,7 @@ describe("SalesOrderItemEngine", () => {
       expect(createdItem.remarks).toStrictEqual(newItem.remarks);
 
       const updatedOrder = await engine.salesOrder.findById(draftSalesOrderId);
-      expect(updatedOrder.total).toBe(6500);
+      expect(updatedOrder.total).toBe(4000);
       expect(updatedOrder.salesOrderItems).toHaveLength(6);
     });
 
@@ -93,10 +93,10 @@ describe("SalesOrderItemEngine", () => {
       );
     });
 
-    it("should throw InventoryInvalidStatusException for inactive inventorys", async () => {
+    it("should throw InventoryInvalidStatusException for inactive inventories", async () => {
       const newItem: SalesOrderItemCreationAttributes = {
         salesOrderId: draftSalesOrderId,
-        inventoryId: draftInventory, // Assuming this inventory is inactive
+        inventoryId: finishedInventory, // Assuming this inventory is inactive
         quantity: 10,
         unitPrice: 150,
         remarks: "Invalid Inventory",
@@ -110,7 +110,10 @@ describe("SalesOrderItemEngine", () => {
 
   describe("update", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData();
+      await materialFixtures();
+      await inventoryFixtures();
+      await customerFixtures();
       await salesOrderFixtures();
     });
     it("should update an existing sales order item", async () => {
@@ -136,7 +139,7 @@ describe("SalesOrderItemEngine", () => {
     it("should throw InventoryInvalidStatusException for inactive inventorys on update", async () => {
       const existingItemId = idGenerator.salesOrderItem(0, 0); // Assuming this item exists
       const updateData: SalesOrderItemUpdateAttributes = {
-        inventoryId: draftInventory, // Assuming this inventory is inactive
+        inventoryId: finishedInventory, // Assuming this inventory is inactive
         quantity: 10,
         unitPrice: 150,
         remarks: "Invalid Update",
@@ -165,7 +168,10 @@ describe("SalesOrderItemEngine", () => {
 
   describe("delete", () => {
     beforeEach(async () => {
-      await resetData([SalesOrderItem, SalesOrder]);
+      await resetData();
+      await materialFixtures();
+      await inventoryFixtures();
+      await customerFixtures();
       await salesOrderFixtures();
     });
     it("should delete an existing sales order item", async () => {

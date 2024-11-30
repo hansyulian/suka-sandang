@@ -1,10 +1,17 @@
 import type {
+  CreateOmit,
   SalesOrderAttributes,
   SalesOrderCreationAttributes,
+  SalesOrderItemAttributes,
   SalesOrderItemSyncAttributes,
   SalesOrderUpdateAttributes,
 } from "@app/common";
-import { compareArray, filterDuplicates, sum } from "@hyulian/common";
+import {
+  compareArray,
+  filterDuplicates,
+  indexArray,
+  sum,
+} from "@hyulian/common";
 import { Op, type WhereOptions } from "sequelize";
 import {
   InventoryInvalidStatusException,
@@ -20,6 +27,7 @@ import {
   SalesOrderItem,
   Customer,
   InventoryFlow,
+  SalesOrderItemSequelizeCreationAttributes,
 } from "~/models";
 import { WithTransaction } from "~/modules/WithTransactionDecorator";
 import type { SequelizePaginationOptions } from "~/types";
@@ -198,22 +206,22 @@ export class SalesOrderEngine extends EngineBase {
     const inventoryIds = filterDuplicates(
       records.map((record) => record.inventoryId)
     );
-    const foundInventory = await Inventory.findAll({
+    const foundInventories = await Inventory.findAll({
       where: {
         id: {
           [Op.in]: inventoryIds,
         },
       },
     });
-    if (foundInventory.length !== inventoryIds.length) {
-      const foundinventoryIds = foundInventory.map((record) => record.id);
+    if (foundInventories.length !== inventoryIds.length) {
+      const foundinventoryIds = foundInventories.map((record) => record.id);
       throw new InventoryNotFoundException({
         ids: inventoryIds.filter(
           (inventoryId) => !foundinventoryIds.includes(inventoryId)
         ),
       });
     }
-    const inactiveInventory = foundInventory.find(
+    const inactiveInventory = foundInventories.find(
       (record) => record.status !== "active"
     );
     if (inactiveInventory) {
@@ -221,6 +229,25 @@ export class SalesOrderEngine extends EngineBase {
         "active",
         inactiveInventory.status
       );
+    }
+    const inventoryIndex = indexArray(foundInventories, "id");
+    const requestedInventoryQuantityIndex: Record<string, number> = {};
+    for (const record of records) {
+      const { inventoryId, quantity } = record;
+      requestedInventoryQuantityIndex[inventoryId] =
+        requestedInventoryQuantityIndex[inventoryId] || 0;
+      requestedInventoryQuantityIndex[inventoryId] += quantity;
+    }
+    for (const inventoryId in requestedInventoryQuantityIndex) {
+      if (
+        inventoryIndex[inventoryId].total <
+        requestedInventoryQuantityIndex[inventoryId]
+      ) {
+        throw new InventoryInsufficientQuantityException(
+          inventoryIndex[inventoryId],
+          requestedInventoryQuantityIndex[inventoryId]
+        );
+      }
     }
     const items = await SalesOrderItem.findAll({
       where: {
@@ -232,34 +259,32 @@ export class SalesOrderEngine extends EngineBase {
       records,
       (left, right) => left.id === right.id
     );
-    const promises = [];
     for (const leftOnly of compareResult.leftOnly) {
-      promises.push(leftOnly.destroy());
+      await leftOnly.destroy();
     }
+    const bulkCreate: CreateOmit<SalesOrderItemAttributes>[] = [];
     for (const rightOnly of compareResult.rightOnly) {
       const { inventoryId, quantity, remarks, unitPrice } = rightOnly;
-      promises.push(
-        SalesOrderItem.create({
-          salesOrderId: record.id,
-          inventoryId,
-          quantity,
-          remarks,
-          unitPrice,
-        })
-      );
+      bulkCreate.push({
+        salesOrderId: record.id,
+        inventoryId,
+        quantity,
+        remarks,
+        unitPrice,
+        subTotal: quantity * unitPrice,
+      });
     }
     for (const itemUpdate of compareResult.both) {
       const { inventoryId, quantity, unitPrice, remarks } = itemUpdate.right;
-      promises.push(
-        itemUpdate.left.update({
-          inventoryId,
-          quantity,
-          unitPrice,
-          remarks,
-        })
-      );
+
+      await itemUpdate.left.update({
+        inventoryId,
+        quantity,
+        unitPrice,
+        remarks,
+      });
     }
-    await Promise.all(promises);
+    await SalesOrderItem.bulkCreate(bulkCreate, { individualHooks: true });
     await this.recalculateTotal(id);
   }
 
@@ -275,20 +300,21 @@ export class SalesOrderEngine extends EngineBase {
       },
       include: [
         {
+          model: InventoryFlow,
+        },
+        {
           model: Inventory,
         },
       ],
     });
-    const promises = [];
     for (const salesOrderItem of salesOrderItems) {
       if (
         salesOrderItem.inventoryFlows &&
         salesOrderItem.inventoryFlows.length === 0
       ) {
-        promises.push(createInventoryFlow(salesOrderItem));
+        await createInventoryFlow(salesOrderItem);
       }
     }
-    await Promise.all(promises);
     async function createInventoryFlow(salesOrderItem: SalesOrderItem) {
       const { id, inventoryId, quantity, inventory } = salesOrderItem;
       if (inventory.total < quantity) {

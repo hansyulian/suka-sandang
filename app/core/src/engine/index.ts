@@ -1,3 +1,5 @@
+export * from "./SalesOrderEngine";
+export * from "./SalesOrderItemEngine";
 export * from "./CustomerEngine";
 export * from "./EnumEngine";
 export * from "./InventoryEngine";
@@ -5,6 +7,8 @@ export * from "./InventoryFlowEngine";
 export * from "./MaterialEngine";
 export * from "./PurchaseOrderEngine";
 export * from "./PurchaseOrderItemEngine";
+export * from "./SalesOrderEngine";
+export * from "./SalesOrderItemEngine";
 export * from "./SessionEngine";
 export * from "./SupplierEngine";
 export * from "./UserEngine";

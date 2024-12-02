@@ -15,12 +15,12 @@ export function usePurchaseOrderStatusOptions(
       {
         label: purchaseOrderStatusLabels.draft,
         value: "draft",
-        disabled: !isDraft,
+        disabled: isEdit && !isDraft,
       },
       {
         label: purchaseOrderStatusLabels.processing,
         value: "processing",
-        disabled: !isEdit || !isDraft || !isProcessing,
+        disabled: isEdit && !isDraft && !isProcessing,
       },
       {
         label: purchaseOrderStatusLabels.completed,

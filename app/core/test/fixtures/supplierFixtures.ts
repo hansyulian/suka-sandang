@@ -6,5 +6,5 @@ export async function supplierFixtures() {
   for (let i = 0; i < 50; i += 1) {
     params.push({ id: idGenerator.supplier(i), name: `Test Supplier ${i}` });
   }
-  await Supplier.bulkCreate(params);
+  await Supplier.bulkCreate(params, { individualHooks: true });
 }

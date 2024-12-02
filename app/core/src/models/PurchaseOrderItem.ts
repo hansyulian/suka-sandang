@@ -4,6 +4,7 @@ import type {
 } from "@app/common";
 import {
   BeforeCreate,
+  BeforeSave,
   BeforeUpdate,
   BelongsTo,
   Column,
@@ -59,6 +60,7 @@ export class PurchaseOrderItem extends BaseModel<
 
   @BeforeCreate
   @BeforeUpdate
+  @BeforeSave
   static calculateSubTotal(instance: PurchaseOrderItem) {
     instance.subTotal = instance.quantity * instance.unitPrice;
   }

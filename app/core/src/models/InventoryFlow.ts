@@ -8,9 +8,13 @@ import { BelongsTo, Column, ForeignKey, Table } from "sequelize-typescript";
 import { BaseModel, SequelizeCreationPreset } from "~/models/BaseModel";
 import { Inventory } from "~/models/Inventory";
 import { PurchaseOrderItem } from "~/models/PurchaseOrderItem";
+import { SalesOrderItem } from "~/models/SalesOrderItem";
 
 export type InventoryFlowSequelizeCreationAttributes = SequelizeCreationPreset<
-  InventoryFlowCreationAttributes & { purchaseOrderItemId?: string }
+  InventoryFlowCreationAttributes & {
+    purchaseOrderItemId?: string;
+    salesOrderItemId?: string;
+  }
 >;
 @Table({
   paranoid: false,
@@ -25,6 +29,10 @@ export class InventoryFlow extends BaseModel<
   @ForeignKey(() => PurchaseOrderItem)
   @Column
   declare purchaseOrderItemId?: string;
+
+  @ForeignKey(() => SalesOrderItem)
+  @Column
+  declare salesOrderItemId?: string;
 
   @ForeignKey(() => Inventory)
   @Column
@@ -42,6 +50,9 @@ export class InventoryFlow extends BaseModel<
 
   @BelongsTo(() => PurchaseOrderItem, "purchaseOrderItemId")
   declare purchaseOrderItem: PurchaseOrderItem;
+
+  @BelongsTo(() => SalesOrderItem, "salesOrderItemId")
+  declare salesOrderItem: SalesOrderItem;
 
   @BelongsTo(() => Inventory)
   declare inventory: Inventory;

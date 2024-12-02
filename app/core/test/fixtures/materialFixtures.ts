@@ -12,7 +12,7 @@ export async function materialFixtures() {
       status: i % 10 === 0 ? "draft" : "active",
     });
   }
-  await Material.bulkCreate(params);
+  await Material.bulkCreate(params, { individualHooks: true });
   const material = await Material.create({
     id: idGenerator.material(100),
     code: "deleted-material-test",

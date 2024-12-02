@@ -15,6 +15,7 @@ export const inventoryFlowStatus = ["valid", "cancelled", "deleted"] as const;
 export const inventoryFlowFields = apiContractModelSchema({
   inventoryId: { type: "string" },
   purchaseOrderItemId: { type: "string", optional: true },
+  salesOrderItemId: { type: "string", optional: true },
   quantity: { type: "number" },
   remarks: { type: "string", optional: true },
   activity: { type: "enum", values: inventoryFlowActivity },

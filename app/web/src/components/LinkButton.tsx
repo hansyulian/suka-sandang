@@ -4,7 +4,6 @@ import { Icon, IconNames } from "~/components/Icon";
 import { RouteNames } from "~/config/routes";
 
 export type LinkButtonProps<RouteName extends RouteNames> = {
-  target: RouteName;
   iconName?: IconNames;
 } & ButtonProps &
   AppLinkProps<RouteName>;
@@ -12,12 +11,14 @@ export type LinkButtonProps<RouteName extends RouteNames> = {
 export function LinkButton<RouteName extends RouteNames>(
   props: LinkButtonProps<RouteName>
 ) {
-  const { target, iconName, ...rest } = props;
+  const { target, params, query, iconName, ...rest } = props;
 
   return (
     <Button
       component={AppLink}
       target={target}
+      params={params}
+      query={query}
       leftSection={iconName ? <Icon name={iconName} /> : null}
       {...rest}
     />

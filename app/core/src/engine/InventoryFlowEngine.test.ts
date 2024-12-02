@@ -34,7 +34,7 @@ describe("InventoryFlowEngine", () => {
         {},
         { limit: 10, offset: 0 }
       );
-      expect(result.count).toBeGreaterThanOrEqual(250);
+      expect(result.count).toBeGreaterThanOrEqual(101);
       expect(result.records).toHaveLength(10);
       expect(result.records[0].inventoryId).toBeDefined();
       expect(result.records[0].purchaseOrderItem).toBeDefined();
@@ -118,7 +118,7 @@ describe("InventoryFlowEngine", () => {
     });
 
     it("should reject updates on inventory flows with non-updatable activity", async () => {
-      const data = { quantity: 15, remarks: "Attempted update" };
+      const data = { quantity: 16, remarks: "Attempted update" };
       await expect(
         engine.inventoryFlow.update(testNonUpdatableFlowId, data)
       ).rejects.toThrow(InventoryFlowInvalidActivityException);

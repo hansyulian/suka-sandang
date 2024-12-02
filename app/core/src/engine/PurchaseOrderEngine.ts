@@ -124,6 +124,9 @@ export class PurchaseOrderEngine extends EngineBase {
     if (items) {
       await this.sync(record.id, items);
     }
+    if (status === "completed") {
+      await this.createInventory(record.id);
+    }
     return this.findById(record.id);
   }
 
@@ -255,7 +258,7 @@ export class PurchaseOrderEngine extends EngineBase {
         unitPrice,
       });
     }
-    await PurchaseOrderItem.bulkCreate(bulkCreate);
+    await PurchaseOrderItem.bulkCreate(bulkCreate, { individualHooks: true });
     for (const itemUpdate of compareResult.both) {
       const { materialId, quantity, unitPrice, remarks } = itemUpdate.right;
 
@@ -329,7 +332,9 @@ export class PurchaseOrderEngine extends EngineBase {
         remarks: "",
       });
     }
-    await Inventory.bulkCreate(inventoryBulkCreate);
-    await InventoryFlow.bulkCreate(inventoryFlowBulkCreate);
+    await Inventory.bulkCreate(inventoryBulkCreate, { individualHooks: true });
+    await InventoryFlow.bulkCreate(inventoryFlowBulkCreate, {
+      individualHooks: true,
+    });
   }
 }

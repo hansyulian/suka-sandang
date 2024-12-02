@@ -1,15 +1,17 @@
 import { pad, valueIndex } from "@hyulian/common";
 const width = 2;
 export const idGenerator = {
-  user,
-  enum: enumValue,
-  material,
-  supplier,
   customer,
-  purchaseOrder,
-  purchaseOrderItem,
+  enum: enumValue,
   inventory,
   inventoryFlow,
+  material,
+  purchaseOrder,
+  purchaseOrderItem,
+  salesOrder,
+  salesOrderItem,
+  supplier,
+  user,
 };
 
 const entityKeys = [
@@ -20,6 +22,8 @@ const entityKeys = [
   "customer",
   "purchaseOrder",
   "purchaseOrderItem",
+  "salesOrder",
+  "salesOrderItem",
   "inventory",
   "inventoryFlow",
 ] as const;
@@ -65,6 +69,14 @@ function purchaseOrder(id: number) {
 
 function purchaseOrderItem(id: number, purchaseOrderId: number) {
   return generator("purchaseOrderItem", [purchaseOrderId, id]);
+}
+
+function salesOrder(id: number) {
+  return generator("salesOrder", [id]);
+}
+
+function salesOrderItem(id: number, salesOrderId: number) {
+  return generator("salesOrderItem", [salesOrderId, id]);
 }
 
 function inventory(id: number) {

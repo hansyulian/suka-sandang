@@ -4,6 +4,7 @@ import {
   createInventoryContract,
   updateInventoryContract,
   deleteInventoryContract,
+  getInventoryOptionsContract,
 } from "@app/common";
 import { apiClient } from "~/config/api/baseApi";
 import { queryKeys } from "~/config/queryKeys";
@@ -41,4 +42,8 @@ export const deleteInventoryApi = apiClient.registerMutationContract(
     message: "Deleting inventory",
     successMessage: "Inventory deleted!",
   })
+);
+export const getInventoryOptionsApi = apiClient.registerQueryContract(
+  getInventoryOptionsContract,
+  queryKeyFn.option(queryKeys.inventory)
 );

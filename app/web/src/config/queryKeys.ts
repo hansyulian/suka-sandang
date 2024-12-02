@@ -17,6 +17,8 @@ export const queryKeys = lockQueryKeys({
   purchaseOrderItem: "purchaseOrderItem",
   inventory: "inventory",
   inventoryFlow: "inventoryFlow",
+  salesOrder: "salesOrder",
+  salesOrderItem: "salesOrderItem",
 } as const);
 
 export type QueryKeys = typeof queryKeys;

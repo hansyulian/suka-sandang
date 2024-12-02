@@ -7,25 +7,32 @@ export const queryKeyFn = {
 };
 
 function many(group: string) {
-  return (_params: any, query: any) => {
-    return [group, query];
+  return (params?: any, query?: any) => {
+    return [
+      group,
+      "many",
+      {
+        ...params,
+        ...query,
+      },
+    ];
   };
 }
 
 function simple(group: string) {
   return () => {
-    return [group];
+    return [group, "simple"];
   };
 }
 
 function single(group: string) {
   return (params: any) => {
-    return [params, group];
+    return [group, "single", params];
   };
 }
 
 function option(group: string, option: string = "options") {
   return () => {
-    return [group, option];
+    return [group, "option", option];
   };
 }

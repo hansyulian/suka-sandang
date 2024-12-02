@@ -21,6 +21,7 @@ export function generateMiddlewareTestData<
     query: {} as any,
     request: mockRequest,
     response: mockResponse,
+    engine: mockResponse.locals.engine,
     ...context,
   };
 }

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { lazy, LazyExoticComponent, ReactNode } from "react";
+import { lazy } from "react";
 import {
   CustomRouteWithValidateSearch,
   ExtractRouteParams,
@@ -10,6 +11,7 @@ import { customerRoutes } from "~/config/routes/customerRoutes";
 import { inventoryRoutes } from "~/config/routes/inventoryRoutes";
 import { materialRoutes } from "~/config/routes/materialRoutes";
 import { purchaseOrderRoutes } from "~/config/routes/purchaseOrderRoutes";
+import { salesOrderRoutes } from "~/config/routes/salesOrderRoutes";
 import { sessionRoutes } from "~/config/routes/sessionRoutes";
 import { supplierRoutes } from "~/config/routes/supplierRoutes";
 
@@ -23,6 +25,7 @@ export const routes = lockRoutes({
   ...supplierRoutes,
   ...customerRoutes,
   ...purchaseOrderRoutes,
+  ...salesOrderRoutes,
   ...inventoryRoutes,
 } as const);
 export type Routes = typeof routes;
@@ -37,3 +40,9 @@ export type InferQuery<RouteKey extends RouteNames> =
     ? Partial<ReturnType<Routes[RouteKey]["validateQuery"]>>
     : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       {};
+
+export type LinkConfig<RouteName extends RouteNames> = {
+  target: RouteName;
+  params: InferParams<RouteName>;
+  query?: InferQuery<RouteName>;
+};

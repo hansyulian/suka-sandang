@@ -69,6 +69,6 @@ export class EnumEngine extends EngineBase {
         await promises.push(entry[1].destroy());
       }
     }
-    await Enum.bulkCreate(bulkCreateAttributes);
+    await Enum.bulkCreate(bulkCreateAttributes, { individualHooks: true });
   }
 }

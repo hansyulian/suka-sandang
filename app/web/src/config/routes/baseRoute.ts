@@ -43,12 +43,3 @@ export type ExtractRouteParams<T extends string> =
       : { [K in Param]: string }
     : // If T contains no parameters
       {};
-
-type X = ExtractRouteParams<"/app/test/:param">;
-type Y = ExtractRouteParams<"/app/atest/:param?">;
-const x: X = {
-  param: "",
-};
-const y: Y = {
-  param: "",
-};

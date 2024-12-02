@@ -1,7 +1,7 @@
 import { ContractResponseModel } from "@hyulian/react-api-contract";
 import { Table, Text } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { IconButton } from "~/components/IconButton";
 import { NumberInputE } from "~/components/NumberInputE";
 import { SelectColor } from "~/components/SelectColor";
@@ -31,6 +31,7 @@ export const SalesOrderItemTableRow = memo(function (
 ) {
   const { initialData, disabled, onFormChange, index, onDelete } = props;
   const inventorySelectOptions = useInventorySelectOptions("name-code");
+  const maxQuantityRef = useRef(0);
 
   const form = useForm<SalesOrderItemForm>({
     initialValues: {
@@ -43,7 +44,10 @@ export const SalesOrderItemTableRow = memo(function (
     validateInputOnBlur: true,
     validate: {
       inventoryId: formValidations({ required: true }),
-      quantity: formValidations({ required: true }),
+      quantity: formValidations({
+        required: true,
+        max: maxQuantityRef.current,
+      }),
       unitPrice: formValidations({ required: true }),
     },
   });
@@ -52,6 +56,13 @@ export const SalesOrderItemTableRow = memo(function (
     { idOrCode: form.values.inventoryId },
     {}
   );
+  useEffect(() => {
+    if (selectedInventory) {
+      maxQuantityRef.current = selectedInventory.total;
+    } else {
+      maxQuantityRef.current = 0;
+    }
+  }, [selectedInventory]);
   const selectedMaterial = selectedInventory?.material;
   const optionColorExtractor = useCallback(
     (
@@ -111,6 +122,7 @@ export const SalesOrderItemTableRow = memo(function (
           {...form.getInputProps("remarks")}
         />
       </Table.Td>
+      <Table.Td ta="right">{selectedInventory?.total || "-"}</Table.Td>
       <Table.Td valign="top" ta="right">
         <NumberInputE
           rightAlign

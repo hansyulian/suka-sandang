@@ -100,6 +100,12 @@ export const PurchaseOrderItemTableRow = memo(function (
           searchable
           plainDisabled
           optionColorExtractor={optionColorExtractor}
+          link={{
+            target: "material",
+            params: {
+              param: selectedMaterial?.code || "",
+            },
+          }}
           {...getInputProps("materialId")}
         />
       </Table.Td>

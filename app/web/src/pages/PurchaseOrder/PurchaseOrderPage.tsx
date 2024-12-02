@@ -179,7 +179,7 @@ export default function Page() {
             required
             plainDisabled
             {...getInputProps("code")}
-            onChange={(event) => {
+            onChange={(event: never) => {
               setAutoCode(false);
               return getInputProps("code").onChange(event);
             }}
@@ -213,7 +213,6 @@ export default function Page() {
           <SegmentedControlInput
             label="Status"
             data={purchaseOrderStatusOptions}
-            disabled={!isEditMode}
             color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />

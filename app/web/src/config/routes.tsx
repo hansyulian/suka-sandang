@@ -40,3 +40,9 @@ export type InferQuery<RouteKey extends RouteNames> =
     ? Partial<ReturnType<Routes[RouteKey]["validateQuery"]>>
     : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       {};
+
+export type LinkConfig<RouteName extends RouteNames> = {
+  target: RouteName;
+  params: InferParams<RouteName>;
+  query?: InferQuery<RouteName>;
+};

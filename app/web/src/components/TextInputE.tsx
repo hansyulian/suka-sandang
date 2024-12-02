@@ -1,20 +1,19 @@
-import { TextInput, TextInputProps, Text } from "@mantine/core";
-import { ReadOnly } from "~/components/ReadOnly";
+import { TextInput, TextInputProps } from "@mantine/core";
+import {
+  PlainDisabledView,
+  PlainDisabledViewProps,
+} from "~/components/PlainDisabledView";
+import { RouteNames } from "~/config/routes";
 
-export type TextInputEProps = TextInputProps & {
-  plainDisabled?: boolean;
-};
+export type TextInputEProps<RouteName extends RouteNames> = TextInputProps &
+  PlainDisabledViewProps<RouteName> & {};
 
-export function TextInputE(props: TextInputEProps) {
-  const { plainDisabled, ...rest } = props;
-
-  if (plainDisabled && props.disabled) {
-    return (
-      <ReadOnly label={props.label}>
-        <Text c="gray">{props.value}</Text>
-      </ReadOnly>
-    );
-  }
-
-  return <TextInput {...rest} />;
+export function TextInputE<RouteName extends RouteNames = any>(
+  props: TextInputEProps<RouteName>
+) {
+  return (
+    <PlainDisabledView {...props}>
+      <TextInput {...props} />
+    </PlainDisabledView>
+  );
 }

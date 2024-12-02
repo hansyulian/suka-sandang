@@ -213,7 +213,6 @@ export default function Page() {
           <SegmentedControlInput
             label="Status"
             data={salesOrderStatusOptions}
-            disabled={!isEditMode}
             color={getStatusColor(values.status)}
             {...getInputProps("status")}
           />

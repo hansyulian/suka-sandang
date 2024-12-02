@@ -94,6 +94,9 @@ export const SalesOrderItemTable = memo(function (
             <Table.Th ta="center">Material</Table.Th>
             <Table.Th ta="center">Remarks</Table.Th>
             <Table.Th w="100" ta="center">
+              Availability
+            </Table.Th>
+            <Table.Th w="100" ta="center">
               Quantity
             </Table.Th>
             <Table.Th w="150" ta="center">

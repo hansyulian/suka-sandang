@@ -1,27 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ComboboxItem, Select, SelectProps, Text } from "@mantine/core";
-import { ReadOnly } from "~/components/ReadOnly";
+import { ComboboxItem, Select, SelectProps } from "@mantine/core";
+import { useMemo } from "react";
+import {
+  PlainDisabledView,
+  PlainDisabledViewProps,
+} from "~/components/PlainDisabledView";
+import { RouteNames } from "~/config/routes";
 
-export type SelectEProps = SelectProps & {
-  onSelectOption?: (option: ComboboxItem | null) => void;
-  plainDisabled?: boolean;
-};
+export type SelectEProps<RouteName extends RouteNames> = SelectProps &
+  PlainDisabledViewProps<RouteName> & {
+    onSelectOption?: (option: ComboboxItem | null) => void;
+  };
 
-export function SelectE(props: SelectEProps) {
-  const { onChange, plainDisabled, onSelectOption, ...rest } = props;
+export function SelectE<RouteName extends RouteNames = any>(
+  props: SelectEProps<RouteName>
+) {
+  const { onChange, onSelectOption, ...rest } = props;
 
   const onChangeProxy = (value: string | null, option: ComboboxItem) => {
     onChange?.(value as any, option);
     onSelectOption?.(option);
   };
 
-  if (plainDisabled && props.disabled) {
+  const selectedOption = useMemo(() => {
     return (
-      <ReadOnly label={props.label}>
-        <Text c="gray">{props.value}</Text>
-      </ReadOnly>
+      props.data?.find((record) => (record as any)?.value === props.value) ||
+      props.value
     );
-  }
+  }, [props.data, props.value]);
 
-  return <Select {...rest} onChange={onChangeProxy} />;
+  const selectedLabel = useMemo(() => {
+    return (selectedOption as any)?.label || props.value;
+  }, [props.value, selectedOption]);
+
+  return (
+    <PlainDisabledView {...props} value={selectedLabel}>
+      <Select {...rest} onChange={onChangeProxy} />
+    </PlainDisabledView>
+  );
 }
